@@ -844,6 +844,56 @@ button,input,textarea,select{font-family:var(--F);font-size:13px}
 
 <script>
 // ═══════════════════════════════════════════════════
+//  STATE & PERSISTENCE
+// ═══════════════════════════════════════════════════
+var curAgent = 'board';
+var chatHistory = {};
+var isSending = false;
+var sessionHist = JSON.parse(localStorage.getItem('tm_hist') || '[]');
+var learning = JSON.parse(localStorage.getItem('tm_learn') || '{}');
+// learning structure: { agentId: { positive: [{insight,action,note}], rejected: [{insight,action,reason}] } }
+var execLog = JSON.parse(localStorage.getItem('tm_exec') || '[]');
+var jobs = JSON.parse(localStorage.getItem('tm_jobs') || '[]');
+var pStep = 0, pData = {};
+var rejectTarget = null;
+var deGiroData = [];
+var weeklyCache = null;
+
+function getLearningContextSummary() {
+  const entries = Object.values(learning);
+  const totalPos = entries.reduce((s, e) => s + (e.positive?.length || 0), 0);
+  const totalRej = entries.reduce((s, e) => s + (e.rejected?.length || 0), 0);
+  if (!totalPos && !totalRej) return 'Nog geen feedback verzameld.';
+  const rejSnip = Object.entries(learning)
+    .flatMap(([, e]) => (e.rejected || []).slice(0, 2).map(r => `❌ ${r.insight?.slice(0,40)}: ${r.reason?.slice(0,30)}`))
+    .slice(0, 3).join('; ');
+  return `${totalPos} positieve voorbeelden, ${totalRej} afgewezen adviezen. ${rejSnip}`;
+}
+
+function getLearningForAgent(agentId) {
+  const ag = learning[agentId];
+  if (!ag) return 'Geen feedback voor deze agent.';
+  const pos = (ag.positive || []).slice(0, 2).map(p => `✓ "${p.insight?.slice(0,40)}"`).join('; ');
+  const rej = (ag.rejected || []).slice(0, 2).map(r => `✗ "${r.insight?.slice(0,40)}" (${r.reason?.slice(0,25)})`).join('; ');
+  return [pos, rej].filter(Boolean).join(' | ') || 'Geen data.';
+}
+
+var BITVAVO_HOLDINGS = JSON.parse(localStorage.getItem('tm_holdings') || JSON.stringify({
+  BTC:  { qty: 0.62,  avgBuy: 28000, name: 'Bitcoin',  type: 'crypto' },
+  ETH:  { qty: 4.20,  avgBuy: 1800,  name: 'Ethereum', type: 'crypto' },
+  // Voeg meer toe: SYMBOL: { qty: aantal, avgBuy: gemiddelde_aankoopprijs, name: 'Naam', type: 'crypto' }
+}));
+
+// DeGiro ETF posities (handmatig invullen of via CSV import)
+var DEGIRO_HOLDINGS = JSON.parse(localStorage.getItem('tm_degiro') || JSON.stringify({
+  VWCE: { qty: 120, avgBuy: 96.50, name: 'Vanguard FTSE All-World', type: 'etf', currentPrice: null },
+  IEMG: { qty: 85,  avgBuy: 48.20, name: 'iShares MSCI EM',        type: 'etf', currentPrice: null },
+}));
+
+var livePortfolio = JSON.parse(localStorage.getItem('tm_live_portfolio') || '{}');
+var lastPriceFetch = localStorage.getItem('tm_last_fetch') || null;
+
+// ═══════════════════════════════════════════════════
 //  REAL AGENTS (from seed.ts)
 // ═══════════════════════════════════════════════════
 var AGENTS = {
@@ -910,7 +960,7 @@ Kernregel: 1 insight + 1 actie. Max 30 woorden. Geen jargon. Werkwoord. Nederlan
     sys:`Je bent de Health & Energy Coach in het Takumi Master board.
 Principes: "Energy precedes performance. Recovery is part of progress. Consistency over intensity."
 Grenzen: Geen medische claims. Geen prestatiedruk.
-HRV data: rMSSD ${getLatestHRV().rmssd} (gem. 53, -7pt), herstel ${getLatestHRV().recovery}/10, HR ${getLatestHRV().hr}bpm, slaap ${getLatestHRV().sleep}u, 3× training/week.
+HRV data: rMSSD HRV_RMSSD (gem. 53, -7pt), herstel HRV_RECOVERY/10, HR HRV_HR bpm, slaap HRV_SLEEP u, 3× training/week.
 Patroon: 3× laag herstel afgelopen week.
 Learning: LEARNING_HEALTH
 Kernregel: 1 insight op basis van ECHTE HRV-data + 1 actie. Max 30 woorden. Nederlands.`},
@@ -957,41 +1007,6 @@ Context: boek-doel 28% stagnatie (14 weken), first draft Q3 2026.
 Grenzen: Geen ghostwriting zonder credit.
 Kernregel: 1 schrijf-inzicht + 1 actie om stagnatie door te breken. Max 30 woorden. Nederlands.`}
 };
-
-// ═══════════════════════════════════════════════════
-//  STATE & PERSISTENCE
-// ═══════════════════════════════════════════════════
-var curAgent = 'board';
-var chatHistory = {};
-var isSending = false;
-var sessionHist = JSON.parse(localStorage.getItem('tm_hist') || '[]');
-var learning = JSON.parse(localStorage.getItem('tm_learn') || '{}');
-// learning structure: { agentId: { positive: [{insight,action,note}], rejected: [{insight,action,reason}] } }
-var execLog = JSON.parse(localStorage.getItem('tm_exec') || '[]');
-var jobs = JSON.parse(localStorage.getItem('tm_jobs') || '[]');
-var pStep = 0, pData = {};
-var rejectTarget = null;
-var deGiroData = [];
-var weeklyCache = null;
-
-function getLearningContextSummary() {
-  const entries = Object.values(learning);
-  const totalPos = entries.reduce((s, e) => s + (e.positive?.length || 0), 0);
-  const totalRej = entries.reduce((s, e) => s + (e.rejected?.length || 0), 0);
-  if (!totalPos && !totalRej) return 'Nog geen feedback verzameld.';
-  const rejSnip = Object.entries(learning)
-    .flatMap(([, e]) => (e.rejected || []).slice(0, 2).map(r => `❌ ${r.insight?.slice(0,40)}: ${r.reason?.slice(0,30)}`))
-    .slice(0, 3).join('; ');
-  return `${totalPos} positieve voorbeelden, ${totalRej} afgewezen adviezen. ${rejSnip}`;
-}
-
-function getLearningForAgent(agentId) {
-  const ag = learning[agentId];
-  if (!ag) return 'Geen feedback voor deze agent.';
-  const pos = (ag.positive || []).slice(0, 2).map(p => `✓ "${p.insight?.slice(0,40)}"`).join('; ');
-  const rej = (ag.rejected || []).slice(0, 2).map(r => `✗ "${r.insight?.slice(0,40)}" (${r.reason?.slice(0,25)})`).join('; ');
-  return [pos, rej].filter(Boolean).join(' | ') || 'Geen data.';
-}
 
 // ═══════════════════════════════════════════════════
 //  NAVIGATION
@@ -1577,20 +1592,6 @@ function renderHRVResult(rows) {
 // ═══════════════════════════════════════════════════
 
 // Jouw Bitvavo holdings — pas dit aan met je echte aantallen
-var BITVAVO_HOLDINGS = JSON.parse(localStorage.getItem('tm_holdings') || JSON.stringify({
-  BTC:  { qty: 0.62,  avgBuy: 28000, name: 'Bitcoin',  type: 'crypto' },
-  ETH:  { qty: 4.20,  avgBuy: 1800,  name: 'Ethereum', type: 'crypto' },
-  // Voeg meer toe: SYMBOL: { qty: aantal, avgBuy: gemiddelde_aankoopprijs, name: 'Naam', type: 'crypto' }
-}));
-
-// DeGiro ETF posities (handmatig invullen of via CSV import)
-var DEGIRO_HOLDINGS = JSON.parse(localStorage.getItem('tm_degiro') || JSON.stringify({
-  VWCE: { qty: 120, avgBuy: 96.50, name: 'Vanguard FTSE All-World', type: 'etf', currentPrice: null },
-  IEMG: { qty: 85,  avgBuy: 48.20, name: 'iShares MSCI EM',        type: 'etf', currentPrice: null },
-}));
-
-var livePortfolio = JSON.parse(localStorage.getItem('tm_live_portfolio') || '{}');
-var lastPriceFetch = localStorage.getItem('tm_last_fetch') || null;
 
 async function syncBitvavo() {
   toast('Bitvavo posities ophalen...', '🔄');
@@ -2305,14 +2306,14 @@ if (livePortfolio && livePortfolio.rows) {
 }
 
 // Auto-fetch live prices if cache is older than 5 min or missing
-const fetchAge = lastPriceFetch ? (Date.now() - new Date(lastPriceFetch).getTime()) : Infinity;
-if (fetchAge > 5 * 60 * 1000) {
-  // Try Bitvavo first (will auto-fallback to CoinGecko if keys missing)
-  setTimeout(() => syncBitvavo(), 1500);
-} else if (livePortfolio && livePortfolio.rows) {
-  // Render cached portfolio immediately
-  setTimeout(() => renderPortfolioTable(livePortfolio), 100);
-}
+try {
+  const fetchAge = lastPriceFetch ? (Date.now() - new Date(lastPriceFetch).getTime()) : Infinity;
+  if (fetchAge > 5 * 60 * 1000) {
+    setTimeout(() => { try { syncBitvavo(); } catch(e) { console.warn('Auto-sync failed:', e); } }, 2000);
+  } else if (livePortfolio && livePortfolio.rows) {
+    setTimeout(() => renderPortfolioTable(livePortfolio), 100);
+  }
+} catch(e) { console.warn('Boot fetch error:', e); }
 </script>
 </body>
 </html>
