@@ -1,24 +1,11 @@
-/**
- * /api/bitvavo-portfolio — Cloudflare Pages Function
- * Haalt echte Bitvavo posities op via HMAC-signed REST API.
- *
- * Environment variables vereist in Cloudflare Pages:
- *   BITVAVO_API_KEY    = jouw Bitvavo API key
- *   BITVAVO_API_SECRET = jouw Bitvavo API secret
- */
-
 async function hmacSHA256(secret, message) {
-  const enc     = new TextEncoder();
-  const keyData = enc.encode(secret);
-  const msgData = enc.encode(message);
-
+  const enc = new TextEncoder();
   const cryptoKey = await crypto.subtle.importKey(
-    'raw', keyData,
+    'raw', enc.encode(secret),
     { name: 'HMAC', hash: 'SHA-256' },
     false, ['sign']
   );
-
-  const signature = await crypto.subtle.sign('HMAC', cryptoKey, msgData);
+  const signature = await crypto.subtle.sign('HMAC', cryptoKey, enc.encode(message));
   return Array.from(new Uint8Array(signature))
     .map(b => b.toString(16).padStart(2, '0'))
     .join('');
@@ -30,23 +17,20 @@ export async function onRequestGet(context) {
   const apiKey    = env.BITVAVO_API_KEY;
   const apiSecret = env.BITVAVO_API_SECRET;
 
+  // Return clear diagnostic info
   if (!apiKey || !apiSecret) {
     return new Response(JSON.stringify({
-      error: 'BITVAVO_API_KEY en BITVAVO_API_SECRET niet geconfigureerd. Voeg toe via Cloudflare Pages → Settings → Environment Variables.'
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+      error: 'BITVAVO_API_KEY en/of BITVAVO_API_SECRET niet geconfigureerd',
+      hasKey: !!apiKey,
+      hasSecret: !!apiSecret,
+      hint: 'Voeg toe via Cloudflare Pages → Settings → Variables and Secrets → redeploy'
+    }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 
   try {
     const timestamp = Date.now();
-    const path      = '/balance';
-    const method    = 'GET';
-
-    // Bitvavo HMAC signature: timestamp + method + /v2 + path
-    const msg = `${timestamp}${method}/v2${path}`;
-    const sig = await hmacSHA256(apiSecret, msg);
+    const path = '/balance';
+    const sig = await hmacSHA256(apiSecret, `${timestamp}GET/v2${path}`);
 
     const upstream = await fetch(`https://api.bitvavo.com/v2${path}`, {
       headers: {
@@ -59,15 +43,13 @@ export async function onRequestGet(context) {
 
     if (!upstream.ok) {
       const err = await upstream.text();
-      return new Response(JSON.stringify({ error: err }), {
-        status: upstream.status,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({ 
+        error: `Bitvavo API ${upstream.status}: ${err}`,
+        hint: 'Controleer of de API key de juiste permissies heeft (View balance)'
+      }), { status: upstream.status, headers: { 'Content-Type': 'application/json' } });
     }
 
     const balances = await upstream.json();
-
-    // Filter posities met saldo > 0
     const positions = balances
       .filter(b => parseFloat(b.available) + parseFloat(b.inOrder) > 0.000001)
       .map(b => ({
@@ -79,16 +61,12 @@ export async function onRequestGet(context) {
 
     return new Response(JSON.stringify({ positions, fetchedAt: new Date().toISOString() }), {
       status: 200,
-      headers: {
-        'Content-Type':  'application/json',
-        'Cache-Control': 'max-age=60', // 60s cache op Cloudflare edge
-      },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'max-age=60' },
     });
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
+    return new Response(JSON.stringify({ error: err.message, stack: err.stack }), {
+      status: 500, headers: { 'Content-Type': 'application/json' }
     });
   }
 }
