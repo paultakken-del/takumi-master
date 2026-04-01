@@ -846,7 +846,7 @@ button,input,textarea,select{font-family:var(--F);font-size:13px}
 // ═══════════════════════════════════════════════════
 //  REAL AGENTS (from seed.ts)
 // ═══════════════════════════════════════════════════
-const AGENTS = {
+var AGENTS = {
   board:{id:'board',name:'Volledig Board',ico:'◈',dom:'Board',dc:'d-b',
     desc:'13 agents · 4-fase SSE pipeline · 9/10 drempel',
     get sys(){ return `Je bent het Takumi Master advisory board — 13 gespecialiseerde agents als raad van bestuur voor iemands leven.
@@ -961,18 +961,18 @@ Kernregel: 1 schrijf-inzicht + 1 actie om stagnatie door te breken. Max 30 woord
 // ═══════════════════════════════════════════════════
 //  STATE & PERSISTENCE
 // ═══════════════════════════════════════════════════
-let curAgent = 'board';
-let chatHistory = {};
-let isSending = false;
-let sessionHist = JSON.parse(localStorage.getItem('tm_hist') || '[]');
-let learning = JSON.parse(localStorage.getItem('tm_learn') || '{}');
+var curAgent = 'board';
+var chatHistory = {};
+var isSending = false;
+var sessionHist = JSON.parse(localStorage.getItem('tm_hist') || '[]');
+var learning = JSON.parse(localStorage.getItem('tm_learn') || '{}');
 // learning structure: { agentId: { positive: [{insight,action,note}], rejected: [{insight,action,reason}] } }
-let execLog = JSON.parse(localStorage.getItem('tm_exec') || '[]');
-let jobs = JSON.parse(localStorage.getItem('tm_jobs') || '[]');
-let pStep = 0, pData = {};
-let rejectTarget = null;
-let deGiroData = [];
-let weeklyCache = null;
+var execLog = JSON.parse(localStorage.getItem('tm_exec') || '[]');
+var jobs = JSON.parse(localStorage.getItem('tm_jobs') || '[]');
+var pStep = 0, pData = {};
+var rejectTarget = null;
+var deGiroData = [];
+var weeklyCache = null;
 
 function getLearningContextSummary() {
   const entries = Object.values(learning);
@@ -1576,20 +1576,20 @@ function renderHRVResult(rows) {
 // ═══════════════════════════════════════════════════
 
 // Jouw Bitvavo holdings — pas dit aan met je echte aantallen
-const BITVAVO_HOLDINGS = JSON.parse(localStorage.getItem('tm_holdings') || JSON.stringify({
+var BITVAVO_HOLDINGS = JSON.parse(localStorage.getItem('tm_holdings') || JSON.stringify({
   BTC:  { qty: 0.62,  avgBuy: 28000, name: 'Bitcoin',  type: 'crypto' },
   ETH:  { qty: 4.20,  avgBuy: 1800,  name: 'Ethereum', type: 'crypto' },
   // Voeg meer toe: SYMBOL: { qty: aantal, avgBuy: gemiddelde_aankoopprijs, name: 'Naam', type: 'crypto' }
 }));
 
 // DeGiro ETF posities (handmatig invullen of via CSV import)
-const DEGIRO_HOLDINGS = JSON.parse(localStorage.getItem('tm_degiro') || JSON.stringify({
+var DEGIRO_HOLDINGS = JSON.parse(localStorage.getItem('tm_degiro') || JSON.stringify({
   VWCE: { qty: 120, avgBuy: 96.50, name: 'Vanguard FTSE All-World', type: 'etf', currentPrice: null },
   IEMG: { qty: 85,  avgBuy: 48.20, name: 'iShares MSCI EM',        type: 'etf', currentPrice: null },
 }));
 
-let livePortfolio = JSON.parse(localStorage.getItem('tm_live_portfolio') || '{}');
-let lastPriceFetch = localStorage.getItem('tm_last_fetch') || null;
+var livePortfolio = JSON.parse(localStorage.getItem('tm_live_portfolio') || '{}');
+var lastPriceFetch = localStorage.getItem('tm_last_fetch') || null;
 
 async function syncBitvavo() {
   toast('Bitvavo posities ophalen...', '🔄');
