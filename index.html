@@ -1205,7 +1205,7 @@ async function sendMsg() {
     renderChat();
     setPh(2);
 
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2130,7 +2130,7 @@ async function generateReview() {
   el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--m)"><div style="font-size:24px;margin-bottom:12px;animation:spin .8s linear infinite;display:inline-block">⟳</div><br>Board genereert weekly review via AI...</div>';
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
