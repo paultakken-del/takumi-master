@@ -1,0 +1,10 @@
+# Cloudflare Pages headers
+# Geldt voor alle pagina's
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# API routes: geen caching in browser
+/api/*
+  Cache-Control: no-store
