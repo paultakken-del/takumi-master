@@ -867,12 +867,12 @@ AGENTS (uit seed.ts):
 13. Writing Coach & Author (Career) — "Every word must earn its place. Structure serves story."
 
 ECHTE GEBRUIKERSDATA:
-- ${getLivePortfolioContext()}
-- Health HRV: rMSSD ${getLatestHRV().rmssd} (gem. 14d: 53), herstel ${getLatestHRV().recovery}/10, HR ${getLatestHRV().hr}bpm, slaap ${getLatestHRV().sleep}u
+- LIVE_PORTFOLIO_CONTEXT
+- Health HRV: rMSSD HRV_RMSSD (gem. 14d: 53), herstel HRV_RECOVERY/10, HR HRV_HR bpm, slaap HRV_SLEEP u
 - World: Crypto mixed/CoinTelegraph (8/10), Finance negatief/ECB (9/10), Economie mixed/NOS (7/10)
 - Patronen: beslissings-vermijding (6R/1D 14d), laag herstel (3×≤4/10), finance focus (4×/7d)
 - Doelen: Gezondheid 62%, Portfolio €150k 82%, Boek 28% STAGNATIE (14w), Digital declutter 45%
-- Learning context: ${getLearningContextSummary()}
+- Learning context: LEARNING_CONTEXT_SUMMARY
 
 KWALITEITSREGELS (quality-gate.ts):
 - MAX 30 woorden per agent. Actie begint met werkwoord.
@@ -902,7 +902,7 @@ Spreek Nederlands. Verwijs naar echte data. Wees concreet en persoonlijk.`}},
 Principes: "Every decision has a cost. Direction beats speed. Strategy is choosing what not to do."
 Grenzen: Geen operationele details. Geen emotionele begeleiding.
 Context: ondernemer Amsterdam, €122k portfolio, patronen: beslissings-vermijding actief, boek-stagnatie 14w.
-Learning: ${getLearningForAgent('strategic')}
+Learning: LEARNING_STRATEGIC
 Kernregel: 1 insight + 1 actie. Max 30 woorden. Geen jargon. Werkwoord. Nederlands.`},
 
   health:{id:'health',name:'Health & Energy Coach',ico:'◎',dom:'Health',dc:'d-h',
@@ -912,7 +912,7 @@ Principes: "Energy precedes performance. Recovery is part of progress. Consisten
 Grenzen: Geen medische claims. Geen prestatiedruk.
 HRV data: rMSSD ${getLatestHRV().rmssd} (gem. 53, -7pt), herstel ${getLatestHRV().recovery}/10, HR ${getLatestHRV().hr}bpm, slaap ${getLatestHRV().sleep}u, 3× training/week.
 Patroon: 3× laag herstel afgelopen week.
-Learning: ${getLearningForAgent('health')}
+Learning: LEARNING_HEALTH
 Kernregel: 1 insight op basis van ECHTE HRV-data + 1 actie. Max 30 woorden. Nederlands.`},
 
   finance:{id:'finance',name:'Financial Risk & Wealth',ico:'◇',dom:'Finance',dc:'d-f',
@@ -922,7 +922,7 @@ Principes: "Risk first, return second. Optionality matters. Avoid irreversible l
 Grenzen: Geen productadvies. Geen voorspellingen.
 Portfolio: €122.8k. BTC 47.4%/+21%, ETH 18.8%/-3%, VWCE 25.6%/+8.7%, IEMG 8.2%/+4.1%. Doel: €150k (82%).
 World context: Crypto mixed (CoinTelegraph), Finance negatief (ECB negatief).
-Learning: ${getLearningForAgent('finance')}
+Learning: LEARNING_FINANCE
 Kernregel: 1 insight op basis van ECHTE portfoliodata + world context + 1 actie. Max 30 woorden. Nederlands.`},
 
   reflection:{id:'reflection',name:'Reflective Sensemaker',ico:'≈',dom:'Reflection',dc:'d-r',
@@ -1159,18 +1159,19 @@ async function sendMsg() {
   setPh(1);
 
   const a = AGENTS[curAgent];
+  if (!a) { isSending = false; document.getElementById('send-btn').disabled = false; return; }
   // Build messages for API — resolving dynamic learning context
   const hrv = getLatestHRV();
-  const sysPrompt = a.sys
-    .replace('${getLearningContextSummary()}', getLearningContextSummary())
-    .replace("${getLearningForAgent('strategic')}", getLearningForAgent('strategic'))
-    .replace("${getLearningForAgent('health')}", getLearningForAgent('health'))
-    .replace("${getLearningForAgent('finance')}", getLearningForAgent('finance'))
-    .replace('${getLivePortfolioContext()}', getLivePortfolioContext())
-    .replace('${getLatestHRV().rmssd}', hrv.rmssd)
-    .replace('${getLatestHRV().recovery}', hrv.recovery)
-    .replace('${getLatestHRV().hr}', hrv.hr)
-    .replace('${getLatestHRV().sleep}', hrv.sleep);
+  const sysPrompt = (a.sys || '')
+    .replace('LIVE_PORTFOLIO_CONTEXT', getLivePortfolioContext())
+    .replace('HRV_RMSSD', hrv.rmssd)
+    .replace('HRV_RECOVERY', hrv.recovery)
+    .replace('HRV_HR', hrv.hr)
+    .replace('HRV_SLEEP', hrv.sleep)
+    .replace('LEARNING_CONTEXT_SUMMARY', getLearningContextSummary())
+    .replace('LEARNING_STRATEGIC', getLearningForAgent('strategic'))
+    .replace('LEARNING_HEALTH', getLearningForAgent('health'))
+    .replace('LEARNING_FINANCE', getLearningForAgent('finance'));
 
   const apiMsgs = (chatHistory[curAgent] || [])
     .filter(m => m.r === 'u' || m.r === 'a')
