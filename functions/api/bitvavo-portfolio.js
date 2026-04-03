@@ -15,12 +15,11 @@ export async function onRequestGet(context) {
   const { env } = context;
 
   const apiKey    = env.BITVAVO_API_KEY;
-  const apiSecret = env.BITVAVO_API_SECRET;
+  const apiSecret = env.BITVAVO_API_KEY_SECRET;
 
-  // Return clear diagnostic info
   if (!apiKey || !apiSecret) {
     return new Response(JSON.stringify({
-      error: 'BITVAVO_API_KEY en/of BITVAVO_API_SECRET niet geconfigureerd',
+      error: 'BITVAVO_API_KEY en/of BITVAVO_API_KEY_SECRET niet geconfigureerd',
       hasKey: !!apiKey,
       hasSecret: !!apiSecret,
       hint: 'Voeg toe via Cloudflare Pages → Settings → Variables and Secrets → redeploy'
