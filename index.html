@@ -943,7 +943,7 @@ async function loadWorld(){
   try{
     const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:'Zoek het laatste nieuws over crypto, markten en geopolitiek. Genereer World Intelligence. Datum: '+new Date().toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'. Return ALLEEN valid JSON zonder markdown:\n{"items":[{"domain":"Crypto","sentiment":"Mixed","score":7,"headline":"max 60 chars","summary":"max 100 chars","impact":"max 60 chars"},{"domain":"Finance","sentiment":"Negatief","score":6,"headline":"...","summary":"...","impact":"..."},{"domain":"Economie","sentiment":"Mixed","score":6,"headline":"...","summary":"...","impact":"..."},{"domain":"Geopolitiek","sentiment":"Negatief","score":5,"headline":"...","summary":"...","impact":"..."},{"domain":"Tech/AI","sentiment":"Positief","score":8,"headline":"...","summary":"...","impact":"..."}],"portfolioSignal":"max 80 chars"}'}]})});
     const data=await res.json();
-    const raw=(data.content?.[0]?.text||'').replace(/```json|```/g,'').trim();
+    const raw=((data.content||[]).map(b=>b.type==='text'?b.text:'').join('').replace(/```json|```/g,'').trim();
     let wi;try{wi=JSON.parse(raw);}catch{try{const m=raw.match(/\{[\s\S]*\}/);if(m)wi=JSON.parse(m[0]);}catch{}}
     if(!wi?.items)throw new Error('Geen geldige data ontvangen');
     const sc=s=>s==='Positief'?'sp':s==='Negatief'?'sn':'sm';
@@ -961,7 +961,7 @@ async function genReview(){
   try{
     const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:`Weekly review data: HRV rMSSD ${S.hrv.rmssd} (doel 53+), herstel ${S.hrv.recovery}/10, slaap ${S.hrv.sleep}u. ${portCtx()}. Board sessies: ${sc}. Learning positief: ${lp}.\nReturn ALLEEN valid JSON:\n{"weekHighlight":"max 80 chars","energyAvg":${S.hrv.recovery},"sessionsCount":${sc},"actionsCompleted":2,"insights":[{"ico":"❤","title":"string","body":"max 2 zinnen"},{"ico":"📊","title":"string","body":"max 2 zinnen"},{"ico":"🎯","title":"string","body":"max 2 zinnen"}],"nextWeekFocus":"max 80 chars","domainBreakdown":{"Gezondheid":30,"Finance":25,"Work":35,"Persoonlijk":10},"patternNote":"max 60 chars"}`}]})});
     const data=await res.json();
-    const raw=(data.content?.[0]?.text||'').replace(/```json|```/g,'').trim();
+    const raw=((data.content||[]).map(b=>b.type==='text'?b.text:'').join('').replace(/```json|```/g,'').trim();
     let r;try{r=JSON.parse(raw);}catch{try{const m=raw.match(/\{[\s\S]*\}/);if(m)r=JSON.parse(m[0]);}catch{}}
     if(!r)throw new Error('JSON parsing mislukt');
     document.getElementById('wr-w').textContent=new Date().toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'});
