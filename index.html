@@ -51,8 +51,8 @@ button,input,textarea,select{font-family:var(--F);font-size:13px}
 .btn.sm{padding:6px 11px;font-size:11px;min-height:30px}
 .btn.gh{border-color:transparent;color:var(--m)}.btn.gh:hover{color:var(--ink);background:var(--pw)}
 .btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
-.mg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-.metric{background:var(--pc);border-radius:var(--r);padding:16px;box-shadow:var(--sh);cursor:pointer;transition:transform .1s}
+.mg{display:flex;flex-direction:row;gap:8px;margin-bottom:12px;align-items:flex-start}
+.metric{background:var(--pc);border-radius:var(--r);padding:10px 12px;box-shadow:var(--sh);cursor:pointer;transition:transform .1s}
 .metric:active{transform:scale(.97)}
 .mv{font-family:var(--FD);font-size:28px;font-weight:800;line-height:1;margin-bottom:4px}
 .ml{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--m)}
@@ -71,9 +71,9 @@ button,input,textarea,select{font-family:var(--F);font-size:13px}
 .bp{background:rgba(122,74,138,.12);color:#7a4a8a}
 .bl{display:grid;grid-template-columns:1fr 300px;flex:1;overflow:hidden;min-height:0}
 .bleft{display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--b);min-height:0}
-.agw{padding:14px;border-bottom:1px solid var(--b);flex:0 1 auto;max-height:220px;overflow-y:auto}
-.ag{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
-.ac{background:var(--pw);border-radius:var(--rs);padding:10px 12px;cursor:pointer;transition:all .12s;border:1px solid transparent;-webkit-tap-highlight-color:transparent}
+.agw{padding:10px 14px;border-bottom:1px solid var(--b);flex-shrink:0}
+.ag{display:flex;flex-direction:row;gap:6px;overflow-x:auto;scrollbar-width:none}
+.ac{background:var(--pw);border-radius:20px;padding:5px 12px;white-space:nowrap;cursor:pointer;transition:all .12s;border:1px solid transparent;-webkit-tap-highlight-color:transparent}
 .ac:hover{background:var(--pc);border-color:var(--bm)}.ac:active{transform:scale(.97)}
 .ac.on,.ac.bm{background:var(--ink3);color:#fff}
 .ac.bm{grid-column:1/-1;padding:14px}
