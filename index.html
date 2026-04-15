@@ -2279,8 +2279,10 @@ document.addEventListener('DOMContentLoaded',function(){
 function showGoGrid(){
   var grid=document.getElementById('go-grid');
   var ca=document.querySelector('#v-bo .ca');
+  var cia=document.querySelector('.cia');
   if(grid)grid.style.display='flex';
   if(ca)ca.style.display='none';
+  if(cia){cia.style.position='';cia.style.bottom='';cia.style.zIndex='';cia.style.display='none';}
 }
 function showChat(){
   var grid=document.getElementById('go-grid');
@@ -2292,7 +2294,7 @@ function showChat(){
   if(ca){ca.style.display='flex';ca.style.overflow='visible';ca.style.minHeight='100%';}
   if(bleft){bleft.style.overflowY='auto';bleft.style.webkitOverflowScrolling='touch';}
   if(cm){cm.style.overflow='visible';}
-  if(cia){cia.style.position='';cia.style.bottom='';cia.style.zIndex='';}
+  if(cia){cia.style.position='';cia.style.bottom='';cia.style.zIndex='';cia.style.display='';}
 }
 function openWarrior(agentId){
   showChat();
