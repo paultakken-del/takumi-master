@@ -513,6 +513,14 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ck-balans-track{opacity:.6}
 .ck-balans-hint{opacity:.55;font-size:10px!important;letter-spacing:.04em}
 .ck-brief-inner{opacity:.6;font-size:12px!important}
+
+/* PASSIEVE ZONE */
+.ck-passief{margin-top:8px;padding-top:8px;border-top:1px solid var(--b);opacity:.6}
+.ck-triad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin:0 16px}
+.ck-triad-item{padding:16px 8px;text-align:center;cursor:default;user-select:none}
+.ck-triad-center{}
+[data-theme="dark"] .ck-triad-item{background:transparent}
+[data-theme="dark"] .ck-triad-center{background:transparent}
 </style>
 </head>
 <body>
@@ -577,6 +585,35 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     </div>
 
 
+
+    <div class="ck-passief">
+    <div class="ck-triad">
+      <div class="ck-triad-item">
+        <div class="ck-triad-kanji">頭</div>
+        <div class="ck-triad-label">Hoofd</div>
+        <div class="ck-triad-val" id="ck-hoofd-val">–</div>
+        <div class="ck-triad-sub" id="ck-hoofd-sub">focus</div>
+      </div>
+      <div class="ck-triad-item ck-triad-center">
+        <div class="ck-triad-kanji" id="ck-hart-kanji">心</div>
+        <div class="ck-triad-label">Hart</div>
+        <div class="ck-triad-val" id="ck-hart-val">–</div>
+        <div class="ck-triad-sub" id="ck-hart-sub">HRV</div>
+      </div>
+      <div class="ck-triad-item">
+        <div class="ck-triad-kanji">腹</div>
+        <div class="ck-triad-label">Hara</div>
+        <div class="ck-triad-val" id="ck-hara-val">–</div>
+        <div class="ck-triad-sub" id="ck-hara-sub">energie</div>
+      </div>
+    </div>
+    <div class="ck-balans" id="ck-balans">
+      <div class="ck-balans-label"><span>focus</span><span id="ck-balans-hint-top"></span><span>rust</span></div>
+      <div class="ck-balans-track"><div class="ck-balans-center"></div><div class="ck-balans-bar" id="ck-balans-bar"></div><div class="ck-balans-dot" id="ck-balans-dot"></div></div>
+      <div class="ck-balans-hint" id="ck-balans-hint"></div>
+    </div>
+    <div class="ck-brief" id="ck-brief"><div class="ck-brief-inner" id="ck-brief-inner">—</div></div>
+    </div><!-- /.ck-passief -->
 
     <!-- ACTIES -->
     <div class="ck-actions">
