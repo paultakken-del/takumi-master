@@ -54,7 +54,7 @@
 [data-theme="dark"] .ck-triad-item{background:transparent}
 [data-theme="dark"] .ck-triad-center{background:transparent}
 [data-theme="dark"] .ck-balans-track{background:rgba(255,255,255,.08)}
-[data-theme="dark"] .ck-passief{border-top-color:rgba(255,255,255,.08)}
+[data-theme="dark"] .ck-passief{padding:16px 0 0;border-top:1px solid var(--b);margin-top:12px}
 [data-theme="dark"] .fi{background:#1e1d1a;border-color:rgba(255,255,255,.07)}
 [data-theme="dark"] .ci{background:#1e1d1a;border-color:rgba(255,255,255,.12);color:#ede9e0}
 [data-theme="dark"] .ac{background:#1e1d1a}
@@ -302,11 +302,11 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ck-date{font-family:var(--F);font-size:11px;color:var(--m);letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
 
 /* TRIAD */
-.ck-triad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin:24px 16px 0;opacity:.55}
-.ck-triad-item{padding:20px 12px;text-align:center;cursor:default;user-select:none}
-.ck-triad-item:last-child{border-right:none}
-
+.ck-triad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin:20px 20px 0;opacity:.55}
+.ck-triad-item{padding:14px 8px;text-align:center;cursor:default;user-select:none}
+.ck-triad-item:last-child{}
 .ck-triad-center{}
+/* no active states */
 .ck-triad-kanji{font-family:var(--FJ);font-size:32px;font-weight:200;line-height:1;margin-bottom:6px;color:var(--ink)}
 .ck-triad-label{font-family:var(--F);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--m);margin-bottom:8px}
 .ck-triad-val{font-family:var(--FD);font-size:28px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:4px}
@@ -504,23 +504,29 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ri-pill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .ri-pill.on span{opacity:.6!important}
 
-/* PASSIEVE ZONE — informatief, niet interactief */
-.ck-passief{border-top:1px solid var(--b);margin-top:4px;padding-top:4px;opacity:.7}
-.ck-triad-item{cursor:default!important}
-.ck-triad-kanji{font-size:22px!important}
-.ck-triad-val{font-size:20px!important;font-weight:600}
-.ck-triad-sub{font-size:10px;letter-spacing:.06em;text-transform:uppercase;opacity:.6}
-.ck-balans-track{opacity:.6}
-.ck-balans-hint{opacity:.55;font-size:10px!important;letter-spacing:.04em}
-.ck-brief-inner{opacity:.6;font-size:12px!important}
 
-/* PASSIEVE ZONE */
-.ck-passief{margin-top:8px;padding-top:8px;border-top:1px solid var(--b);opacity:.6}
-.ck-triad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin:0 16px}
-.ck-triad-item{padding:16px 8px;text-align:center;cursor:default;user-select:none}
-.ck-triad-center{}
-[data-theme="dark"] .ck-triad-item{background:transparent}
-[data-theme="dark"] .ck-triad-center{background:transparent}
+/* ── STATS STRIP ── */
+.ck-stats-strip{display:flex;align-items:center;justify-content:space-between;margin:16px 20px 0;padding:14px 20px;background:var(--pw);border-radius:var(--rs)}
+.ck-stat{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1}
+.ck-stat-icon{font-size:14px;opacity:.5;line-height:1}
+.ck-stat-val{font-family:var(--FD);font-size:22px;font-weight:700;color:var(--ink);line-height:1}
+.ck-stat-arrow{font-size:11px;line-height:1;margin-top:-2px}
+.ck-stat-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--m);opacity:.7}
+.ck-stat-div{width:1px;height:32px;background:var(--b)}
+.ck-stat-good{color:var(--teal)!important}
+.ck-stat-warn{color:var(--gold)!important}
+.ck-stat-bad{color:var(--acc)!important}
+/* BALANS */
+.ck-balans{margin:10px 20px 0}
+.ck-balans-track{position:relative;height:4px;background:var(--pw);border-radius:2px}
+.ck-balans-center{position:absolute;left:50%;top:-2px;width:1px;height:8px;background:var(--bm)}
+.ck-balans-bar{position:absolute;top:0;left:50%;height:4px;border-radius:2px;background:var(--acc);transition:all .6s ease;width:0;transform-origin:left}
+.ck-balans-dot{position:absolute;top:50%;width:10px;height:10px;border-radius:50%;background:var(--ink);border:2px solid var(--paper);transform:translate(-50%,-50%);transition:left .6s ease;left:50%}
+.ck-balans-hint{font-size:10px;color:var(--m);text-align:center;margin-top:6px;min-height:14px;letter-spacing:.04em}
+/* BUTTONS */
+.ck-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px 16px 0}
+.ck-btn-pulse{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:20px 12px;border:1px solid var(--b);border-radius:var(--r);background:var(--paper);color:var(--ink);font-family:var(--F);font-size:12px;cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent;min-height:68px}
+.ck-btn-board{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:20px 12px;border-radius:var(--r);background:var(--acc);color:#fff;font-family:var(--F);font-size:12px;cursor:pointer;transition:opacity .12s;border:none;-webkit-tap-highlight-color:transparent;min-height:68px}
 </style>
 </head>
 <body>
@@ -586,35 +592,29 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
 
 
-    <div class="ck-passief">
-    <div class="ck-triad">
-      <div class="ck-triad-item">
-        <div class="ck-triad-kanji">頭</div>
-        <div class="ck-triad-label">Hoofd</div>
-        <div class="ck-triad-val" id="ck-hoofd-val">–</div>
-        <div class="ck-triad-sub" id="ck-hoofd-sub">focus</div>
+    <div class="ck-stats-strip" id="ck-stats">
+      <div class="ck-stat">
+        <span class="ck-stat-icon">心</span>
+        <span class="ck-stat-val" id="ck-stat-hrv">–</span>
+        <span class="ck-stat-arrow" id="ck-stat-hrv-arr"></span>
+        <span class="ck-stat-lbl">HRV</span>
       </div>
-      <div class="ck-triad-item ck-triad-center">
-        <div class="ck-triad-kanji" id="ck-hart-kanji">心</div>
-        <div class="ck-triad-label">Hart</div>
-        <div class="ck-triad-val" id="ck-hart-val">–</div>
-        <div class="ck-triad-sub" id="ck-hart-sub">HRV</div>
+      <div class="ck-stat-div"></div>
+      <div class="ck-stat">
+        <span class="ck-stat-icon">💤</span>
+        <span class="ck-stat-val" id="ck-stat-sleep">–</span>
+        <span class="ck-stat-arrow" id="ck-stat-sleep-arr"></span>
+        <span class="ck-stat-lbl">slaap</span>
       </div>
-      <div class="ck-triad-item">
-        <div class="ck-triad-kanji">腹</div>
-        <div class="ck-triad-label">Hara</div>
-        <div class="ck-triad-val" id="ck-hara-val">–</div>
-        <div class="ck-triad-sub" id="ck-hara-sub">energie</div>
+      <div class="ck-stat-div"></div>
+      <div class="ck-stat">
+        <span class="ck-stat-icon">⚡</span>
+        <span class="ck-stat-val" id="ck-stat-rec">–</span>
+        <span class="ck-stat-arrow" id="ck-stat-rec-arr"></span>
+        <span class="ck-stat-lbl">herstel</span>
       </div>
     </div>
-    <div class="ck-balans" id="ck-balans">
-      <div class="ck-balans-label"><span>focus</span><span id="ck-balans-hint-top"></span><span>rust</span></div>
-      <div class="ck-balans-track"><div class="ck-balans-center"></div><div class="ck-balans-bar" id="ck-balans-bar"></div><div class="ck-balans-dot" id="ck-balans-dot"></div></div>
-      <div class="ck-balans-hint" id="ck-balans-hint"></div>
-    </div>
-    <div class="ck-brief" id="ck-brief"><div class="ck-brief-inner" id="ck-brief-inner">—</div></div>
-    </div><!-- /.ck-passief -->
-
+    <div class="ck-balans" id="ck-balans"><div class="ck-balans-track"><div class="ck-balans-center"></div><div class="ck-balans-bar" id="ck-balans-bar"></div><div class="ck-balans-dot" id="ck-balans-dot"></div></div><div class="ck-balans-hint" id="ck-balans-hint"></div></div>
     <!-- ACTIES -->
     <div class="ck-actions">
       <button class="ck-btn-pulse" onclick="toggleDagRitme()">
@@ -656,21 +656,12 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <!-- Afsluiten -->
       <div class="dr-step" style="padding:12px 16px;text-align:right">
         <button class="btn pri sm" onclick="sluitDagRitme()">Opslaan & sluiten</button>
-        <button class="btn sm gh" onclick="go('dy')" style="margin-left:8px">Volledige Pulse →</button>
+        <button class="btn sm gh" style="margin-left:8px">Volledige Pulse →</button>
       </div>
 
     </div>
 
     <!-- SECUNDAIRE INFO — klein, niet dominant -->
-    <div class="ck-footer">
-      <div class="ck-footer-item">
-        <span id="ck-acts">–</span> acties
-      </div>
-      <div class="ck-footer-dot">·</div>
-      <div class="ck-footer-item">
-        <span id="ck-week">W–</span> · week
-      </div>
-    </div>
 
   </div>
 </div>
