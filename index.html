@@ -1416,7 +1416,7 @@ function go(id){
   document.querySelectorAll('[data-v]').forEach(el=>el.classList.toggle('on',el.dataset.v===id));
   const v=document.getElementById('v-'+id);if(v)v.classList.add('on');
   if(id==='ck')initCK();
-  if(id==='bo'){renderGrid();renderChat();upCtx();upLearn();}
+  if(id==='bo'){renderGrid();renderChat();upCtx();upLearn();showGoGrid();}
   if(id==='dy')initPulse();
   if(id==='gl')renderGoals();
   if(id==='rt'){go_rt();}
@@ -1713,6 +1713,7 @@ function upLearn(){
   const a=S.learn[S.cur];
   const sec=document.getElementById('learn-sec');
   const hasData=a&&(a.pos?.length||a.rej?.length||a.visitCount);
+  if(!sec)return;
   if(!hasData){sec.style.display='none';return;}
   sec.style.display='block';
   document.getElementById('learn-ct').innerHTML=
@@ -2297,12 +2298,7 @@ function openWarrior(agentId){
   showChat();
   selAg(agentId);
 }
-document.addEventListener('DOMContentLoaded',function(){
-  var boardNi=document.querySelector('.ni[data-v="bo"]');
-  if(boardNi)boardNi.addEventListener('click',function(){setTimeout(showGoGrid,60);});
-  var mobBoard=document.querySelector('.mi2[data-v="bo"]');
-  if(mobBoard)mobBoard.addEventListener('click',function(){setTimeout(showGoGrid,60);});
-});
+
 
 function updateGreetIcon(){
   var h = new Date().getHours();
