@@ -2283,6 +2283,11 @@ document.addEventListener('DOMContentLoaded',function(){
 function showGoGrid(){
   var vbo=document.getElementById('v-bo');
   if(vbo)vbo.classList.add('grid-mode');
+  var grid=document.getElementById('go-grid');
+  if(grid){
+    grid.style.pointerEvents='none';
+    setTimeout(function(){grid.style.pointerEvents='';},500);
+  }
 }
 function showChat(){
   var vbo=document.getElementById('v-bo');
