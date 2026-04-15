@@ -51,8 +51,8 @@
 [data-theme="dark"] .ck-opening{background:#1e1d1a;border-color:rgba(255,255,255,.07)}
 [data-theme="dark"] .ck-card{background:#242220;border-color:rgba(255,255,255,.09);color:#ede9e0}
 [data-theme="dark"] .ck-card.on{background:#ede9e0;color:#181714}
-[data-theme="dark"] .ck-triad-item{background:#1e1d1a;border-color:rgba(255,255,255,.07)}
-[data-theme="dark"] .ck-triad-center{background:#242220}
+[data-theme="dark"] .ck-triad-item{background:transparent}
+[data-theme="dark"] .ck-triad-center{background:transparent}
 [data-theme="dark"] .ck-balans-track{background:rgba(255,255,255,.08)}
 [data-theme="dark"] .ck-passief{border-top-color:rgba(255,255,255,.08)}
 [data-theme="dark"] .fi{background:#1e1d1a;border-color:rgba(255,255,255,.07)}
@@ -302,11 +302,11 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ck-date{font-family:var(--F);font-size:11px;color:var(--m);letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
 
 /* TRIAD */
-.ck-triad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin:24px 16px 0;border:1px solid var(--b);border-radius:var(--r);overflow:hidden}
-.ck-triad-item{padding:20px 12px;text-align:center;cursor:pointer;transition:background .12s;border-right:1px solid var(--b)}
+.ck-triad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin:24px 16px 0;opacity:.55}
+.ck-triad-item{padding:20px 12px;text-align:center;cursor:default;user-select:none}
 .ck-triad-item:last-child{border-right:none}
-.ck-triad-item:active{background:var(--pw)}
-.ck-triad-center{background:var(--pw)}
+
+.ck-triad-center{}
 .ck-triad-kanji{font-family:var(--FJ);font-size:32px;font-weight:200;line-height:1;margin-bottom:6px;color:var(--ink)}
 .ck-triad-label{font-family:var(--F);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--m);margin-bottom:8px}
 .ck-triad-val{font-family:var(--FD);font-size:28px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:4px}
