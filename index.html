@@ -361,10 +361,10 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 #sb-overlay.on{display:block}
 @media(max-width:720px){
   /* Mobile scroll fix Master Council */
-  #v-bo .bleft{overflow-y:auto!important;-webkit-overflow-scrolling:touch;touch-action:pan-y}
-  #v-bo .ca{overflow:visible!important;display:flex;flex-direction:column;min-height:100%}
-  #v-bo .cm{overflow:visible!important;flex:1}
-  #v-bo .cia{background:var(--paper);border-top:1px solid var(--b)}
+  #v-bo .bleft{overflow:hidden!important;display:flex;flex-direction:column;height:100%}
+  #v-bo .ca{overflow:hidden!important;display:flex;flex-direction:column;flex:1;min-height:0}
+  #v-bo .cm{overflow-y:auto!important;-webkit-overflow-scrolling:touch;flex:1;min-height:0}
+  #v-bo .cia{flex-shrink:0;position:sticky;bottom:0;background:var(--paper);border-top:1px solid var(--b)}
   #sb{display:flex!important;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);position:fixed!important;top:0;bottom:0;left:0;z-index:100;width:280px;overflow-y:auto}
   #sb.sb-open{transform:translateX(0)!important}
   #mob{display:none!important}
@@ -2251,10 +2251,6 @@ function showGoGrid(){
 function showChat(){
   var vbo=document.getElementById('v-bo');
   if(vbo)vbo.classList.remove('grid-mode');
-  var bleft=document.querySelector('#v-bo .bleft');
-  var cm=document.getElementById('cm');
-  if(bleft){bleft.style.overflowY='auto';bleft.style.webkitOverflowScrolling='touch';}
-  if(cm){cm.style.overflow='visible';}
 }
 function openWarrior(agentId){
   showChat();
