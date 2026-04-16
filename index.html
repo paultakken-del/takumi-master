@@ -634,9 +634,10 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div style="padding:16px 16px 0">
       <div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--m);margin-bottom:10px">Dag cyclus</div>
       <div style="display:flex;align-items:center;gap:0">
-        <button onclick="go('ri')" style="flex:1;background:none;border:1.5px solid var(--acc);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s" onmouseenter="this.style.background='rgba(196,83,42,.06)'" onmouseleave="this.style.background='none'">
+        <button onclick="go('ri')" style="flex:1;background:none;border:1.5px solid var(--acc);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;position:relative" onmouseenter="this.style.background='rgba(196,83,42,.06)'" onmouseleave="this.style.background='none'">
           <div style="width:36px;height:36px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:#fff">習</div>
           <span style="font-size:10px;color:var(--ink);letter-spacing:.04em">Rituelen</span>
+          <div id="onb-badge" style="display:none;position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--acc);color:#fff;font-size:8px;padding:2px 7px;border-radius:10px;white-space:nowrap;letter-spacing:.04em;transition:opacity .4s">Begin hier</div>
         </button>
         <div style="flex:1;height:1.5px;background:var(--b);position:relative"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--m)">→</div></div>
         <button onclick="go('dy')" style="flex:1;background:none;border:1.5px solid var(--b);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s" onmouseenter="this.style.borderColor='var(--acc)'" onmouseleave="this.style.borderColor='var(--b)'">
@@ -1169,7 +1170,11 @@ function executeTool(name,input){
 }
 
 const AGENTS={
-  board:{id:'board',name:'Volledig Board',ico:'匠',dom:'Board',col:'var(--acc)',sys(){return`Je bent de 師匠会 — het Master Council van Takumi Master. Je spreekt als vijf Godai-stemmen die elk vanuit hun element influisteren. Gebruik tools voor actuele data.\n\nTOOLS:\n- get_portfolio() → vermogen, posities, P&L\n- get_hrv() → rMSSD, herstel, slaap, energie\n- get_goals() → doelen, voortgang, open acties\n- get_learning('board') → wat werkte eerder\n\nCONTEXT: ${allCtx()}\n\nANTWOORD ALTIJD in dit formaat — elke stem max 2 zinnen, scherp en direct:\n\n地 Chi — Fundament\n[Structuur, strategie, vermogen. Wat is de solide basis hier?]\n\n水 Sui — Flow\n[Energie, herstel, beweging. Hoe stroomt dit het beste?]\n\n風 Fū — Geest\n[Communicatie, relaties, creativiteit. Wat zegt de intuïtie?]\n\n火 Ka — Energie\n[Actie, focus, beslissing. Wat moet NU gebeuren?]\n\n空 Kū — Ruimte\n[Synthese, stilte, het grotere geheel. Wat is de werkelijke vraag?]\n\n匠 Advies\n[Eén concrete actie. Max 15 woorden.]\n\nREGELS:\n- Elke stem spreekt vanuit zijn element, niet generiek\n- Warriors mogen kort influisteren bijv: 略 Ryaku: tip of 気 Ki: tip\n- Als HRV < 45: Kū geeft stilte-advies\n- Geen opsommingstekens, geen herhaling\n- Nederlands, direct, meesterlijk kort`;}},
+  board:{id:'board',name:'Volledig Board',ico:'匠',dom:'Board',col:'var(--acc)',sys(){
+    var nieuw=typeof _isNieuwGebruiker!=='undefined'&&_isNieuwGebruiker;
+    if(nieuw)return`Je bent 匠 — de meester die een nieuwe leerling verwelkomt in de dojo van Takumi Master.\n\nDeze gebruiker opent Takumi voor het eerst. Verwelkom hem warm maar beknopt. Leg in max 3 zinnen uit:\n1. Wat Takumi is (persoonlijk meesterschap platform, drie dagelijkse stappen)\n2. Wat de vijf Godai-meesters doen (elk spreekt vanuit zijn element)\n3. Stel één concrete vraag: wat is het belangrijkste dat hij dit jaar wil bereiken?\n\nSpreek als één stem — de Meester. Niet als vijf stemmen. Kort, uitnodigend, niet overweldigend. Nederlands.`;
+    return`Je bent de 師匠会 — het Master Council van Takumi Master. Je spreekt als vijf Godai-stemmen die elk vanuit hun element influisteren. Gebruik tools voor actuele data.\n\nTOOLS:\n- get_portfolio() → vermogen, posities, P&L\n- get_hrv() → rMSSD, herstel, slaap, energie\n- get_goals() → doelen, voortgang, open acties\n- get_learning('board') → wat werkte eerder\n\nCONTEXT: ${allCtx()}\n\nANTWOORD ALTIJD in dit formaat — elke stem max 2 zinnen, scherp en direct:\n\n地 Chi — Fundament\n[Structuur, strategie, vermogen. Wat is de solide basis hier?]\n\n水 Sui — Flow\n[Energie, herstel, beweging. Hoe stroomt dit het beste?]\n\n風 Fū — Geest\n[Communicatie, relaties, creativiteit. Wat zegt de intuïtie?]\n\n火 Ka — Energie\n[Actie, focus, beslissing. Wat moet NU gebeuren?]\n\n空 Kū — Ruimte\n[Synthese, stilte, het grotere geheel. Wat is de werkelijke vraag?]\n\n匠 Advies\n[Eén concrete actie. Max 15 woorden.]\n\nREGELS:\n- Elke stem spreekt vanuit zijn element, niet generiek\n- Warriors mogen kort influisteren bijv: 略 Ryaku: tip of 気 Ki: tip\n- Als HRV < 45: Kū geeft stilte-advies\n- Geen opsommingstekens, geen herhaling\n- Nederlands, direct, meesterlijk kort`;
+  }},
   strategic:{id:'strategic',name:'略 Ryaku — Strateeg',ico:'略',dom:'Work',col:'#384888',sys(){return`Strategic Advisor. Besluitvorming, prioriteiten, strategie.\n"Every decision has a cost. Strategy is choosing what not to do."\n${allCtx()}\n${learnCtx('strategic')}\n1 insight + 1 actie. Max 30w. Nederlands.`;}},
   health:{id:'health',name:'気 Ki — Gezondheid',ico:'気',dom:'Health',col:'var(--teal)',sys(){return`Health & Energy Coach. HRV, herstel, energie.\n"Energy precedes performance."\nHRV: rMSSD ${S.hrv.rmssd} (gem.53), herstel ${S.hrv.recovery}/10, HR ${S.hrv.hr}bpm, slaap ${S.hrv.sleep}u\n${learnCtx('health')}\n1 insight op ECHTE data + 1 actie. Max 30w. Nederlands.`;}},
   finance:{id:'finance',name:'財 Zai — Financieel',ico:'財',dom:'Finance',col:'var(--gold)',sys(){return`Financial Risk & Wealth Advisor. Portfolio, risico, vermogen.\n"Risk first, return second. Avoid irreversible loss."\n${portCtx()}\nWorld: Crypto mixed, Finance negatief (ECB)\n${learnCtx('finance')}\n1 financieel insight + 1 actie. Max 30w. Nederlands.`;}},
@@ -1598,6 +1603,7 @@ function setCkOpening(el, val){
   el.classList.add('on');
   RituelenData.binnenkomst = val;
   lsSet('tm2_rituelen', RituelenData);
+  markNietNieuw();
   // Briefing aanpassen op binnenkomst
   var brief = document.getElementById('ck-brief-txt');
   var msgs = {
@@ -1653,7 +1659,24 @@ function initCkOpening(){
   }
 }
 
-// ── INSPIRERENDE QUOTES ────────────────────────────────────────────
+// ── NIEUWE GEBRUIKER DETECTIE ──────────────────────────────────────
+var _isNieuwGebruiker=(function(){
+  var heeftChat=Object.values(S.chat).some(function(m){return m&&m.length>0;});
+  var heeftDojo=!!ls('tm2_dojo_entry',null);
+  var heeftRituelen=!!(RituelenData.binnenkomst||
+    (RituelenData.audit&&(RituelenData.audit.gevers||[]).length)||
+    (RituelenData.dank&&RituelenData.dank.length));
+  return !heeftChat&&!heeftDojo&&!heeftRituelen;
+})();
+
+function markNietNieuw(){
+  if(!_isNieuwGebruiker)return;
+  _isNieuwGebruiker=false;
+  lsSet('tm2_dojo_entry',new Date().toISOString());
+  // Verwijder begin-badge van Rituelen pill
+  var badge=document.getElementById('onb-badge');
+  if(badge)badge.style.opacity='0';
+}
 const QUOTES={
   stagnatie:[
     {q:"If you spend too much time thinking about a thing, you'll never get it done.",a:"Bruce Lee"},
@@ -1706,15 +1729,26 @@ function renderQuote(){
   }catch(e){}
 }
 
-// Render een standaard quote direct bij het laden (geen dependencies nodig)
+// Render quote of welkomst direct bij laden
 (function(){
   var pool=QUOTES.standaard;
   var q=pool[Math.floor(Math.random()*pool.length)];
   document.addEventListener('DOMContentLoaded',function(){
     var qEl=document.getElementById('ck-quote');
     var aEl=document.getElementById('ck-quote-auth');
-    if(qEl)qEl.textContent='\u201c'+q.q+'\u201d';
-    if(aEl)aEl.textContent='\u2014 '+q.a;
+    if(!qEl)return;
+    if(_isNieuwGebruiker){
+      qEl.textContent='Takumi begeleidt je dagelijkse meesterschap — via rituelen, biometrische data en een AI-raad van vijf meesters.';
+      qEl.style.fontStyle='normal';
+      qEl.style.opacity='0.75';
+      if(aEl){aEl.textContent='↓ Begin met hoe je vandaag binnenkomt';aEl.style.letterSpacing='.04em';aEl.style.textTransform='none';aEl.style.opacity='0.5';}
+      // Begin-badge op Rituelen pill
+      var badge=document.getElementById('onb-badge');
+      if(badge)badge.style.display='block';
+    } else {
+      qEl.textContent='\u201c'+q.q+'\u201d';
+      if(aEl)aEl.textContent='\u2014 '+q.a;
+    }
   });
 })();
 
