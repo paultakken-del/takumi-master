@@ -517,18 +517,19 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <nav id="sb">
   <div class="sb-logo"><span class="sb-kanji">匠</span><div><div class="sb-brand">Takumi</div></div></div>
   <div class="sb-nav">
-    <div class="sb-sec">Kern</div>
+    <div class="sb-sec">☀ Dag</div>
     <div class="ni on" data-v="ck"><span class="ico">⬡</span>Cockpit</div>
-    <div class="ni" data-v="bo"><span class="ico">◈</span>Master Council</div>
-    <div class="ni" data-v="dy"><span class="ico" style="font-family:var(--FJ)">脈</span>Dag Pulse</div>
     <div class="ni" data-v="ri"><span class="ico">習</span>Rituelen</div>
-    <div class="sb-sec">Strategie</div>
-    <div class="ni" data-v="gl"><span class="ico">◇</span>Doelen</div>
+    <div class="ni" data-v="dy"><span class="ico" style="font-family:var(--FJ)">脈</span>Dag Pulse</div>
+    <div class="ni" data-v="bo"><span class="ico">◈</span>Master Council</div>
+    <div class="sb-sec">週 Week · 律 Maand</div>
     <div class="ni" id="nav-wr" data-v="wr"><span class="ico" style="font-family:var(--FJ)">週</span>Week Reflectie</div>
     <div class="ni" data-v="rt"><span class="ico" style="font-family:var(--FJ)">律</span>Ritme</div>
-    <div class="sb-sec">Data</div>
-    <div class="ni" data-v="da"><span class="ico">▤</span>Data Hub</div>
+    <div class="sb-sec">配 Strategie</div>
+    <div class="ni" data-v="gl"><span class="ico">◇</span>Doelen</div>
     <div class="ni" data-v="wc"><span class="ico">○</span>World Context</div>
+    <div class="sb-sec">▤ Data</div>
+    <div class="ni" data-v="da"><span class="ico">▤</span>Data Hub</div>
   </div>
   <div class="sb-foot" style="display:flex;align-items:center;justify-content:space-between">
       <span>persoonlijk adviesplatform</span>
@@ -591,16 +592,25 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       </div>
     </div>
     <div class="ck-balans" id="ck-balans"><div class="ck-balans-track"><div class="ck-balans-center"></div><div class="ck-balans-bar" id="ck-balans-bar"></div><div class="ck-balans-dot" id="ck-balans-dot"></div></div><div class="ck-balans-hint" id="ck-balans-hint"></div></div>
-    <!-- ACTIES -->
-    <div class="ck-actions">
-      <button class="ck-btn-pulse" onclick="toggleDagRitme()">
-        <div style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:15px;flex-shrink:0">脈</div>
-        <span id="dag-ritme-lbl">Dag Ritme</span>
-      </button>
-      <button class="ck-btn-board" onclick="raadpleegCouncil()">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:15px;color:#fff;flex-shrink:0">匠</div>
-        <span>Council</span>
-      </button>
+    <!-- DAG CYCLUS — drie geneste stappen -->
+    <div style="padding:16px 16px 0">
+      <div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--m);margin-bottom:10px">Dag cyclus</div>
+      <div style="display:flex;align-items:center;gap:0">
+        <button onclick="go('ri')" style="flex:1;background:none;border:1.5px solid var(--acc);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s" onmouseenter="this.style.background='rgba(196,83,42,.06)'" onmouseleave="this.style.background='none'">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:#fff">習</div>
+          <span style="font-size:10px;color:var(--ink);letter-spacing:.04em">Rituelen</span>
+        </button>
+        <div style="flex:1;height:1.5px;background:var(--b);position:relative"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--m)">→</div></div>
+        <button onclick="go('dy')" style="flex:1;background:none;border:1.5px solid var(--b);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s" onmouseenter="this.style.borderColor='var(--acc)'" onmouseleave="this.style.borderColor='var(--b)'">
+          <div style="width:36px;height:36px;border-radius:50%;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:var(--ink)">脈</div>
+          <span style="font-size:10px;color:var(--m);letter-spacing:.04em">Pulse</span>
+        </button>
+        <div style="flex:1;height:1.5px;background:var(--b);position:relative"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--m)">→</div></div>
+        <button onclick="raadpleegCouncil()" style="flex:1;background:none;border:1.5px solid var(--b);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s" onmouseenter="this.style.borderColor='var(--acc)'" onmouseleave="this.style.borderColor='var(--b)'">
+          <div style="width:36px;height:36px;border-radius:50%;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:var(--ink)">匠</div>
+          <span style="font-size:10px;color:var(--m);letter-spacing:.04em">Council</span>
+        </button>
+      </div>
     </div>
 
     <!-- DAG RITME MODULE — inline cockpit -->
@@ -779,7 +789,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <!-- WEEKLY REVIEW -->
 <div class="view" id="v-wr">
   <div class="tb"><div><div class="tb-t">律 Week Reflectie <span id="wr-vrijdag-badge" style="display:none;font-size:10px;background:var(--acc);color:#fff;padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:middle">Vandaag</span></div><div class="tb-s" id="wr-w">Wekelijkse terugblik — inzichten, patronen, lessen</div></div><button class="btn sm pri" onclick="genReview()">⚡ Genereer</button></div>
-  <div class="vs" id="wr-body"><div style="text-align:center;padding:60px;color:var(--m)">Klik "⚡ Genereer" voor je wekelijkse AI review</div></div>
+  <div class="vs" id="wr-body"><div style="text-align:center;padding:60px;color:var(--m)">Klik "⚡ Genereer" voor je wekelijkse AI review</div><div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--b);margin-top:8px"><span style="font-size:11px;color:var(--m)">週 Week cyclus · volgende laag</span><button onclick="go('rt')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">律 Ritme <span style="font-size:14px">→</span></button></div></div>
 </div>
 
 
@@ -817,6 +827,14 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div class="card">
       <div class="ct">Rustenweken gepland</div>
       <div id="rt-kalender"></div>
+    </div>
+
+    <!-- VOLGENDE STAP IN CYCLUS -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding:14px 16px;border-top:1px solid var(--b)">
+      <span style="font-size:11px;color:var(--m)">律 Maand cyclus · volgende laag</span>
+      <button onclick="go('gl')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">
+        配 Doelen <span style="font-size:14px">→</span>
+      </button>
     </div>
 
   </div>
@@ -942,6 +960,14 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       </div>
       <button class="btn pri" style="width:100%;background:var(--acc);border:none" onclick="raadpleegVanuitRituelen()">
         匠 Raadpleeg Council — stuur mijn praktijk mee
+      </button>
+    </div>
+
+    <!-- VOLGENDE STAP IN CYCLUS -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding:14px 16px;border-top:1px solid var(--b)">
+      <span style="font-size:11px;color:var(--m)">Dag cyclus · stap 1 van 3</span>
+      <button onclick="go('dy')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">
+        脈 Dag Pulse <span style="font-size:14px">→</span>
       </button>
     </div>
 
@@ -2353,7 +2379,8 @@ async function genReview(){
       </div>
       <div class="card" style="margin-bottom:16px"><div class="ct">Insights</div>${r.insights.map(i=>`<div class="ri"><div style="font-size:20px;flex-shrink:0">${i.ico}</div><div><strong>${i.title}</strong><div style="font-size:12px;color:var(--m);margin-top:3px">${i.body}</div></div></div>`).join('')}</div>
       <div class="card" style="margin-bottom:16px"><div class="ct">Domein verdeling</div>${Object.entries(r.domainBreakdown).map(([d,v])=>`<div class="db2"><div class="db2-l"><span>${d}</span><span>${v}%</span></div><div class="db2-t"><div class="db2-f" style="width:${v}%"></div></div></div>`).join('')}</div>
-      <div class="card" style="border-left:3px solid var(--teal)"><div class="ct">Focus volgende week</div><div style="font-size:13px">${r.nextWeekFocus}</div>${r.patternNote?`<div style="font-size:11px;color:var(--m);margin-top:6px;font-style:italic">${r.patternNote}</div>`:''}</div>`;
+      <div class="card" style="border-left:3px solid var(--teal)"><div class="ct">Focus volgende week</div><div style="font-size:13px">${r.nextWeekFocus}</div>${r.patternNote?`<div style="font-size:11px;color:var(--m);margin-top:6px;font-style:italic">${r.patternNote}</div>`:''}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--b);margin-top:8px"><span style="font-size:11px;color:var(--m)">週 Week cyclus · volgende laag</span><button onclick="go('rt')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">律 Ritme →</button></div>`;
     toast('Weekly review gegenereerd','ok');
   }catch(e){el.innerHTML=`<div class="card" style="color:var(--acc)">Genereren mislukt: ${e.message}<br><button class="btn sm" style="margin-top:10px" onclick="genReview()">↺ Opnieuw</button></div>`;}
 }
