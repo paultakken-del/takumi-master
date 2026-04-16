@@ -570,6 +570,12 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <div class="ck-date" id="ck-d"></div>
     </div>
 
+    <!-- QUOTE -->
+    <div style="padding:12px 28px 4px;text-align:center">
+      <div id="ck-quote" style="font-size:12px;color:var(--m);font-style:italic;line-height:1.7"></div>
+      <div id="ck-quote-auth" style="font-size:9px;color:var(--f);margin-top:5px;letter-spacing:.12em;text-transform:uppercase"></div>
+    </div>
+
     <!-- DAGELIJKSE OPENING — micro-ritueel -->
     <div class="ck-opening" id="ck-opening">
       <div class="ck-opening-q">Hoe kom je vandaag binnen?</div>
@@ -1577,7 +1583,7 @@ function go(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
   document.querySelectorAll('[data-v]').forEach(el=>el.classList.toggle('on',el.dataset.v===id));
   const v=document.getElementById('v-'+id);if(v)v.classList.add('on');
-  if(id==='ck'){initCK();updateDagVoortgang();}
+  if(id==='ck'){initCK();updateDagVoortgang();renderQuote();}
   if(id==='bo'){renderGrid();renderChat();upCtx();upLearn();showGoGrid();markVandaag('bo');}
   if(id==='dy'){initPulse();markVandaag('dy');}
   if(id==='gl')renderGoals();
@@ -1645,6 +1651,61 @@ function initCkOpening(){
     var card = document.querySelector('.ck-card[data-val="' + saved + '"]');
     if(card) card.classList.add('on');
   }
+}
+
+// ── INSPIRERENDE QUOTES ────────────────────────────────────────────
+const QUOTES={
+  stagnatie:[
+    {q:"If you spend too much time thinking about a thing, you'll never get it done.",a:"Bruce Lee"},
+    {q:"Do not pray for an easy life, pray for the strength to endure a difficult one.",a:"Bruce Lee"},
+    {q:"A goal is not always meant to be reached; it often serves simply as something to aim at.",a:"Bruce Lee"},
+    {q:"You must be shapeless, formless, like water. When you pour water in a cup, it becomes the cup.",a:"Bruce Lee"},
+    {q:"There is no fixed teaching. All I can provide is an appropriate medicine for a particular ailment.",a:"Miyamoto Musashi"},
+    {q:"Today is victory over yourself of yesterday; tomorrow is your victory over lesser men.",a:"Miyamoto Musashi"},
+    {q:"Determine that today you will overcome your self of the day before.",a:"Miyamoto Musashi"},
+  ],
+  herstel:[
+    {q:"Notice that the stiffest tree is most easily cracked, while the bamboo survives by bending with the wind.",a:"Bruce Lee"},
+    {q:"Be like water making its way through cracks. Be water, my friend.",a:"Bruce Lee"},
+    {q:"Empty your mind, be formless, shapeless — like water.",a:"Bruce Lee"},
+    {q:"In adversity, do not lose virtue.",a:"Miyamoto Musashi"},
+    {q:"Sleep is the interest we pay on the capital which is called in at death.",a:"Arthur Schopenhauer"},
+    {q:"Almost everything will work again if you unplug it for a few minutes — including you.",a:"Anne Lamott"},
+  ],
+  voortgang:[
+    {q:"I fear not the man who has practiced 10,000 kicks once, but I fear the man who has practiced one kick 10,000 times.",a:"Bruce Lee"},
+    {q:"Long-term consistency trumps short-term intensity.",a:"Bruce Lee"},
+    {q:"The successful warrior is the average man, with laser-like focus.",a:"Bruce Lee"},
+    {q:"Mastery is not a function of genius or talent. It is a function of time and intense focus.",a:"Robert Greene"},
+    {q:"You are today where your thoughts have brought you; you will be tomorrow where your thoughts take you.",a:"James Allen"},
+  ],
+  standaard:[
+    {q:"Knowing is not enough, we must apply. Willing is not enough, we must do.",a:"Bruce Lee"},
+    {q:"As you think, so shall you become.",a:"Bruce Lee"},
+    {q:"Be happy, but never satisfied.",a:"Bruce Lee"},
+    {q:"Mistakes are always forgivable, if one has the courage to admit them.",a:"Bruce Lee"},
+    {q:"If you love life, don't waste time, for time is what life is made up of.",a:"Bruce Lee"},
+    {q:"The possession of anything begins in the mind.",a:"Bruce Lee"},
+    {q:"Defeat is a state of mind; no one is ever defeated until defeat has been accepted as a reality.",a:"Bruce Lee"},
+    {q:"Absorb what is useful, discard what is not, add what is uniquely your own.",a:"Bruce Lee"},
+    {q:"Do not think dishonestly. The way is in training.",a:"Miyamoto Musashi"},
+    {q:"Think lightly of yourself and deeply of the world.",a:"Miyamoto Musashi"},
+    {q:"It is difficult to understand the universe if you only study one planet.",a:"Miyamoto Musashi"},
+    {q:"You can observe a lot just by watching.",a:"Yogi Berra"},
+    {q:"We are what we repeatedly do. Excellence, then, is not an act, but a habit.",a:"Aristoteles"},
+  ]
+};
+
+function renderQuote(){
+  var hasStagnatie=GOALS&&GOALS.some(function(g){return g.pct<25&&g.status==='Actief';});
+  var needsHerstel=S.hrv.recovery<=5||S.hrv.rmssd<45||S.hrv.sleep<6;
+  var goedVoortgang=GOALS&&GOALS.length>0&&GOALS.some(function(g){return g.pct>60&&g.status==='Actief';});
+  var pool=needsHerstel?QUOTES.herstel:hasStagnatie?QUOTES.stagnatie:goedVoortgang?QUOTES.voortgang:QUOTES.standaard;
+  var q=pool[Math.floor(Math.random()*pool.length)];
+  var qEl=document.getElementById('ck-quote');
+  var aEl=document.getElementById('ck-quote-auth');
+  if(qEl)qEl.textContent='"'+q.q+'"';
+  if(aEl)aEl.textContent='— '+q.a;
 }
 
 function initCK(){
@@ -2485,6 +2546,7 @@ applyTheme(currentTheme);
 if(S.port)renderPort();
 initCK();
 updateDagVoortgang();
+renderQuote();
 // Auto-sync if cache is old
 const lf=localStorage.getItem('tm2_lf');
 if(!lf||Date.now()-new Date(lf).getTime()>5*60*1000){setTimeout(()=>syncPort().catch(()=>{}),2000);}
