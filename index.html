@@ -592,6 +592,24 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       </div>
     </div>
     <div class="ck-balans" id="ck-balans"><div class="ck-balans-track"><div class="ck-balans-center"></div><div class="ck-balans-bar" id="ck-balans-bar"></div><div class="ck-balans-dot" id="ck-balans-dot"></div></div><div class="ck-balans-hint" id="ck-balans-hint"></div></div>
+    <!-- DAG VOORTGANG — stipjes -->
+    <div style="display:flex;justify-content:center;align-items:center;gap:20px;padding:16px 16px 0">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div id="dot-ri" style="width:9px;height:9px;border-radius:50%;background:rgba(0,0,0,.1);transition:background .4s"></div>
+        <span style="font-size:10px;color:var(--m);font-family:var(--FJ)">習</span>
+      </div>
+      <div style="width:20px;height:1px;background:var(--b)"></div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div id="dot-dy" style="width:9px;height:9px;border-radius:50%;background:rgba(0,0,0,.1);transition:background .4s"></div>
+        <span style="font-size:10px;color:var(--m);font-family:var(--FJ)">脈</span>
+      </div>
+      <div style="width:20px;height:1px;background:var(--b)"></div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div id="dot-bo" style="width:9px;height:9px;border-radius:50%;background:rgba(0,0,0,.1);transition:background .4s"></div>
+        <span style="font-size:10px;color:var(--m);font-family:var(--FJ)">匠</span>
+      </div>
+    </div>
+
     <!-- DAG CYCLUS — drie geneste stappen -->
     <div style="padding:16px 16px 0">
       <div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--m);margin-bottom:10px">Dag cyclus</div>
@@ -1068,6 +1086,25 @@ const S={
   rejIdx:null,
 };
 
+// ── DAG VOORTGANG TRACKING ─────────────────────────────────────────
+var _today=new Date().toISOString().slice(0,10);
+var vandaag=ls('tm2_vandaag',{date:'',ri:false,dy:false,bo:false});
+if(vandaag.date!==_today){vandaag={date:_today,ri:false,dy:false,bo:false};lsSet('tm2_vandaag',vandaag);}
+
+function markVandaag(key){
+  if(vandaag[key])return;
+  vandaag[key]=true;
+  lsSet('tm2_vandaag',vandaag);
+  updateDagVoortgang();
+}
+function updateDagVoortgang(){
+  var dots={ri:'dot-ri',dy:'dot-dy',bo:'dot-bo'};
+  Object.keys(dots).forEach(function(k){
+    var el=document.getElementById(dots[k]);
+    if(el)el.style.background=vandaag[k]?'var(--teal)':'rgba(0,0,0,.1)';
+  });
+}
+
 // ── CONTEXT HELPERS ────────────────────────────────────────────────
 function portCtx(){
   if(!S.port?.rows)return'€122.8k (sync voor live)';
@@ -1507,12 +1544,12 @@ function go(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
   document.querySelectorAll('[data-v]').forEach(el=>el.classList.toggle('on',el.dataset.v===id));
   const v=document.getElementById('v-'+id);if(v)v.classList.add('on');
-  if(id==='ck')initCK();
-  if(id==='bo'){renderGrid();renderChat();upCtx();upLearn();showGoGrid();}
-  if(id==='dy')initPulse();
+  if(id==='ck'){initCK();updateDagVoortgang();}
+  if(id==='bo'){renderGrid();renderChat();upCtx();upLearn();showGoGrid();markVandaag('bo');}
+  if(id==='dy'){initPulse();markVandaag('dy');}
   if(id==='gl')renderGoals();
   if(id==='rt'){go_rt();}
-  if(id==='ri'){go_ri();}
+  if(id==='ri'){go_ri();markVandaag('ri');}
 }
 document.querySelectorAll('[data-v]').forEach(el=>el.addEventListener('click',()=>go(el.dataset.v)));
 
@@ -2414,6 +2451,7 @@ function toggleTheme(){
 applyTheme(currentTheme);
 if(S.port)renderPort();
 initCK();
+updateDagVoortgang();
 // Auto-sync if cache is old
 const lf=localStorage.getItem('tm2_lf');
 if(!lf||Date.now()-new Date(lf).getTime()>5*60*1000){setTimeout(()=>syncPort().catch(()=>{}),2000);}
@@ -2663,6 +2701,7 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 function raadpleegCouncil(){
+  markVandaag('bo');
   // Bouw check-in context op vanuit cockpit data
   var ctx = [];
   var binnenkomst = RituelenData && RituelenData.binnenkomst;
