@@ -526,7 +526,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div class="ni" data-v="wc"><span class="ico">○</span>World Context</div>
     <div class="sb-sec">Ritme</div>
     <div class="ni" id="nav-wr" data-v="wr"><span class="ico">律</span>Week Reflectie</div>
-    <div class="ni" data-v="rt"><span class="ico">間</span>Seizoen & Energie</div>
+    <div class="ni" data-v="rt"><span class="ico" style="font-family:var(--FJ)">律</span>Ritme</div>
     <div class="ni" data-v="ri"><span class="ico">習</span>Rituelen</div>
   </div>
   <div class="sb-foot" style="display:flex;align-items:center;justify-content:space-between">
@@ -785,20 +785,59 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <!-- RITME & SEIZOEN -->
 <div class="view" id="v-rt">
   <div class="tb">
-    <div><div class="tb-t">間 Seizoen & Energie</div><div class="tb-s">Ritme · Prestatiegolven · HRV patroon over tijd</div></div>
-    <div style="display:flex;gap:8px">
-      <button class="btn sm" onclick="analyzeRhythm()">↺ Analyseer</button>
-      <button class="btn sm pri" onclick="openRustweek()">+ Rustweek plannen</button>
-    </div>
+    <div><div class="tb-t">律 Ritme</div><div class="tb-s">Week-positie · Persoonlijk energiepatroon · Rustweek</div></div>
+    <button class="btn sm pri" onclick="openRustweek()">+ Rustweek</button>
   </div>
   <div class="vs">
-    <!-- Seizoensoverzicht -->
+
+    <!-- Week positie -->
     <div class="card" style="margin-bottom:16px">
-      <div class="ct">Deze maand — Week positie</div>
-      <div id="rt-weekpos" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px"></div>
-      <div id="rt-patroon" style="font-size:12px;color:var(--m);line-height:1.6;padding:10px;background:var(--pw);border-radius:var(--rs)"></div>
+      <div class="ct" style="display:flex;justify-content:space-between;align-items:center">
+        <span>Maand positie</span>
+        <span id="rt-week-badge" style="font-size:11px;color:var(--m)"></span>
+      </div>
+      <div id="rt-weekpos" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px"></div>
+      <div id="rt-patroon" style="font-size:12px;line-height:1.7;padding:12px 14px;background:var(--pw);border-radius:var(--rs);border-left:3px solid var(--acc);color:var(--ink)"></div>
     </div>
-    <!-- Energie trend -->
+
+    <!-- HRV trend — echte Oura data of placeholder -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="ct" style="display:flex;justify-content:space-between;align-items:center">
+        <span>HRV · 14 dagen</span>
+        <button class="btn sm" onclick="loadOuraHistory()">↺ Oura</button>
+      </div>
+      <div id="rt-trend" style="padding:8px 0">
+        <div style="text-align:center;padding:28px;color:var(--m);font-size:12px;font-style:italic">Koppel Oura Ring in Data Hub voor je persoonlijke HRV trend</div>
+      </div>
+      <div id="rt-insight" style="font-size:11px;color:var(--m);margin-top:4px;padding:0 2px"></div>
+    </div>
+
+    <!-- Rustweek kalender -->
+    <div class="card">
+      <div class="ct">Rustenweken gepland</div>
+      <div id="rt-kalender"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RUSTWEEK DIALOG -->
+<div class="do" id="rt-d" onclick="if(event.target===this)closeRustweek()">
+  <div class="do-box">
+    <div class="do-title">律 Rustweek plannen</div>
+    <div class="field"><label>Startdatum</label><input type="date" id="rt-start" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:9px;background:var(--paper);color:var(--ink);font-size:13px;outline:none"></div>
+    <div class="field"><label>Type</label>
+      <select id="rt-type" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:9px;background:var(--paper);color:var(--ink);font-size:13px;outline:none">
+        <option value="herstel">Herstelweek</option>
+        <option value="licht">Lichte week</option>
+        <option value="vakantie">Vakantie</option>
+      </select>
+    </div>
+    <div class="field"><label>Intentie</label><input type="text" id="rt-intent" placeholder="Bijv: focus op herstel en wandelen" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:9px;background:var(--paper);color:var(--ink);font-size:13px;outline:none"></div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn gh" style="flex:1" onclick="closeRustweek()">Annuleren</button>
+      <button class="btn pri" style="flex:1" onclick="saveRustweek()">Opslaan</button>
+    </div>
   </div>
 </div>
 <div class="view" id="v-ri">
@@ -1227,120 +1266,144 @@ var RitmeData = ls('tm2_ritme', {rustWeken:[], maList:[], pulseHistory:[]});
 
 function go_rt(){
   analyzeRhythm();
-  renderMaList();
   renderKalender();
+  // Load Oura history if token available
+  var tok=ls('tm2_oura_token','');
+  if(tok) loadOuraHistory();
 }
 
 function analyzeRhythm(){
   var now = new Date();
   var weekNum = Math.ceil(now.getDate() / 7);
-  var dayOfWeek = now.getDay();
-  
-  // Week positie visualisatie
-  var weekLabels = ['Week 1\nOpstart', 'Week 2\nTop', 'Week 3\nDip', 'Week 4\nAfronden'];
-  var weekTypes = ['actief', 'actief', 'herstel', 'normaal'];
-  var weekHtml = weekLabels.map(function(label, i) {
+  var hrv = S.hrv.rmssd || 45;
+  var rec = S.hrv.recovery || 7;
+
+  // Week badge
+  var badge = document.getElementById('rt-week-badge');
+  if(badge) badge.textContent = 'HRV ' + hrv + ' rMSSD · Herstel ' + rec + '/10';
+
+  // Week positie
+  var configs = [
+    {label:'W1', sub:'Opstart', type:'actief', col:'var(--teal)'},
+    {label:'W2', sub:'Top', type:'actief', col:'var(--teal)'},
+    {label:'W3', sub:'Dip', type:'herstel', col:'var(--acc)'},
+    {label:'W4', sub:'Afronden', type:'normaal', col:'var(--gold)'}
+  ];
+  var weekHtml = configs.map(function(c, i){
     var isNow = (i + 1) === weekNum;
-    var type = weekTypes[i];
-    var extra = isNow ? ' style="box-shadow:0 0 0 2px var(--ink)"' : '';
-    return '<div class="wk ' + type + '"' + extra + '>' +
-      '<div class="wk-num">W' + (i+1) + '</div>' +
-      '<span class="wk-label">' + label.replace('\n','<br>') + '</span>' +
-      (isNow ? '<span style="font-size:9px;color:inherit;margin-top:2px;display:block">← nu</span>' : '') +
+    var border = isNow ? 'border:2px solid var(--ink)' : 'border:1px solid var(--b)';
+    var bg = isNow ? 'background:var(--ink);color:#fff' : (i === 2 ? 'background:rgba(196,83,42,.06)' : 'background:var(--paper)');
+    return '<div style="' + border + ';' + bg + ';border-radius:var(--rs);padding:10px 6px;text-align:center">' +
+      '<div style="font-size:10px;font-weight:600;letter-spacing:.06em">' + c.label + '</div>' +
+      '<div style="width:6px;height:6px;border-radius:50%;background:' + c.col + ';margin:5px auto"></div>' +
+      '<div style="font-size:9px;opacity:.7">' + c.sub + '</div>' +
+      (isNow ? '<div style="font-size:8px;margin-top:3px;opacity:.6">← nu</div>' : '') +
       '</div>';
   }).join('');
   document.getElementById('rt-weekpos').innerHTML = weekHtml;
-  
-  // Patroon detectie
+
+  // HRV-aware advice — persoonlijk, niet hardcoded
   var patroon = '';
+  var hrvStatus = hrv >= 55 ? 'goed (' + hrv + ' rMSSD — boven jouw norm)' :
+                  hrv >= 45 ? 'normaal (' + hrv + ' rMSSD)' :
+                  'laag (' + hrv + ' rMSSD — herstel heeft prioriteit)';
   if(weekNum === 3){
-    patroon = '⚠ Je zit in Week 3 — historisch de zwaarste week van de maand. ' +
-      'HRV is nu ' + S.hrv.rmssd + ' rMSSD. Plan geen grote beslissingen. Verlaag tempo.';
+    patroon = 'Week 3 — historisch een zwaardere week. Jouw HRV is ' + hrvStatus + '. ' +
+      (hrv < 45 ? 'Verlaag tempo, geen grote beslissingen vandaag.' :
+       'Je staat er relatief goed voor — maar wees alert op overbelasting.');
   } else if(weekNum === 1){
-    patroon = '✓ Week 1 — opstartsenergie. Goed moment voor nieuwe initiatieven en beslissingen. ' +
-      'Je HRV van ' + S.hrv.rmssd + ' bevestigt je staat van herstel.';
+    patroon = 'Week 1 — opstart. Jouw HRV van ' + hrv + ' rMSSD ' +
+      (hrv >= 50 ? 'geeft groen licht voor nieuwe initiatieven en beslissingen.' :
+       'vraagt om een voorzichtige opbouw. Begin met structuur, nog geen grote sprongen.');
   } else if(weekNum === 2){
-    patroon = '◎ Week 2 — piekprestatie. Hoogste energieweek. Plan je belangrijkste werk nu. ' +
-      'Deep work, moeilijke gesprekken, grote beslissingen.';
+    patroon = 'Week 2 — piekweek. Plan je belangrijkste werk nu. HRV ' + hrvStatus + '. ' +
+      (hrv >= 50 ? 'Je systeem bevestigt: dit is het moment voor deep work en moeilijke gesprekken.' :
+       'HRV is lager dan ideaal — doseer de intensiteit en neem herstelmomenten.');
   } else {
-    patroon = '→ Week 4 — afronden en loslaten. Sluit lopende zaken, geen nieuwe starts. ' +
-      'Bereid je voor op de rustweek of de nieuwe maand.';
+    patroon = 'Week 4 — afronden. Sluit lopende zaken, geen nieuwe starts. HRV ' + hrvStatus + '. ' +
+      (rec <= 5 ? 'Herstel staat laag — plan al een lichte week vooruit.' : 'Bereid je voor op een goede start van volgende maand.');
   }
-  
-  // Check of er rustweek gepland is
-  var aankomend = RitmeData.rustWeken.find(function(w){
-    return new Date(w.start) > now;
-  });
+
+  // Komende rustweek
+  var aankomend = RitmeData.rustWeken.find(function(w){ return new Date(w.start) > now; });
   if(aankomend){
-    patroon += ' | 律 Volgende rustweek: ' + new Date(aankomend.start).toLocaleDateString('nl-NL', {day:'numeric',month:'long'}) + ' (' + aankomend.type + ')';
+    patroon += '\n律 Volgende rustweek: ' + new Date(aankomend.start).toLocaleDateString('nl-NL',{day:'numeric',month:'long'}) + ' (' + aankomend.type + ')';
   }
-  
+
   document.getElementById('rt-patroon').textContent = patroon;
-  
-  // Energie trend (gebruik pulse history + HRV)
-  renderEnergieTrend();
 }
 
-function renderEnergieTrend(){
-  // Simuleer 8 weken trend op basis van beschikbare data
+async function loadOuraHistory(){
+  var tok = ls('tm2_oura_token','');
+  if(!tok){ toast('Oura token ontbreekt — sla op in Data Hub','err'); return; }
   var el = document.getElementById('rt-trend');
-  var maxH = 80;
-  
-  // Genereer realistische weekpatroon op basis van HRV
-  var base = S.hrv.rmssd;
-  var weeks = [];
-  for(var i = 7; i >= 0; i--){
-    var weekOfMonth = ((new Date().getDate() - (i * 7)) % 28 + 28) % 28;
-    var weekNum = Math.floor(weekOfMonth / 7) + 1;
-    // Week 3 dip
-    var factor = weekNum === 3 ? 0.75 : weekNum === 2 ? 1.1 : weekNum === 1 ? 0.95 : 0.9;
-    var val = Math.round(base * factor * (0.9 + Math.random() * 0.2));
-    weeks.push({val: val, label: i === 0 ? 'Nu' : i + 'w'});
+  if(el) el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--m);font-size:12px">Laden...</div>';
+  try{
+    var end = new Date().toISOString().slice(0,10);
+    var start = new Date(Date.now() - 14*24*60*60*1000).toISOString().slice(0,10);
+    var resp = await fetch('https://api.ouraring.com/v2/usercollection/daily_sleep?start_date='+start+'&end_date='+end,
+      {headers:{'Authorization':'Bearer '+tok}});
+    if(!resp.ok) throw new Error('Oura '+resp.status);
+    var data = await resp.json();
+    var days = (data.data||[]).filter(function(d){ return d.average_hrv; });
+    if(!days.length){ if(el) el.innerHTML='<div style="padding:20px;text-align:center;color:var(--m);font-size:12px">Geen HRV data in Oura voor de afgelopen 14 dagen</div>'; return; }
+    var vals = days.map(function(d){ return Math.round(d.average_hrv); });
+    var max = Math.max.apply(null, vals), min = Math.min.apply(null, vals);
+    var avg = Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length);
+    var bars = days.map(function(d,i){
+      var v = Math.round(d.average_hrv);
+      var pct = max===min ? 60 : Math.round(30 + ((v-min)/(max-min))*50);
+      var col = v >= avg+3 ? 'var(--teal)' : v <= avg-5 ? 'var(--acc)' : 'var(--m)';
+      var dateStr = new Date(d.day).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">' +
+        '<div style="font-size:9px;color:var(--m)">' + v + '</div>' +
+        '<div style="width:100%;height:' + pct + 'px;background:' + col + ';border-radius:3px 3px 0 0;min-height:8px"></div>' +
+        '<div style="font-size:8px;color:var(--m);writing-mode:vertical-rl;transform:rotate(180deg);height:28px;overflow:hidden">' + dateStr + '</div>' +
+        '</div>';
+    }).join('');
+    if(el) el.innerHTML = '<div style="display:flex;align-items:flex-end;gap:3px;padding:4px 0;height:110px">' + bars + '</div>';
+    var insight = document.getElementById('rt-insight');
+    if(insight) insight.textContent = '14-daags gemiddelde: ' + avg + ' rMSSD · Groen = boven gem. · Rood = herstel nodig · ' + vals.length + ' metingen';
+    // Update S.hrv with latest
+    var latest = days[days.length-1];
+    if(latest && latest.average_hrv){
+      S.hrv.rmssd = Math.round(latest.average_hrv);
+      lsSet('tm2_hrv', S.hrv);
+      analyzeRhythm();
+    }
+    toast('HRV trend geladen: ' + days.length + ' dagen','ok');
+  } catch(err){
+    if(el) el.innerHTML='<div style="padding:12px;color:var(--acc);font-size:12px">'+err.message+'</div>';
+    toast(err.message,'err');
   }
-  
-  var max = Math.max.apply(null, weeks.map(function(w){ return w.val; }));
-  el.innerHTML = weeks.map(function(w, i){
-    var h = Math.round((w.val / max) * maxH);
-    var col = w.val < base * 0.85 ? 'var(--acc)' : w.val > base * 1.05 ? 'var(--teal)' : 'var(--m)';
-    return '<div class="eb" style="height:' + h + 'px;background:' + col + ';flex:1">' +
-      '<div class="eb-tip">' + w.label + ': ' + w.val + ' rMSSD</div></div>';
-  }).join('');
-  
-  document.getElementById('rt-insight').textContent = 
-    'HRV trend over 8 weken. Oranje = onder jouw baseline (' + S.hrv.rmssd + ' rMSSD). ' +
-    'Week 3 dip is normaal — plan herstel proactief in.';
 }
 
 function renderKalender(){
   var el = document.getElementById('rt-kalender');
+  if(!el) return;
   var now = new Date();
-  var maanden = [];
-  for(var i = 0; i < 3; i++){
-    var d = new Date(now.getFullYear(), now.getMonth() + i, 1);
-    maanden.push(d.toLocaleDateString('nl-NL', {month:'long', year:'numeric'}));
+  if(!RitmeData.rustWeken.length){
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--m);font-size:12px;font-style:italic">Nog geen rusteweken gepland. Klik "+ Rustweek" om een herstelmoment in te plannen.</div>';
+    return;
   }
-  
-  el.innerHTML = maanden.map(function(m, mi){
-    var rustInMaand = RitmeData.rustWeken.filter(function(w){
-      var d = new Date(w.start);
-      return d.getMonth() === (now.getMonth() + mi) % 12;
-    });
-    return '<div style="margin-bottom:12px;padding:12px;background:var(--pw);border-radius:var(--rs)">' +
-      '<div style="font-size:11px;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em">' + m + '</div>' +
-      '<div style="display:flex;gap:6px">' +
-      ['W1','W2','W3','W4'].map(function(w, wi){
-        var isRust = rustInMaand.some(function(r){
-          var d = new Date(r.start);
-          return Math.ceil(d.getDate() / 7) === (wi + 1);
-        });
-        var col = wi === 2 ? 'background:rgba(196,83,42,.08);border-color:rgba(196,83,42,.2)' : 
-                  isRust ? 'background:rgba(40,137,122,.12);border-color:rgba(40,137,122,.3)' : '';
-        return '<div style="flex:1;padding:6px;text-align:center;border:1px solid var(--bm);border-radius:4px;font-size:11px;' + col + '">' +
-          '<div style="font-weight:500">' + w + '</div>' +
-          '<div style="font-size:9px;color:var(--m);margin-top:2px">' + (wi === 2 ? 'dip' : isRust ? 'rust' : wi === 1 ? 'top' : '') + '</div>' +
-          '</div>';
-      }).join('') + '</div>' +
-      (rustInMaand.length === 0 && mi > 0 ? '<div style="font-size:11px;color:var(--acc);margin-top:8px">⚠ Geen rustweek gepland</div>' : '') +
+  var upcoming = RitmeData.rustWeken
+    .filter(function(w){ return new Date(w.start) >= new Date(now.getFullYear(), now.getMonth(), 1); })
+    .sort(function(a,b){ return new Date(a.start)-new Date(b.start); })
+    .slice(0,6);
+  if(!upcoming.length){
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--m);font-size:12px;font-style:italic">Geen komende rusteweken. Plan er een in.</div>';
+    return;
+  }
+  el.innerHTML = upcoming.map(function(w,i){
+    var d = new Date(w.start);
+    var isPast = d < now;
+    var dateStr = d.toLocaleDateString('nl-NL',{weekday:'short',day:'numeric',month:'long'});
+    var typeColor = w.type==='herstel'?'var(--teal)':w.type==='vakantie'?'var(--gold)':'var(--m)';
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--b);opacity:' + (isPast?.5:1) + '">' +
+      '<div style="width:6px;height:6px;border-radius:50%;background:' + typeColor + ';flex-shrink:0"></div>' +
+      '<div style="flex:1"><div style="font-size:12px;font-weight:500">' + dateStr + '</div>' +
+      (w.intent?'<div style="font-size:11px;color:var(--m);margin-top:2px">' + w.intent + '</div>':'') + '</div>' +
+      '<div style="font-size:10px;color:' + typeColor + ';text-transform:uppercase;letter-spacing:.06em">' + w.type + '</div>' +
       '</div>';
   }).join('');
 }
