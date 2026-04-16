@@ -571,9 +571,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     </div>
 
     <!-- QUOTE -->
-    <div style="padding:12px 28px 4px;text-align:center">
-      <div id="ck-quote" style="font-size:12px;color:var(--ink);opacity:.6;font-style:italic;line-height:1.7"></div>
-      <div id="ck-quote-auth" style="font-size:9px;color:var(--ink);opacity:.35;margin-top:5px;letter-spacing:.12em;text-transform:uppercase"></div>
+    <div style="padding:12px 28px 8px;text-align:center;min-height:52px">
+      <div id="ck-quote" style="font-size:12px;color:var(--ink);opacity:.65;font-style:italic;line-height:1.7;word-wrap:break-word"> </div>
+      <div id="ck-quote-auth" style="font-size:9px;color:var(--ink);opacity:.4;margin-top:4px;letter-spacing:.12em;text-transform:uppercase"> </div>
     </div>
 
     <!-- DAGELIJKSE OPENING — micro-ritueel -->
@@ -1697,15 +1697,16 @@ const QUOTES={
 };
 
 function renderQuote(){
-  var hasStagnatie=GOALS&&GOALS.some(function(g){return g.pct<25&&g.status==='Actief';});
+  var goals=typeof GOALS!=='undefined'?GOALS:[];
+  var hasStagnatie=goals.some(function(g){return g.pct<25&&g.status==='Actief';});
   var needsHerstel=S.hrv.recovery<=5||S.hrv.rmssd<45||S.hrv.sleep<6;
-  var goedVoortgang=GOALS&&GOALS.length>0&&GOALS.some(function(g){return g.pct>60&&g.status==='Actief';});
+  var goedVoortgang=goals.length>0&&goals.some(function(g){return g.pct>60&&g.status==='Actief';});
   var pool=needsHerstel?QUOTES.herstel:hasStagnatie?QUOTES.stagnatie:goedVoortgang?QUOTES.voortgang:QUOTES.standaard;
   var q=pool[Math.floor(Math.random()*pool.length)];
   var qEl=document.getElementById('ck-quote');
   var aEl=document.getElementById('ck-quote-auth');
-  if(qEl)qEl.textContent='"'+q.q+'"';
-  if(aEl)aEl.textContent='— '+q.a;
+  if(qEl){qEl.textContent='\u201c'+q.q+'\u201d';qEl.style.display='block';}
+  if(aEl){aEl.textContent='— '+q.a;aEl.style.display='block';}
 }
 
 function initCK(){
@@ -2546,7 +2547,7 @@ applyTheme(currentTheme);
 if(S.port)renderPort();
 initCK();
 updateDagVoortgang();
-renderQuote();
+setTimeout(renderQuote, 0);
 // Auto-sync if cache is old
 const lf=localStorage.getItem('tm2_lf');
 if(!lf||Date.now()-new Date(lf).getTime()>5*60*1000){setTimeout(()=>syncPort().catch(()=>{}),2000);}
