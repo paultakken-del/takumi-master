@@ -449,7 +449,21 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .dr-close{margin-left:auto;font-size:11px;cursor:pointer;color:var(--m);background:none;border:none;font-family:var(--F);padding:4px 8px}
 .dr-close:hover{color:var(--ink)}
 
-/* RITUELEN STAPPEN */
+/* RITUELEN ANKERS */
+.ri-anker{border-bottom:1px solid var(--b);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ri-anker-hd{display:flex;align-items:center;gap:14px;padding:16px}
+.ri-anker-ico{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:20px;flex-shrink:0;transition:transform .2s}
+.ri-anker.open .ri-anker-ico{transform:scale(1.08)}
+.ri-anker-info{flex:1;min-width:0}
+.ri-anker-titel{font-size:13px;font-weight:600;color:var(--ink);line-height:1.3}
+.ri-anker-preview{font-size:11px;color:var(--m);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ri-anker-chev{font-size:20px;color:var(--m);transition:transform .25s;line-height:1;flex-shrink:0}
+.ri-anker.open .ri-anker-chev{transform:rotate(90deg)}
+.ri-anker-body{display:none;padding:0 16px 16px;animation:riIn .18s ease}
+.ri-anker.open .ri-anker-body{display:block}
+@keyframes riIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.ri-volgende-btn{width:100%;margin-top:14px;padding:11px;border:1.5px solid var(--b);border-radius:var(--rs);background:none;font-size:12px;color:var(--ink);cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;transition:all .12s;font-family:var(--F)}
+.ri-volgende-btn:active{background:var(--pw)}
 .ri-stap{padding:18px 0;border-bottom:1px solid var(--b)}
 .ri-stap-hd{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
 .ri-stap-nr{width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
@@ -630,42 +644,6 @@ input[type=range]{width:100%;accent-color:var(--acc)}
         </button>
       </div>
     </div>
-
-    <!-- DAG RITME MODULE — inline cockpit -->
-    <div class="dr-module" id="dr-module">
-
-      <!-- Samenvatting (wanneer al ingevuld) -->
-      <div class="dr-summary" id="dr-summary" style="display:none">
-        <div id="dr-sum-txt">–</div>
-        <button class="dr-close" onclick="closeDagRitme()">↑ Sluiten</button>
-      </div>
-
-      <!-- Stap 1: Energie -->
-      <div class="dr-step" id="dr-step-energie">
-        <div class="dr-step-label">Energie</div>
-        <div class="dr-slider-row">
-          <div class="dr-val" id="dr-ev">6</div>
-          <input type="range" min="1" max="10" value="6" id="dr-energie-slider"
-            oninput="document.getElementById('dr-ev').textContent=this.value;S.pulse.data.energy=+this.value;updateHaraFromPulse(+this.value)">
-        </div>
-      </div>
-
-      <!-- Stap 2: Loslaten (間 Ma) -->
-      <div class="dr-step" id="dr-step-ma">
-        <div class="dr-step-label">間 — Wat laat je los vandaag?</div>
-        <input class="dr-ma-inp" id="dr-ma-inp" placeholder="Bijv: de druk om alles af te ronden"
-          oninput="S.pulse.data.ma1=this.value">
-      </div>
-
-      <!-- Afsluiten -->
-      <div class="dr-step" style="padding:12px 16px;text-align:right">
-        <button class="btn pri sm" onclick="sluitDagRitme()">Opslaan & sluiten</button>
-        <button class="btn sm gh" style="margin-left:8px">Volledige Pulse →</button>
-      </div>
-
-    </div>
-
-    <!-- SECUNDAIRE INFO — klein, niet dominant -->
 
   </div>
 </div>
@@ -881,108 +859,104 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   <div class="tb">
     <div>
       <div class="tb-t">習 Dagelijkse Praktijk</div>
-      <div class="tb-s">Vier ankers — Energie · Lichaam · Inzicht · Dankbaarheid</div>
+      <div class="tb-s">Vier ankers — tik om te openen</div>
     </div>
-    <button class="btn sm pri" onclick="raadpleegVanuitRituelen()">匠 Raadpleeg Council</button>
+    <button class="btn sm pri" onclick="raadpleegVanuitRituelen()">匠 Council</button>
   </div>
-  <div class="vs">
+  <div class="vs" style="padding:0">
 
-    <!-- INTRO BANNER -->
-    <div style="padding:16px 18px;background:var(--pw);border-radius:var(--r);margin-bottom:20px;border-left:3px solid var(--acc)">
-      <div style="font-size:12px;color:var(--ink);line-height:1.7;font-style:italic">
-        習 — De meester herhaalt bewust. Niet omdat het moet, maar omdat kleine dagelijkse praktijken de bodem zijn waarop alles groeit.
-      </div>
-    </div>
-
-    <!-- STAP 1: 気 ENERGIE-ANKER -->
-    <div class="ri-stap" id="ri-s1">
-      <div class="ri-stap-hd">
-        <div class="ri-stap-nr">1</div>
-        <div>
-          <div class="ri-stap-titel">気 Energie — Wat geeft, wat neemt?</div>
-          <div class="ri-stap-sub">Benoem één energiegever en één energienemer van vandaag</div>
+    <!-- ANKER 1: 気 ENERGIE -->
+    <div class="ri-anker" id="ri-a1" onclick="riToggle(1)">
+      <div class="ri-anker-hd">
+        <div class="ri-anker-ico" style="background:rgba(40,137,122,.12);color:var(--teal)">気</div>
+        <div class="ri-anker-info">
+          <div class="ri-anker-titel">Energie</div>
+          <div class="ri-anker-preview" id="ri-prev1">Wat geeft, wat neemt?</div>
         </div>
+        <div class="ri-anker-chev" id="ri-chev1">›</div>
       </div>
-      <div class="ri-instr">① Schrijf op wat je energie geeft of kost vandaag — en druk op +</div>
-      <div class="ri-2col">
-        <div class="ri-inp-blok ri-teal">
-          <div class="ri-inp-label">▲ Geeft energie</div>
-          <div id="ri-gevers-list" class="ri-list"></div>
-          <div class="ri-inp-row">
-            <input id="ri-gever-inp" type="text" class="ri-inp" placeholder="Wat geeft je energie vandaag?" onkeydown="if(event.key==='Enter')addAudit('gever')">
-            <button class="ri-add-btn ri-teal-btn" onclick="addAudit('gever')">+</button>
+      <div class="ri-anker-body" id="ri-body1">
+        <div class="ri-2col">
+          <div class="ri-inp-blok ri-teal">
+            <div class="ri-inp-label">▲ Geeft energie</div>
+            <div id="ri-gevers-list" class="ri-list"></div>
+            <div class="ri-inp-row">
+              <input id="ri-gever-inp" type="text" class="ri-inp" placeholder="Wat geeft je energie?" onkeydown="if(event.key==='Enter')addAudit('gever')">
+              <button class="ri-add-btn ri-teal-btn" onclick="event.stopPropagation();addAudit('gever')">+</button>
+            </div>
+          </div>
+          <div class="ri-inp-blok ri-acc">
+            <div class="ri-inp-label">▼ Kost energie</div>
+            <div id="ri-nemers-list" class="ri-list"></div>
+            <div class="ri-inp-row">
+              <input id="ri-nemer-inp" type="text" class="ri-inp" placeholder="Wat kost je energie?" onkeydown="if(event.key==='Enter')addAudit('nemer')">
+              <button class="ri-add-btn ri-acc-btn" onclick="event.stopPropagation();addAudit('nemer')">+</button>
+            </div>
           </div>
         </div>
-        <div class="ri-inp-blok ri-acc">
-          <div class="ri-inp-label">▼ Kost energie</div>
-          <div id="ri-nemers-list" class="ri-list"></div>
-          <div class="ri-inp-row">
-            <input id="ri-nemer-inp" type="text" class="ri-inp" placeholder="Wat kost je energie vandaag?" onkeydown="if(event.key==='Enter')addAudit('nemer')">
-            <button class="ri-add-btn ri-acc-btn" onclick="addAudit('nemer')">+</button>
-          </div>
-        </div>
+        <button class="ri-volgende-btn" onclick="event.stopPropagation();riToggle(1);riToggle(2)">体 Lichaam →</button>
       </div>
     </div>
 
-    <!-- STAP 2: 体 LICHAAM-SCAN -->
-    <div class="ri-stap" id="ri-s2">
-      <div class="ri-stap-hd">
-        <div class="ri-stap-nr">2</div>
-        <div>
-          <div class="ri-stap-titel">体 Lichaam</div>
-          <div class="ri-stap-sub">Scan even — hoofd · hart · buik. Wat voel je?</div>
+    <!-- ANKER 2: 体 LICHAAM -->
+    <div class="ri-anker" id="ri-a2" onclick="riToggle(2)">
+      <div class="ri-anker-hd">
+        <div class="ri-anker-ico" style="background:rgba(196,83,42,.08);color:var(--acc)">体</div>
+        <div class="ri-anker-info">
+          <div class="ri-anker-titel">Lichaam</div>
+          <div class="ri-anker-preview" id="ri-prev2">Scan — hoofd · hart · buik</div>
         </div>
+        <div class="ri-anker-chev" id="ri-chev2">›</div>
       </div>
-      <textarea id="ri-lichaam-txt" class="ri-textarea" placeholder="Bijv: mijn schouders zijn gespannen, buik rustig..." rows="3"></textarea>
-    </div>
-
-    <!-- STAP 3: 道場 LEREN — fout + les -->
-    <div class="ri-stap" id="ri-s3">
-      <div class="ri-stap-hd">
-        <div class="ri-stap-nr">3</div>
-        <div>
-          <div class="ri-stap-titel">道場 Leren — Fout & Les</div>
-          <div class="ri-stap-sub">Fouten zijn geen schande — het zijn de beste leraren</div>
-        </div>
-      </div>
-      <div class="ri-instr">Schrijf de fout en de les — druk op Vastleggen</div>
-      <div id="ri-fouten-list" class="ri-list" style="margin-bottom:10px"></div>
-      <div class="ri-2col" style="margin-bottom:8px">
-        <input id="ri-fout-inp" type="text" class="ri-inp" placeholder="De fout of het patroon...">
-        <input id="ri-les-inp" type="text" class="ri-inp" placeholder="De les die ik er uit trek...">
-      </div>
-      <button class="btn sm" style="width:100%" onclick="addFout()">+ Vastleggen</button>
-    </div>
-
-    <!-- STAP 4: ✦ DANKBAARHEID -->
-    <div class="ri-stap" id="ri-s4" style="border-bottom:none">
-      <div class="ri-stap-hd">
-        <div class="ri-stap-nr">4</div>
-        <div>
-          <div class="ri-stap-titel">✦ Dankbaarheid — Sluit de dag</div>
-          <div class="ri-stap-sub">Eén moment van erkenning verankert de dag</div>
-        </div>
-      </div>
-      <div class="ri-instr">Typ en druk op +</div>
-      <div id="ri-dank-list" class="ri-list" style="margin-bottom:10px"></div>
-      <div class="ri-inp-row">
-        <input id="ri-dank-inp" type="text" class="ri-inp" placeholder="Ik ben dankbaar voor..." onkeydown="if(event.key==='Enter')addDank()">
-        <button class="ri-add-btn" style="background:var(--gold);border-color:var(--gold);color:#fff" onclick="addDank()">+</button>
+      <div class="ri-anker-body" id="ri-body2">
+        <textarea id="ri-lichaam-txt" class="ri-textarea" placeholder="Bijv: mijn schouders zijn gespannen, buik rustig..." rows="3" onclick="event.stopPropagation()"></textarea>
+        <button class="ri-volgende-btn" onclick="event.stopPropagation();riToggle(2);riToggle(3)">道場 Leren →</button>
       </div>
     </div>
 
-    <!-- COUNCIL CTA -->
-    <div style="margin-top:24px;padding:18px;background:var(--ink);border-radius:var(--r);text-align:center">
-      <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:12px;letter-spacing:.04em">
-        Klaar met je praktijk? Laat het Master Council reflecteren.
+    <!-- ANKER 3: 道場 LEREN -->
+    <div class="ri-anker" id="ri-a3" onclick="riToggle(3)">
+      <div class="ri-anker-hd">
+        <div class="ri-anker-ico" style="background:rgba(122,74,138,.1);color:#7a4a8a">道</div>
+        <div class="ri-anker-info">
+          <div class="ri-anker-titel">Leren</div>
+          <div class="ri-anker-preview" id="ri-prev3">Fout & les vastleggen</div>
+        </div>
+        <div class="ri-anker-chev" id="ri-chev3">›</div>
       </div>
-      <button class="btn pri" style="width:100%;background:var(--acc);border:none" onclick="raadpleegVanuitRituelen()">
-        匠 Raadpleeg Council — stuur mijn praktijk mee
-      </button>
+      <div class="ri-anker-body" id="ri-body3">
+        <div id="ri-fouten-list" class="ri-list" style="margin-bottom:10px"></div>
+        <div class="ri-2col" style="margin-bottom:8px">
+          <input id="ri-fout-inp" type="text" class="ri-inp" placeholder="De fout of het patroon..." onclick="event.stopPropagation()">
+          <input id="ri-les-inp" type="text" class="ri-inp" placeholder="De les die ik trek..." onclick="event.stopPropagation()">
+        </div>
+        <button class="btn sm" style="width:100%;margin-bottom:12px" onclick="event.stopPropagation();addFout()">+ Vastleggen</button>
+        <button class="ri-volgende-btn" onclick="event.stopPropagation();riToggle(3);riToggle(4)">✦ Dankbaarheid →</button>
+      </div>
+    </div>
+
+    <!-- ANKER 4: ✦ DANKBAARHEID -->
+    <div class="ri-anker" id="ri-a4" onclick="riToggle(4)" style="border-bottom:none">
+      <div class="ri-anker-hd">
+        <div class="ri-anker-ico" style="background:rgba(196,157,42,.1);color:var(--gold)">✦</div>
+        <div class="ri-anker-info">
+          <div class="ri-anker-titel">Dankbaarheid</div>
+          <div class="ri-anker-preview" id="ri-prev4">Sluit de dag</div>
+        </div>
+        <div class="ri-anker-chev" id="ri-chev4">›</div>
+      </div>
+      <div class="ri-anker-body" id="ri-body4">
+        <div id="ri-dank-list" class="ri-list" style="margin-bottom:10px"></div>
+        <div class="ri-inp-row">
+          <input id="ri-dank-inp" type="text" class="ri-inp" placeholder="Ik ben dankbaar voor..." onkeydown="if(event.key==='Enter')addDank()" onclick="event.stopPropagation()">
+          <button class="ri-add-btn" style="background:var(--gold);border-color:var(--gold);color:#fff" onclick="event.stopPropagation();addDank()">+</button>
+        </div>
+        <button class="ri-volgende-btn" style="background:var(--acc);color:#fff;border-color:var(--acc)" onclick="event.stopPropagation();raadpleegVanuitRituelen()">匠 Raadpleeg Council →</button>
+      </div>
     </div>
 
     <!-- VOLGENDE STAP IN CYCLUS -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding:14px 16px;border-top:1px solid var(--b)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--b)">
       <span style="font-size:11px;color:var(--m)">Dag cyclus · stap 1 van 3</span>
       <button onclick="go('dy')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">
         脈 Dag Pulse <span style="font-size:14px">→</span>
@@ -1224,10 +1198,45 @@ var BINNENKOMSTEN = [
 ];
 
 function go_ri(){
-  renderBinnenkomst();
   renderAudit();
   renderFouten();
   renderDank();
+  riUpdatePreviews();
+  // Open first anker by default if nothing is open
+  var anyOpen = [1,2,3,4].some(function(i){ return document.getElementById('ri-a'+i) && document.getElementById('ri-a'+i).classList.contains('open'); });
+  if(!anyOpen) riToggle(1);
+}
+
+function riToggle(n){
+  for(var i=1;i<=4;i++){
+    var el=document.getElementById('ri-a'+i);
+    if(!el)continue;
+    if(i===n){
+      el.classList.toggle('open');
+    } else {
+      el.classList.remove('open');
+    }
+  }
+}
+
+function riUpdatePreviews(){
+  // Energie preview
+  var gevers=(RituelenData.audit&&RituelenData.audit.gevers||[]).length;
+  var nemers=(RituelenData.audit&&RituelenData.audit.nemers||[]).length;
+  var p1=document.getElementById('ri-prev1');
+  if(p1)p1.textContent=gevers||nemers?(gevers+' gever'+(gevers!==1?'s':'')+' · '+nemers+' nemer'+(nemers!==1?'s':'')):'Wat geeft, wat neemt?';
+  // Lichaam preview
+  var lichTxt=document.getElementById('ri-lichaam-txt');
+  var p2=document.getElementById('ri-prev2');
+  if(p2)p2.textContent=(lichTxt&&lichTxt.value.trim())||RituelenData.lichaamTxt||'Scan — hoofd · hart · buik';
+  // Leren preview
+  var fouten=(RituelenData.fouten||[]).length;
+  var p3=document.getElementById('ri-prev3');
+  if(p3)p3.textContent=fouten?(fouten+' les'+(fouten!==1?'sen':'')+' vastgelegd'):'Fout & les vastleggen';
+  // Dankbaarheid preview
+  var dank=(RituelenData.dank||[]).length;
+  var p4=document.getElementById('ri-prev4');
+  if(p4)p4.textContent=dank?(dank+' moment'+(dank!==1?'en':'')+' van dankbaarheid'):'Sluit de dag';
 }
 
 function renderBinnenkomst(){
@@ -1262,6 +1271,7 @@ function addAudit(type){
   lsSet('tm2_rituelen', RituelenData);
   inp.value = '';
   renderAudit();
+  riUpdatePreviews();
   toast(type === 'gever' ? '▲ Energiegever opgeslagen' : '▼ Energienemer opgeslagen', 'ok');
 }
 
@@ -1285,6 +1295,7 @@ function addFout(){
   document.getElementById('ri-fout-inp').value = '';
   document.getElementById('ri-les-inp').value = '';
   renderFouten();
+  riUpdatePreviews();
   toast('Fout toegevoegd aan de muur — moed!', 'ok');
 }
 
@@ -1306,6 +1317,7 @@ function addDank(){
   lsSet('tm2_rituelen', RituelenData);
   inp.value = '';
   renderDank();
+  riUpdatePreviews();
   toast('Dankbaarheid opgeslagen ✦', 'ok');
 }
 
