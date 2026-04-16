@@ -718,7 +718,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   <div class="tabs">
     <div class="tab on" onclick="stab('portfolio',this)">Portfolio</div>
     <div class="tab" onclick="stab('health',this)">Health & HRV</div>
-    <div class="tab" onclick="stab('degiro',this)">DeGiro import</div>
+    <div class="tab" onclick="stab('oura',this)">Oura Ring</div>
+    <div class="tab" onclick="stab('degiro',this)">DeGiro</div>
   </div>
   <div class="tp on" id="tp-portfolio">
     <div class="ph"><div><div class="pt" id="p-tot">€ –</div><span id="p-ch" style="display:none"></span></div><div style="font-size:11px;color:var(--m)" id="p-sync">Nog niet gesynchroniseerd</div></div>
@@ -735,6 +736,18 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <button class="btn sm" style="margin-top:10px;width:100%" onclick="document.getElementById('hrv-f').click()">↑ Selecteer CSV</button>
     </div>
     <div id="hrv-r"></div>
+  </div>
+  <div class="tp" id="tp-oura">
+    <div class="card" style="margin-bottom:14px">
+      <div class="ct">Oura Ring — Live koppeling</div>
+      <p style="font-size:12px;color:var(--m);margin-bottom:14px">Genereer een Personal Access Token via <strong>cloud.ouraring.com/personal-access-tokens</strong> en plak hem hieronder. Data wordt lokaal opgeslagen.</p>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input id="oura-token-inp" type="password" placeholder="oura_pat_..." style="flex:1;border:1px solid var(--b);border-radius:var(--rs);padding:9px 11px;background:var(--paper);color:var(--ink);font-size:12px;outline:none" value="">
+        <button class="btn sm pri" onclick="saveOuraToken()">Opslaan</button>
+      </div>
+      <button class="btn sm" style="width:100%" onclick="syncOura()">↺ Synchroniseer vandaag</button>
+    </div>
+    <div id="oura-r"></div>
   </div>
   <div class="tp" id="tp-degiro">
     <div class="card" style="margin-bottom:14px">
@@ -1466,6 +1479,32 @@ function initCK(){
   const slaap=S.hrv.sleep||7;
   const weekNum=Math.ceil(now.getDate()/7);
 
+  // ── STATS STRIP ───────────────────────────────────────────
+  const hrvEl=document.getElementById('ck-stat-hrv');
+  const sleepEl=document.getElementById('ck-stat-sleep');
+  const recEl=document.getElementById('ck-stat-rec');
+  const hrvArrEl=document.getElementById('ck-stat-hrv-arr');
+  const sleepArrEl=document.getElementById('ck-stat-sleep-arr');
+  const recArrEl=document.getElementById('ck-stat-rec-arr');
+  if(hrvEl){
+    hrvEl.textContent=hrv;
+    const cl=hrv>=55?'ck-stat-good':hrv>=45?'ck-stat-warn':'ck-stat-bad';
+    hrvEl.className='ck-stat-val '+cl;
+    if(hrvArrEl)hrvArrEl.textContent=hrv>=55?'↑':hrv>=45?'→':'↓';
+  }
+  if(sleepEl){
+    sleepEl.textContent=slaap.toFixed(1)+'u';
+    const cl=slaap>=7.5?'ck-stat-good':slaap>=6?'ck-stat-warn':'ck-stat-bad';
+    sleepEl.className='ck-stat-val '+cl;
+    if(sleepArrEl)sleepArrEl.textContent=slaap>=7.5?'↑':slaap>=6?'→':'↓';
+  }
+  if(recEl){
+    recEl.textContent=rec+'/10';
+    const cl=rec>=8?'ck-stat-good':rec>=6?'ck-stat-warn':'ck-stat-bad';
+    recEl.className='ck-stat-val '+cl;
+    if(recArrEl)recArrEl.textContent=rec>=8?'↑':rec>=6?'→':'↓';
+  }
+
   // ── HOOFD (mentale helderheid) ────────────────────────────
   // Gebaseerd op: slaap + HRV + weekpatroon
   const slaapScore=Math.min(10,Math.round(slaap));
@@ -1967,12 +2006,64 @@ function handleHRV(ev){
     const rows=parseCSV(text);if(!rows.length){toast('CSV kon niet worden verwerkt','err');return;}
     const r=rows[0];
     const rmssd=parseFloat(r.rmssd||r['rmssd_(ms)']||r.hrv||'');
-    if(!isNaN(rmssd)){S.hrv={rmssd:Math.round(rmssd),hr:parseFloat(r.hr||r.heart_rate||'58')||58,recovery:parseFloat(r.recovery||'7')||7,sleep:parseFloat(r.sleep||'7.2')||7.2};lsSet('tm2_hrv',S.hrv);document.getElementById('ck-hrv').textContent=S.hrv.rmssd;}
+    if(!isNaN(rmssd)){
+      S.hrv={rmssd:Math.round(rmssd),hr:parseFloat(r.hr||r.heart_rate||'58')||58,recovery:parseFloat(r.recovery||'7')||7,sleep:parseFloat(r.sleep||'7.2')||7.2};
+      lsSet('tm2_hrv',S.hrv);
+      initCK();
+    }
     document.getElementById('hrv-r').innerHTML=`<div class="card"><div class="ct">Laatste ${Math.min(rows.length,7)} metingen</div><table><thead><tr><th>Datum</th><th>rMSSD</th><th>HR</th><th>Herstel</th><th>Slaap</th></tr></thead><tbody>${rows.slice(0,7).map(r=>`<tr><td>${r.date||'–'}</td><td><strong>${r.rmssd||r['rmssd_(ms)']||'–'}</strong></td><td>${r.hr||'–'}</td><td>${r.recovery||'–'}</td><td>${r.sleep||'–'}</td></tr>`).join('')}</tbody></table></div>`;
     toast(rows.length+' HRV metingen geladen','ok');
   };
   rd.readAsText(file,'UTF-8');
 }
+
+function saveOuraToken(){
+  const tok=document.getElementById('oura-token-inp').value.trim();
+  if(!tok){toast('Voer een token in','err');return;}
+  lsSet('tm2_oura_token',tok);
+  toast('Token opgeslagen — klik Synchroniseer','ok');
+}
+
+async function syncOura(){
+  const tok=ls('tm2_oura_token','');
+  if(!tok){toast('Sla eerst een Oura token op','err');stab('oura',document.querySelector('.tab[onclick*="oura"]'));return;}
+  const el=document.getElementById('oura-r');
+  if(el)el.innerHTML='<div style="text-align:center;padding:20px;color:var(--m)">Laden...</div>';
+  try{
+    const today=new Date().toISOString().slice(0,10);
+    const [sleepRes,readRes]=await Promise.all([
+      fetch('https://api.ouraring.com/v2/usercollection/daily_sleep?start_date='+today+'&end_date='+today,{headers:{'Authorization':'Bearer '+tok}}),
+      fetch('https://api.ouraring.com/v2/usercollection/daily_readiness?start_date='+today+'&end_date='+today,{headers:{'Authorization':'Bearer '+tok}})
+    ]);
+    if(!sleepRes.ok)throw new Error('Oura: '+sleepRes.status+' — controleer je token');
+    const sleepData=await sleepRes.json();
+    const readData=await readRes.json();
+    const s=sleepData.data?.[0];
+    const r=readData.data?.[0];
+    if(!s&&!r){toast('Geen data voor vandaag gevonden','err');return;}
+    const sleepH=s?Math.round((s.total_sleep_duration||0)/360)/10:S.hrv.sleep;
+    const readScore=r?Math.round((r.score||70)/10):S.hrv.recovery;
+    const rmssd=s?Math.round(s.average_hrv||S.hrv.rmssd):S.hrv.rmssd;
+    S.hrv={rmssd,hr:S.hrv.hr,recovery:readScore,sleep:sleepH};
+    lsSet('tm2_hrv',S.hrv);
+    initCK();
+    if(el)el.innerHTML=`<div class="card">
+      <div class="ct">Oura · ${today}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;padding:8px 0">
+        <div><div style="font-size:22px;font-weight:700;color:var(--teal)">${rmssd}</div><div style="font-size:10px;color:var(--m);letter-spacing:.08em">HRV rMSSD</div></div>
+        <div><div style="font-size:22px;font-weight:700;color:var(--gold)">${sleepH}u</div><div style="font-size:10px;color:var(--m);letter-spacing:.08em">SLAAP</div></div>
+        <div><div style="font-size:22px;font-weight:700;color:var(--acc)">${readScore}/10</div><div style="font-size:10px;color:var(--m);letter-spacing:.08em">HERSTEL</div></div>
+      </div>
+    </div>`;
+    toast('Oura data gesynchroniseerd','ok');
+  }catch(err){
+    if(el)el.innerHTML='<div style="color:var(--acc);font-size:12px;padding:12px">'+err.message+'</div>';
+    toast(err.message,'err');
+  }
+}
+
+// Auto-sync Oura bij laden als token aanwezig
+(function(){const t=ls('tm2_oura_token','');if(t)setTimeout(syncOura,3000);})();
 
 function handleDG(ev){
   const file=ev.target.files[0];if(!file)return;
