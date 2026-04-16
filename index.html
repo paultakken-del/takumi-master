@@ -322,7 +322,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ck-balans-hint{font-family:var(--F);font-size:11px;color:var(--m);text-align:center;margin-top:10px;min-height:16px}
 
 /* BRIEFING */
-.ck-brief{margin:20px 16px 0;padding:16px 20px;background:transparent;border-radius:var(--r);border:1px solid var(--b);text-align:center}
+.ck-brief{margin:20px 16px 0;padding:14px 16px 14px 18px;background:transparent;border-radius:var(--r);border:1px solid var(--b);border-left:3px solid var(--acc);text-align:left}
 .ck-brief-inner{font-size:13px;line-height:1.7;color:var(--ink);font-family:var(--F);font-style:italic;opacity:.7}
 
 /* ACTIES */
@@ -340,8 +340,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ck-opening{margin:20px 16px 0;padding:12px 14px;background:transparent;border-radius:var(--r);border:1px solid var(--b);opacity:.85}
 .ck-opening-q{font-family:var(--F);font-size:13px;font-style:italic;letter-spacing:.04em;color:var(--ink);margin-bottom:10px;text-align:center;opacity:.75}
 .ck-opening-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;place-items:center}
-.ck-card{border:1px solid var(--b);border-radius:var(--rs);padding:14px 10px;text-align:center;cursor:pointer;transition:all .12s;background:var(--paper);-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%}
-.ck-card:active,.ck-card.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.ck-card{border:1px solid var(--b);border-radius:var(--rs);padding:14px 10px;text-align:center;cursor:pointer;transition:all .15s;background:var(--paper);-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%}
+.ck-card:active{background:var(--pw)}.ck-card.on{background:var(--ink);border-color:var(--ink);color:#fff;border-left:3px solid var(--acc)}
 .ck-card .ck-card-k{font-size:0;line-height:1;margin-bottom:6px;display:flex;align-items:center;justify-content:center;color:var(--ink)}
 .ck-card .ck-card-l{font-family:var(--F);font-size:9px;letter-spacing:.06em;text-transform:uppercase;opacity:.7}
 @keyframes fadeSlideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -546,7 +546,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
     <!-- GREETING -->
     <div class="ck-greeting">
-      <div class="ck-greeting-icon" id="ck-icon"></div><div class="ck-time" id="ck-g">Goedemorgen</div>
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:26px;color:#fff;margin:0 auto 10px" id="ck-icon-circle">匠</div>
+      <div class="ck-time" id="ck-g">Goedemorgen</div>
       <div class="ck-date" id="ck-d"></div>
     </div>
 
@@ -563,23 +564,23 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
 
 
-    <div class="ck-stats-strip" id="ck-stats">
+    <div class="ck-stats-strip" id="ck-stats" style="border-left:3px solid var(--acc)">
       <div class="ck-stat">
-        <span class="ck-stat-icon">心</span>
+        <span class="ck-stat-icon" style="font-family:var(--FJ);opacity:.8">心</span>
         <span class="ck-stat-val" id="ck-stat-hrv">–</span>
         <span class="ck-stat-arrow" id="ck-stat-hrv-arr"></span>
         <span class="ck-stat-lbl">HRV</span>
       </div>
       <div class="ck-stat-div"></div>
       <div class="ck-stat">
-        <span class="ck-stat-icon">💤</span>
+        <span class="ck-stat-icon" style="font-family:var(--FJ);opacity:.8">眠</span>
         <span class="ck-stat-val" id="ck-stat-sleep">–</span>
         <span class="ck-stat-arrow" id="ck-stat-sleep-arr"></span>
         <span class="ck-stat-lbl">slaap</span>
       </div>
       <div class="ck-stat-div"></div>
       <div class="ck-stat">
-        <span class="ck-stat-icon">⚡</span>
+        <span class="ck-stat-icon" style="font-family:var(--FJ);opacity:.8">氣</span>
         <span class="ck-stat-val" id="ck-stat-rec">–</span>
         <span class="ck-stat-arrow" id="ck-stat-rec-arr"></span>
         <span class="ck-stat-lbl">herstel</span>
@@ -589,12 +590,12 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <!-- ACTIES -->
     <div class="ck-actions">
       <button class="ck-btn-pulse" onclick="toggleDagRitme()">
-        <span style="font-family:var(--FJ);font-size:16px">脈</span>
+        <div style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:15px;flex-shrink:0">脈</div>
         <span id="dag-ritme-lbl">Dag Ritme</span>
       </button>
       <button class="ck-btn-board" onclick="raadpleegCouncil()">
-        <span style="font-family:var(--FJ);font-size:16px">匠</span>
-        <span>Raadpleeg Council</span>
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:15px;color:#fff;flex-shrink:0">匠</div>
+        <span>Council</span>
       </button>
     </div>
 
@@ -2281,22 +2282,18 @@ function openWarrior(agentId){
 
 function updateGreetIcon(){
   var h = new Date().getHours();
-  var icon = '';
+  var kanji, color;
   if(h >= 5 && h < 12){
-    // Ochtend: zon
-    icon = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/><line x1="19.8" y1="4.2" x2="17.7" y2="6.3"/><line x1="6.3" y1="17.7" x2="4.2" y2="19.8"/></svg>';
+    kanji = '朝'; color = '#c4832a'; // ochtend — warm goud
   } else if(h >= 12 && h < 17){
-    // Middag: halve zon
-    icon = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M4 17 Q4 10 12 10 Q20 10 20 17"/><line x1="2" y1="17" x2="22" y2="17"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="5.5" y1="8.5" x2="7" y2="10"/><line x1="18.5" y1="8.5" x2="17" y2="10"/></svg>';
+    kanji = '昼'; color = 'var(--acc)'; // middag — accent
   } else if(h >= 17 && h < 21){
-    // Avond: maan opkomend
-    icon = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M20 13.5A9 9 0 0 1 10.5 4a9 9 0 1 0 9.5 9.5z"/></svg>';
+    kanji = '夕'; color = '#7a4a8a'; // avond — paars
   } else {
-    // Nacht: sterren
-    icon = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><polygon points="12,2 14.4,9.6 22,9.6 16,14.4 18.4,22 12,17.6 5.6,22 8,14.4 2,9.6 9.6,9.6"/></svg>';
+    kanji = '夜'; color = '#384888'; // nacht — donkerblauw
   }
-  var el = document.getElementById('ck-icon');
-  if(el) el.innerHTML = icon;
+  var el = document.getElementById('ck-icon-circle');
+  if(el){ el.textContent = kanji; el.style.background = color; }
 }
 
 updateGreetIcon();
