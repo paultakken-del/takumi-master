@@ -433,7 +433,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .go-warriors{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .go-warrior{font-size:10px;padding:3px 9px;border-radius:20px;background:var(--pw);color:var(--m);border:1px solid var(--b);cursor:pointer;transition:all .1s;-webkit-tap-highlight-color:transparent;position:relative;z-index:2}
 .go-warrior:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
-#v-bo .agw{display:none}
+#v-bo .agw{display:block;padding:10px 14px;border-bottom:1px solid var(--b);overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch}
+#v-bo .ag{display:flex;flex-direction:row;gap:8px;width:max-content}
+#v-bo .ac{min-height:auto;min-width:60px;flex-shrink:0}
 #v-bo.grid-mode #go-grid{display:flex!important}
 #v-bo.grid-mode .ca{display:none!important}
 #v-bo.grid-mode .cia{display:none!important}
@@ -1972,7 +1974,7 @@ function renderChat(){
     if(u)return`<div class="msg u"><div class="bub">${esc(m.content)}</div></div>`;
     return`<div class="msg a"><div style="display:flex;gap:8px;align-items:flex-start">${avatar}<div style="flex:1;min-width:0"><div class="bub${m.stream?' stream':''}" style="border-left:3px solid ${a.col}">${esc(m.content)}</div><div class="mm">${sc}${tb}${fb}</div></div></div></div>`;
   }).join('');
-  c.scrollTop=c.scrollHeight;
+  requestAnimationFrame(function(){c.scrollTop=c.scrollHeight;});
 }
 
 async function send(){
@@ -2914,10 +2916,12 @@ function raadpleegCouncil(){
   var briefTxt = briefing ? briefing.textContent.trim() : '';
   if(briefTxt && briefTxt !== '–') ctx.push('Cockpit: ' + briefTxt);
 
-  // Navigeer naar board en open Master Council met context
-  go('bo');
+  // Navigeer direct naar chat (geen go-grid flash)
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('[data-v]').forEach(el=>el.classList.toggle('on',el.dataset.v==='bo'));
+  var vbo=document.getElementById('v-bo');if(vbo){vbo.classList.add('on');vbo.classList.remove('grid-mode');}
+  renderGrid();renderChat();upCtx();upLearn();
   setTimeout(function(){
-    showChat();
     selAg('board');
     if(ctx.length > 0){
       var ci = document.getElementById('ci');
@@ -2929,8 +2933,8 @@ function raadpleegCouncil(){
       }
     }
     // Scroll naar chat
-    var bleft = document.querySelector('.bleft');
-    if(bleft) setTimeout(function(){ bleft.scrollTop = bleft.scrollHeight; }, 100);
+    var cm = document.getElementById('cm');
+    if(cm) setTimeout(function(){ cm.scrollTop = cm.scrollHeight; }, 300);
   }, 200);
 }
 
@@ -2959,9 +2963,11 @@ function raadpleegVanuitRituelen(){
     ctx.push('Binnenkomst: ' + (bLabels[binnenkomst]||binnenkomst));
   }
 
-  go('bo');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('[data-v]').forEach(el=>el.classList.toggle('on',el.dataset.v==='bo'));
+  var vbo2=document.getElementById('v-bo');if(vbo2){vbo2.classList.add('on');vbo2.classList.remove('grid-mode');}
+  renderGrid();renderChat();upCtx();upLearn();
   setTimeout(function(){
-    showChat && showChat();
     selAg('board');
     var ci = document.getElementById('ci');
     if(ci && ctx.length > 0){
@@ -2970,8 +2976,8 @@ function raadpleegVanuitRituelen(){
       ci.style.height = 'auto';
       ci.style.height = Math.min(ci.scrollHeight, 120) + 'px';
     }
-    var bleft = document.querySelector('.bleft');
-    if(bleft) setTimeout(function(){ bleft.scrollTop = bleft.scrollHeight; }, 100);
+    var cm = document.getElementById('cm');
+    if(cm) setTimeout(function(){ cm.scrollTop = cm.scrollHeight; }, 300);
   }, 200);
 }
 
