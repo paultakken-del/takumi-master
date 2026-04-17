@@ -19,7 +19,9 @@
   --acc:#c4532a;--gold:#b5872a;--teal:#28897a;
   --b:rgba(18,17,14,.07);--bm:rgba(18,17,14,.14);
   --sh:0 1px 3px rgba(18,17,14,.06),0 4px 16px rgba(18,17,14,.08);
-  --r:12px;--rs:7px;
+  --r:12px;--rs:8px;
+  --sp-xs:8px;--sp-sm:12px;--sp-md:16px;--sp-lg:24px;--sp-xl:32px;
+  --text-xs:11px;--text-sm:13px;--text-md:15px;--text-lg:17px;--text-xl:22px;
   --F:'DM Mono',monospace;--FD:'Syne',sans-serif;--FJ:'Noto Serif JP',serif;
 }
 [data-theme="light"]{
@@ -102,9 +104,29 @@
 [data-theme="dark"] .toast.err{border-left-color:#e55}
 [data-theme="dark"] .field label{color:rgba(255,255,255,.5)}
 [data-theme="dark"] select{background:#1e1d1a;color:#ede9e0;border-color:rgba(255,255,255,.15)}
+[data-theme="dark"] .db{background:#1e1d1a;color:#ede9e0}
+[data-theme="dark"] .dt{color:#ede9e0}
+[data-theme="dark"] .ds{color:rgba(255,255,255,.5)}
+[data-theme="dark"] .gsb{background:#1a1916}
+[data-theme="dark"] .gsf{background:#1e1d1a;border-top-color:rgba(255,255,255,.07)}
+[data-theme="dark"] .gs{background:#1a1916}
+[data-theme="dark"] .gst{color:#ede9e0}
+[data-theme="dark"] .mi{border-bottom-color:rgba(255,255,255,.07)}
+[data-theme="dark"] .ai{border-bottom-color:rgba(255,255,255,.07)}
+[data-theme="dark"] .ak{border-color:rgba(255,255,255,.25)}
+[data-theme="dark"] .tb{background:var(--paper);border-bottom-color:rgba(255,255,255,.07)}
+[data-theme="dark"] .tab{color:rgba(255,255,255,.5)}
+[data-theme="dark"] .tab.on{color:#ede9e0;border-bottom-color:#ede9e0}
+[data-theme="dark"] .cr .csw{border-color:rgba(255,255,255,.15)}
+[data-theme="dark"] .ck-opening{background:#1e1d1a;border-color:rgba(255,255,255,.1)}
+[data-theme="dark"] .ck-synthese{background:#1e1d1a;color:#ede9e0}
+[data-theme="dark"] .go-card .go-warriors{border-top-color:rgba(255,255,255,.07)}
+[data-theme="dark"] .go-warrior{background:rgba(255,255,255,.06);color:rgba(255,255,255,.7)}
+[data-theme="dark"] .wk{background:#1e1d1a;border-color:rgba(255,255,255,.1);color:#ede9e0}
+[data-theme="dark"] .ri-anker{border-bottom-color:rgba(255,255,255,.08)}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--F);font-size:15px;font-weight:400;line-height:1.6}
-button,input,textarea,select{font-family:var(--F);font-size:13px;font-weight:500}
+button,input,textarea,select{font-family:var(--F);font-size:13px;font-weight:400}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--bm);border-radius:2px}
 #app{display:flex;height:100vh;height:100dvh}
 #sb{width:260px;flex-shrink:0;background:var(--ink2);display:flex;flex-direction:column}
@@ -122,12 +144,12 @@ button,input,textarea,select{font-family:var(--F);font-size:13px;font-weight:500
 .view{display:none;flex:1;flex-direction:column;overflow:hidden}
 .view.on{display:flex;flex-direction:column}
 .tb{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--b);flex-shrink:0;background:var(--pc);gap:10px;flex-wrap:wrap}
-.tb-t{font-family:var(--FD);font-size:17px;font-weight:700}
-.tb-s{font-size:13px;color:var(--m);margin-top:2px}
+.tb-t{font-family:var(--FD);font-size:var(--text-lg);font-weight:700}
+.tb-s{font-size:var(--text-sm);color:var(--m);margin-top:2px}
 .vs{flex:1;overflow-y:auto;padding:24px 20px 32px}
 .card{background:var(--pc);border-radius:var(--r);padding:20px;box-shadow:var(--sh)}
-.ct{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--m);margin-bottom:12px}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:var(--rs);border:1px solid var(--bm);background:transparent;color:var(--ink);cursor:pointer;font-size:13px;transition:all .12s;-webkit-tap-highlight-color:transparent;min-height:44px}
+.ct{font-size:var(--text-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--m);margin-bottom:var(--sp-sm)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:var(--rs);border:1px solid var(--bm);background:transparent;color:var(--ink);cursor:pointer;font-size:var(--text-sm);transition:all .12s;-webkit-tap-highlight-color:transparent;min-height:44px}
 .btn:hover{background:var(--pw)}.btn:active{transform:scale(.97)}
 .btn.pri{background:var(--ink);color:#fff;border-color:var(--ink)}.btn.pri:hover{background:var(--ink3)}
 .btn.acc{background:var(--acc);color:#fff;border-color:var(--acc)}.btn.acc:hover{background:#b04727}
@@ -137,15 +159,15 @@ button,input,textarea,select{font-family:var(--F);font-size:13px;font-weight:500
 .mg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
 .metric{background:var(--pc);border-radius:var(--r);padding:16px;box-shadow:var(--sh);cursor:pointer;transition:transform .1s}
 .metric:active{transform:scale(.97)}
-.mv{font-family:var(--FD);font-size:28px;font-weight:800;line-height:1;margin-bottom:4px}
+.mv{font-family:var(--FD);font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
 .ml{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--m)}
 .md{font-size:11px;margin-top:4px}
 .md.up{color:var(--teal)}.md.dn{color:var(--acc)}.md.nt{color:var(--m)}
 .brief{background:var(--ink3);color:rgba(255,255,255,.88);border-radius:var(--r);padding:20px;margin-bottom:16px}
-.brief-tag{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:8px}
+.brief-tag{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:var(--sp-xs)}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .fi{background:var(--pc);border-radius:var(--r);padding:14px;box-shadow:var(--sh)}
-.fa{font-size:13px;font-weight:500;margin-bottom:4px}
+.fa{font-size:13px;font-weight:400;margin-bottom:4px}
 .fm{font-size:11px;color:var(--m)}
 .fb{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;margin-bottom:6px}
 .bh{background:rgba(40,137,122,.12);color:var(--teal)}
@@ -160,7 +182,7 @@ button,input,textarea,select{font-family:var(--F);font-size:13px;font-weight:500
 .ac:hover{background:var(--pc);border-color:var(--bm)}.ac:active{transform:scale(.97)}
 .ac.on,.ac.bm{background:var(--ink3);color:#fff}
 .ac.bm{grid-column:1/-1;padding:14px}
-.an{font-size:12px;font-weight:500;margin-top:4px}
+.an{font-size:12px;font-weight:400;margin-top:4px}
 .ad{font-size:10px;opacity:.8}
 .adot{width:7px;height:7px;border-radius:50%;float:right}
 .ca{flex:1;display:flex;flex-direction:column;min-height:0;overflow:visible}
@@ -187,7 +209,7 @@ button,input,textarea,select{font-family:var(--F);font-size:13px;font-weight:500
 .br{display:flex;flex-direction:column;overflow-y:auto}
 .cs{padding:16px;border-bottom:1px solid var(--b)}
 .ct2{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--m);margin-bottom:10px}
-.ci2{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:12px;line-height:1.5}
+.ci2{display:flex;align-items:flex-start;gap:8px;margin-bottom:var(--sp-xs);font-size:12px;line-height:1.5}
 .cd{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
 .qq{background:var(--pw);border:1px solid var(--b);border-radius:var(--rs);padding:9px 12px;cursor:pointer;font-size:12px;text-align:left;color:var(--ink);transition:all .1s;-webkit-tap-highlight-color:transparent;width:100%;display:block;margin-bottom:6px}
 .qq:hover{background:var(--pc);border-color:var(--bm)}.qq:active{transform:scale(.98)}
@@ -198,18 +220,18 @@ button,input,textarea,select{font-family:var(--F);font-size:13px;font-weight:500
 .tp{display:none;overflow-y:auto;padding:20px 22px}
 .tp.on{display:block}
 .ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
-.pt{font-family:var(--FD);font-size:36px;font-weight:800;line-height:1}
+.pt{font-family:var(--FD);font-size:36px;font-weight:700;line-height:1}
 .pg{background:rgba(40,137,122,.12);color:var(--teal);padding:3px 9px;border-radius:var(--rs);font-size:12px}
 .pr{background:rgba(196,83,42,.12);color:var(--acc);padding:3px 9px;border-radius:var(--rs);font-size:12px}
 table{width:100%;border-collapse:collapse}
 th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:6px 10px;text-align:left;border-bottom:1px solid var(--b)}
 td{padding:10px;border-bottom:1px solid var(--b);font-size:12px}
-.an2{font-weight:500;font-size:13px}.at{font-size:10px;color:var(--m)}
+.an2{font-weight:400;font-size:13px}.at{font-size:10px;color:var(--m)}
 .tb2{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px}
 .tc{background:rgba(181,135,42,.12);color:var(--gold)}.te{background:rgba(56,72,136,.12);color:#384888}
 .dz{border:1.5px dashed var(--bm);border-radius:var(--r);padding:32px;text-align:center;cursor:pointer;transition:all .12s}
 .dz:hover,.dz.drag{border-color:var(--acc);background:rgba(196,83,42,.04)}
-.dz-ico{font-size:28px;margin-bottom:8px;opacity:.5}
+.dz-ico{font-size:28px;margin-bottom:var(--sp-xs);opacity:.5}
 .dz-t{font-size:13px;color:var(--m);margin-bottom:4px}
 .dz-s{font-size:11px;color:var(--f)}
 .gg{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
@@ -265,15 +287,15 @@ td{padding:10px;border-bottom:1px solid var(--b);font-size:12px}
 .sp{color:var(--teal)}.sn{color:var(--acc)}.sm{color:var(--gold)}
 .rg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
 .rs{background:var(--pc);border-radius:var(--r);padding:16px;box-shadow:var(--sh);text-align:center}
-.rv{font-family:var(--FD);font-size:28px;font-weight:800}
+.rv{font-family:var(--FD);font-size:28px;font-weight:700}
 .rl{font-size:10px;color:var(--m);text-transform:uppercase;letter-spacing:.08em}
 .ri{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--b)}
-.db2{margin-bottom:8px}
+.db2{margin-bottom:var(--sp-xs)}
 .db2-l{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
 .db2-t{height:5px;background:var(--pw);border-radius:3px;overflow:hidden}
 .db2-f{height:100%;border-radius:3px;background:var(--acc)}
 .pw2{max-width:560px;margin:0 auto}
-.pst{display:flex;gap:6px;margin-bottom:24px}
+.pst{display:flex;gap:6px;margin-bottom:var(--sp-lg)}
 .ps{flex:1;height:3px;background:var(--pw);border-radius:2px;transition:background .3s}
 .ps.done{background:var(--teal)}.ps.cur{background:var(--acc)}
 .pq{font-family:var(--FD);font-size:18px;font-weight:700;margin-bottom:6px}
@@ -287,7 +309,7 @@ td{padding:10px;border-bottom:1px solid var(--b);font-size:12px}
 .hf input{width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:9px 11px;background:var(--paper);color:var(--ink);font-size:14px;outline:none;text-align:center}
 .pn{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
 .rw{margin-bottom:16px}
-.rval{font-family:var(--FD);font-size:32px;font-weight:800;text-align:center;margin-bottom:8px}
+.rval{font-family:var(--FD);font-size:32px;font-weight:700;text-align:center;margin-bottom:var(--sp-xs)}
 input[type=range]{width:100%;accent-color:var(--acc)}
 #mob{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--ink2);border-top:1px solid rgba(255,255,255,.1);padding:6px 0 env(safe-area-inset-bottom,6px);z-index:90}
 .mn2{display:flex;justify-content:space-around}
@@ -332,14 +354,14 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ck-triad-item:last-child{}
 .ck-triad-center{}
 /* no active states */
-.ck-triad-kanji{font-family:var(--FJ);font-size:32px;font-weight:200;line-height:1;margin-bottom:6px;color:var(--ink)}
-.ck-triad-label{font-family:var(--F);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--m);margin-bottom:8px}
+.ck-triad-kanji{font-family:var(--FJ);font-size:32px;font-weight:300;line-height:1;margin-bottom:6px;color:var(--ink)}
+.ck-triad-label{font-family:var(--F);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--m);margin-bottom:var(--sp-xs)}
 .ck-triad-val{font-family:var(--FD);font-size:28px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:4px}
 .ck-triad-sub{font-family:var(--F);font-size:10px;color:var(--m)}
 
 /* BALANS-AS */
 .ck-balans{margin:20px 24px 0}
-.ck-balans-label{display:flex;justify-content:space-between;align-items:center;font-family:var(--F);font-size:10px;color:var(--m);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.ck-balans-label{display:flex;justify-content:space-between;align-items:center;font-family:var(--F);font-size:10px;color:var(--m);letter-spacing:.08em;text-transform:uppercase;margin-bottom:var(--sp-xs)}
 .ck-balans-track{position:relative;height:6px;background:var(--pw);border-radius:3px;overflow:visible}
 .ck-balans-center{position:absolute;left:50%;top:-2px;width:1px;height:10px;background:var(--bm)}
 .ck-balans-bar{position:absolute;top:0;left:50%;height:6px;border-radius:3px;background:var(--acc);transition:all .6s ease;width:0;transform-origin:left}
@@ -378,7 +400,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 @media(max-width:400px){.mg{grid-template-columns:repeat(2,1fr)!important}}
 
 /* ── HAMBURGER + SIDEBAR SLIDE-IN ── */
-#ham-btn{position:fixed;top:14px;right:14px;z-index:300;background:var(--acc);border:none;border-radius:8px;padding:12px;cursor:pointer;flex-direction:column;gap:5px;display:none;box-shadow:0 2px 12px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent}
+#ham-btn{position:fixed;top:14px;right:14px;z-index:300;background:var(--acc);border:none;border-radius:var(--rs);padding:12px;cursor:pointer;flex-direction:column;gap:5px;display:none;box-shadow:0 2px 12px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent}
 .ham-line{width:20px;height:2px;background:rgba(255,255,255,.9);border-radius:1px;transition:.2s}
 #sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:95;backdrop-filter:blur(2px)}
 #sb-overlay.on{display:block}
@@ -412,8 +434,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 }
 
 .sb-footer{padding:12px 16px 16px;border-top:1px solid rgba(255,255,255,.06);position:sticky;bottom:0;background:var(--ink2);z-index:2}
-.sb-user{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sb-logout{width:100%;background:none;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:8px 12px;color:rgba(255,255,255,.45);font-size:11px;letter-spacing:.08em;cursor:pointer;text-align:left;transition:all .15s}
+.sb-user{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:var(--sp-xs);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-logout{width:100%;background:none;border:1px solid rgba(255,255,255,.12);border-radius:var(--rs);padding:8px 12px;color:rgba(255,255,255,.45);font-size:11px;letter-spacing:.08em;cursor:pointer;text-align:left;transition:all .15s}
 .sb-logout:hover{border-color:rgba(196,83,42,.5);color:var(--acc)}
 
 #v-da:not(.on){display:none!important}
@@ -428,8 +450,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .go-card.go-fu{border-left-color:#6B8B6B}
 .go-card.go-ka{border-left-color:var(--acc)}
 .go-card.go-ku{border-left-color:#7A6B8A}
-.go-card-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:8px}
-.go-kanji{font-family:var(--FJ);font-size:32px;font-weight:200;line-height:1;color:var(--ink)}
+.go-card-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:var(--sp-xs)}
+.go-kanji{font-family:var(--FJ);font-size:32px;font-weight:300;line-height:1;color:var(--ink)}
 .go-name{font-family:var(--FD);font-size:14px;font-weight:700;color:var(--ink);letter-spacing:.04em}
 .go-sub{font-size:11px;color:var(--m);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
 .go-desc{font-size:12px;color:var(--m);line-height:1.6}
@@ -498,7 +520,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ri-inp-blok{padding:12px;border-radius:var(--rs);background:var(--pw)}
 .ri-inp-blok.ri-teal{border-top:2px solid var(--teal)}
 .ri-inp-blok.ri-acc{border-top:2px solid var(--acc)}
-.ri-inp-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.ri-inp-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:var(--sp-xs)}
 .ri-inp-blok.ri-teal .ri-inp-label{color:var(--teal)}
 .ri-inp-blok.ri-acc .ri-inp-label{color:var(--acc)}
 .ri-list{min-height:4px;margin-bottom:6px}
@@ -513,7 +535,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ri-textarea:focus{border-color:var(--bm)}
 
 
-.ri-instr{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--m);margin-bottom:8px;margin-top:2px}
+.ri-instr{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--m);margin-bottom:var(--sp-xs);margin-top:2px}
 .ri-pill{padding:8px 16px;border-radius:20px;border:1.5px solid var(--b);background:var(--paper);color:var(--ink);font-size:13px;cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent;font-family:var(--F);text-align:left}
 .ri-pill:hover{border-color:var(--bm);background:var(--pw)}
 .ri-pill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -521,7 +543,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
 
 /* ── STATS STRIP ── */
-.ck-stats-strip{display:flex;align-items:center;justify-content:space-between;margin:20px 0 0;padding:14px 16px;background:var(--pw);border-radius:var(--rs)}
+.ck-stats-strip{display:flex;align-items:center;justify-content:space-between;margin:var(--sp-lg) 0 0;padding:14px 16px;background:var(--pw);border-radius:var(--rs)}
 .ck-stat{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;min-width:0;overflow:hidden}
 .ck-stat-icon{font-size:14px;opacity:.5;line-height:1}
 .ck-stat-val{font-family:var(--FD);font-size:15px;font-weight:700;color:var(--ink);line-height:1;white-space:nowrap}
@@ -556,18 +578,18 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <nav id="sb">
   <div class="sb-logo"><span class="sb-kanji">匠</span><div><div class="sb-brand">Takumi</div></div></div>
   <div class="sb-nav">
-    <div class="sb-sec">☀ Dag</div>
+    <div class="sb-sec">Dag</div>
     <div class="ni on" data-v="ck"><span class="ico">⬡</span>Cockpit</div>
     <div class="ni" data-v="ri"><span class="ico">習</span>Rituelen</div>
     <div class="ni" data-v="dy"><span class="ico" style="font-family:var(--FJ)">脈</span>Dag Pulse</div>
     <div class="ni" data-v="bo"><span class="ico">◈</span>Master Council</div>
-    <div class="sb-sec">週 Week · 律 Maand</div>
+    <div class="sb-sec">Week · Maand</div>
     <div class="ni" id="nav-wr" data-v="wr"><span class="ico" style="font-family:var(--FJ)">週</span>Week Reflectie</div>
     <div class="ni" data-v="rt"><span class="ico" style="font-family:var(--FJ)">律</span>Maandpatroon</div>
-    <div class="sb-sec">配 Strategie</div>
+    <div class="sb-sec">Strategie</div>
     <div class="ni" data-v="gl"><span class="ico">◇</span>Doelen</div>
     <div class="ni" data-v="wc"><span class="ico">○</span>World Context</div>
-    <div class="sb-sec">▤ Data</div>
+    <div class="sb-sec">Data</div>
     <div class="ni" data-v="da"><span class="ico">▤</span>Data Hub</div>
   </div>
   <div class="sb-foot" style="display:flex;align-items:center;justify-content:space-between">
@@ -617,15 +639,15 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     </div>
 
     <!-- SYNTHESE BRIEF — wat het systeem concludeert -->
-    <div id="ck-synthese" style="margin:16px 0 0;padding:14px 16px;background:var(--pw);border-radius:var(--rs);border-left:3px solid var(--acc);font-size:13px;line-height:1.6;color:var(--ink)"></div>
+    <div id="ck-synthese" style="margin:var(--sp-md) 0 0;padding:14px 16px;background:var(--pw);border-radius:var(--rs);border-left:3px solid var(--acc);font-size:13px;line-height:1.6;color:var(--ink)"></div>
 
     <!-- DOELEN VOORTGANG STRIP — max 3 actieve doelen -->
-    <div id="ck-goals-strip" style="margin:16px 0 0"></div>
+    <div id="ck-goals-strip" style="margin:var(--sp-md) 0 0"></div>
 
     <!-- QUOTE -->
     <div style="padding:16px 24px 4px;text-align:center">
       <div id="ck-quote" style="font-size:13px;color:var(--ink);opacity:.6;font-style:italic;line-height:1.7;word-wrap:break-word"> </div>
-      <div id="ck-quote-auth" style="font-size:10px;color:var(--ink);opacity:.35;margin-top:4px;letter-spacing:.1em;text-transform:uppercase"> </div>
+      <div id="ck-quote-auth" style="font-size:var(--text-xs);color:var(--ink);opacity:.35;margin-top:4px;letter-spacing:.1em;text-transform:uppercase"> </div>
     </div>
 
     <!-- DAGELIJKSE OPENING — micro-ritueel -->
@@ -642,17 +664,17 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div class="ck-balans" id="ck-balans"><div class="ck-balans-track"><div class="ck-balans-center"></div><div class="ck-balans-bar" id="ck-balans-bar"></div><div class="ck-balans-dot" id="ck-balans-dot"></div></div><div class="ck-balans-hint" id="ck-balans-hint"></div></div>
     <!-- DAG VOORTGANG — leesbaar -->
     <div style="display:flex;justify-content:center;align-items:center;gap:16px;padding:16px 16px 0">
-      <div id="dprog-ri" style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--m)">
+      <div id="dprog-ri" style="display:flex;align-items:center;gap:5px;font-size:var(--text-xs);color:var(--m)">
         <div id="dot-ri" style="width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.12);transition:background .4s;flex-shrink:0"></div>
         <span>Rituelen</span>
       </div>
       <div style="width:16px;height:1px;background:var(--b)"></div>
-      <div id="dprog-dy" style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--m)">
+      <div id="dprog-dy" style="display:flex;align-items:center;gap:5px;font-size:var(--text-xs);color:var(--m)">
         <div id="dot-dy" style="width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.12);transition:background .4s;flex-shrink:0"></div>
         <span>Pulse</span>
       </div>
       <div style="width:16px;height:1px;background:var(--b)"></div>
-      <div id="dprog-bo" style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--m)">
+      <div id="dprog-bo" style="display:flex;align-items:center;gap:5px;font-size:var(--text-xs);color:var(--m)">
         <div id="dot-bo" style="width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.12);transition:background .4s;flex-shrink:0"></div>
         <span>Advies</span>
       </div>
@@ -660,12 +682,12 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
     <!-- DAG CYCLUS — drie geneste stappen -->
     <div style="padding:16px 16px 0">
-      <div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--m);margin-bottom:10px">Dag cyclus</div>
+      <div style="font-size:var(--text-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--m);margin-bottom:var(--sp-sm)">Dag cyclus</div>
       <div style="display:flex;align-items:center;gap:0">
         <button onclick="go('ri')" style="flex:1;background:none;border:1.5px solid var(--acc);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;position:relative" onmouseenter="this.style.background='rgba(196,83,42,.06)'" onmouseleave="this.style.background='none'">
           <div style="width:36px;height:36px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:#fff">習</div>
           <span style="font-size:10px;color:var(--ink);letter-spacing:.04em">Rituelen</span>
-          <div id="onb-badge" style="display:none;position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--acc);color:#fff;font-size:8px;padding:2px 7px;border-radius:10px;white-space:nowrap;letter-spacing:.04em;transition:opacity .4s">Begin hier</div>
+          <div id="onb-badge" style="display:none;position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--acc);color:#fff;font-size:8px;padding:2px 7px;border-radius:var(--rs);white-space:nowrap;letter-spacing:.04em;transition:opacity .4s">Begin hier</div>
         </button>
         <div style="flex:1;height:1.5px;background:var(--b);position:relative"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--m)">→</div></div>
         <button onclick="go('dy')" style="flex:1;background:none;border:1.5px solid var(--b);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s" onmouseenter="this.style.borderColor='var(--acc)'" onmouseleave="this.style.borderColor='var(--b)'">
@@ -688,7 +710,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   <div class="bl">
     <div class="bleft">
       <div class="agw" id="agw">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-xs)">
           <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Warrior</span>
           <button onclick="showGoGrid()" style="background:none;border:1px solid var(--b);border-radius:20px;cursor:pointer;padding:3px 10px;font-size:11px;color:var(--ink);-webkit-tap-highlight-color:transparent;line-height:1.5">◈ Elementen</button>
         </div>
@@ -779,7 +801,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <tbody id="p-rows"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--m)">Klik "↺ Live koersen" om te laden</td></tr></tbody></table>
   </div>
   <div class="tp" id="tp-health">
-    <div class="card" style="margin-bottom:14px">
+    <div class="card" style="margin-bottom:var(--sp-md)">
       <div class="ct">HRV4Training import</div>
       <div class="dz" onclick="document.getElementById('hrv-f').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="event.preventDefault();this.classList.remove('drag');handleHRV({target:{files:event.dataTransfer.files}})">
         <input type="file" id="hrv-f" accept=".csv,.CSV" style="display:none" onchange="handleHRV(event)">
@@ -790,7 +812,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div id="hrv-r"></div>
   </div>
   <div class="tp" id="tp-oura">
-    <div class="card" style="margin-bottom:14px">
+    <div class="card" style="margin-bottom:var(--sp-md)">
       <div class="ct">Oura Ring — Live koppeling</div>
       <p style="font-size:12px;color:var(--m);margin-bottom:14px">Genereer een Personal Access Token via <strong>cloud.ouraring.com/personal-access-tokens</strong> en plak hem hieronder. Data wordt lokaal opgeslagen.</p>
       <div style="display:flex;gap:8px;margin-bottom:10px">
@@ -802,7 +824,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div id="oura-r"></div>
   </div>
   <div class="tp" id="tp-degiro">
-    <div class="card" style="margin-bottom:14px">
+    <div class="card" style="margin-bottom:var(--sp-md)">
       <div class="ct">DeGiro portfolio export</div>
       <p style="font-size:12px;color:var(--m);margin-bottom:14px">Export via DeGiro → Portfolio → Export CSV</p>
       <div class="dz" onclick="document.getElementById('dg-f').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="event.preventDefault();this.classList.remove('drag');handleDG({target:{files:event.dataTransfer.files}})">
@@ -830,7 +852,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <!-- WEEKLY REVIEW -->
 <div class="view" id="v-wr">
   <div class="tb"><div><div class="tb-t">律 Week Reflectie <span id="wr-vrijdag-badge" style="display:none;font-size:10px;background:var(--acc);color:#fff;padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:middle">Vandaag</span></div><div class="tb-s" id="wr-w">Wekelijkse terugblik — inzichten, patronen, lessen</div></div><button class="btn sm pri" onclick="genReview()">⚡ Genereer</button></div>
-  <div class="vs" id="wr-body"><div style="text-align:center;padding:60px;color:var(--m)">Klik "⚡ Genereer" voor je wekelijkse AI review</div><div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--b);margin-top:8px"><span style="font-size:11px;color:var(--m)">週 Week cyclus · volgende laag</span><button onclick="go('rt')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">律 Maandpatroon <span style="font-size:14px">→</span></button></div></div>
+  <div class="vs" id="wr-body"><div style="text-align:center;padding:60px;color:var(--m)">Klik "⚡ Genereer" voor je wekelijkse AI review</div><div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--b);margin-top:var(--sp-xs)"><span style="font-size:11px;color:var(--m)">週 Week cyclus · volgende laag</span><button onclick="go('rt')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">律 Maandpatroon <span style="font-size:14px">→</span></button></div></div>
 </div>
 
 
@@ -842,17 +864,17 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   <div class="vs">
 
     <!-- MAAND POSITIE + PATROON als één verhaal -->
-    <div class="card" style="margin-bottom:16px">
+    <div class="card" style="margin-bottom:var(--sp-md)">
       <div class="ct" style="display:flex;justify-content:space-between;align-items:center">
         <span>Deze maand</span>
-        <span id="rt-week-badge" style="font-size:11px;color:var(--m)"></span>
+        <span id="rt-week-badge" style="font-size:var(--text-xs);color:var(--m)"></span>
       </div>
       <div id="rt-weekpos" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px"></div>
       <div id="rt-patroon" style="font-size:12px;line-height:1.7;padding:12px 14px;background:var(--pw);border-radius:var(--rs);border-left:3px solid var(--acc);color:var(--ink)"></div>
     </div>
 
     <!-- HRV TREND — conditioneel -->
-    <div class="card" style="margin-bottom:16px" id="rt-hrv-card">
+    <div class="card" style="margin-bottom:var(--sp-md)" id="rt-hrv-card">
       <div class="ct">HRV · 14 dagen</div>
       <div id="rt-trend" style="padding:4px 0">
         <div id="rt-geen-oura" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
@@ -871,7 +893,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     </div>
 
     <!-- VOLGENDE STAP -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding:14px 16px;border-top:1px solid var(--b)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:var(--sp-xs);padding:14px 16px;border-top:1px solid var(--b)">
       <span style="font-size:11px;color:var(--m)">律 Maand cyclus · volgende laag</span>
       <button onclick="go('gl')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">
         配 Doelen <span style="font-size:14px">→</span>
@@ -894,7 +916,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       </select>
     </div>
     <div class="field"><label>Intentie</label><input type="text" id="rt-intent" placeholder="Bijv: focus op herstel en wandelen" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:9px;background:var(--paper);color:var(--ink);font-size:13px;outline:none"></div>
-    <div style="display:flex;gap:8px;margin-top:16px">
+    <div style="display:flex;gap:8px;margin-top:var(--sp-md)">
       <button class="btn gh" style="flex:1" onclick="closeRustweek()">Annuleren</button>
       <button class="btn pri" style="flex:1" onclick="saveRustweek()">Opslaan</button>
     </div>
@@ -971,7 +993,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       </div>
       <div class="ri-anker-body" id="ri-body3">
         <div id="ri-fouten-list" class="ri-list" style="margin-bottom:10px"></div>
-        <div class="ri-2col" style="margin-bottom:8px">
+        <div class="ri-2col" style="margin-bottom:var(--sp-xs)">
           <input id="ri-fout-inp" type="text" class="ri-inp" placeholder="De fout of het patroon..." onclick="event.stopPropagation()">
           <input id="ri-les-inp" type="text" class="ri-inp" placeholder="De les die ik trek..." onclick="event.stopPropagation()">
         </div>
@@ -1885,7 +1907,7 @@ function initCK(){
       strip.innerHTML=actief.map(function(g){
         var pct=Math.max(0,Math.min(100,g.pct||0));
         var col=pct<25?'var(--acc)':pct<75?'var(--gold)':'var(--teal)';
-        return'<div onclick="go(\'gl\')" style="margin-bottom:8px;cursor:pointer">'
+        return'<div onclick="go(\'gl\')" style="margin-bottom:var(--sp-xs);cursor:pointer">'
           +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'
           +'<span style="font-size:13px;font-weight:500;color:var(--ink)">'+(g.ico||'◇')+' '+g.title+'</span>'
           +'<span style="font-size:12px;color:'+col+';font-weight:600">'+pct+'%</span>'
@@ -2188,7 +2210,7 @@ function drawPulse(){
     var vrijdagExtra = isFriday ? `
       <div style="margin-top:20px;padding:14px;background:rgba(40,137,122,.08);border-radius:var(--rs);border-left:3px solid var(--teal)">
         <div style="font-size:11px;font-weight:600;color:var(--teal);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">律 Vrijdagsritueel</div>
-        <div style="font-size:12px;color:var(--m);margin-bottom:8px">Weekbalans — energie gegeven vs. ontvangen:</div>
+        <div style="font-size:12px;color:var(--m);margin-bottom:var(--sp-xs)">Weekbalans — energie gegeven vs. ontvangen:</div>
         <div style="display:flex;gap:8px;margin-bottom:12px">
           <div style="flex:1"><div style="font-size:10px;color:var(--m);margin-bottom:4px">Energiegever van de week</div><input type="text" id="fri-gever" placeholder="Bijv: Deep work sessie" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:8px;font-size:12px;background:var(--paper);color:var(--ink)"></div>
           <div style="flex:1"><div style="font-size:10px;color:var(--m);margin-bottom:4px">Energienemer van de week</div><input type="text" id="fri-nemer" placeholder="Bijv: Te veel vergaderingen" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:8px;font-size:12px;background:var(--paper);color:var(--ink)"></div>
@@ -2201,8 +2223,8 @@ function drawPulse(){
     B.innerHTML = `<div class="pq">間 Ma — Bewuste ruimte</div>
       <div class="ph2">De meester weet wanneer te loslaten. Wat geef je vandaag los?</div>
       <div style="margin-bottom:16px">
-        <div style="font-size:11px;color:var(--m);margin-bottom:8px">Ik laat los:</div>
-        <input type="text" id="ma-inp1" placeholder="Bijv: De urgentie om alles af te ronden" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:10px 12px;font-size:13px;background:var(--paper);color:var(--ink);margin-bottom:8px">
+        <div style="font-size:11px;color:var(--m);margin-bottom:var(--sp-xs)">Ik laat los:</div>
+        <input type="text" id="ma-inp1" placeholder="Bijv: De urgentie om alles af te ronden" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:10px 12px;font-size:13px;background:var(--paper);color:var(--ink);margin-bottom:var(--sp-xs)">
         <input type="text" id="ma-inp2" placeholder="Bijv: Controle over wat ik niet kan beïnvloeden" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:10px 12px;font-size:13px;background:var(--paper);color:var(--ink)">
       </div>
       ${vrijdagExtra}
@@ -2223,7 +2245,7 @@ function drawPulse(){
     if(data.rmssd){S.hrv={rmssd:data.rmssd,sleep:data.sleep||S.hrv.sleep,recovery:data.recovery||S.hrv.recovery,hr:S.hrv.hr};lsSet('tm2_hrv',S.hrv);document.getElementById('ck-hrv').textContent=data.rmssd;}
     const sum=('energie '+(data.energy||6)+'/10, HRV '+(data.rmssd||S.hrv.rmssd)+', binnenkomst '+(RituelenData&&RituelenData.binnenkomst||'onbekend')).replace(/'/g,'');
     B.innerHTML=`<div class="pq">Board Insight</div><div class="ph2">Samenvatting check-in</div>
-      <div class="card" style="margin-bottom:16px"><div style="font-size:13px;line-height:1.7">Energie <strong>${data.energy||6}/10</strong> · HRV <strong>${data.rmssd||S.hrv.rmssd}</strong> rMSSD · Stemming <strong>${data.mood||'–'}</strong></div></div>
+      <div class="card" style="margin-bottom:var(--sp-md)"><div style="font-size:13px;line-height:1.7">Energie <strong>${data.energy||6}/10</strong> · HRV <strong>${data.rmssd||S.hrv.rmssd}</strong> rMSSD · Stemming <strong>${data.mood||'–'}</strong></div></div>
       <div class="pn">
         <button class="btn gh sm" onclick="go('ck')">Naar Cockpit</button>
         <button class="btn pri" onclick="go('bo');setTimeout(()=>{selAg('board');document.getElementById('ci').value='Daginsight: ${sum}. Losgelaten: ${S.pulse.data.ma1||'niets'}.';send();},300)">Board advies →</button>
@@ -2492,8 +2514,8 @@ function renderGoals(){
     document.getElementById('gg').innerHTML=`
       <div style="padding:40px 24px;text-align:center">
         <div style="font-family:var(--FJ);font-size:40px;opacity:.2;margin-bottom:16px">配</div>
-        <div style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px">Wat wil je dit jaar bereiken?</div>
-        <div style="font-size:14px;color:var(--m);line-height:1.6;margin-bottom:24px">Takumi werkt het beste als het weet waar je naartoe wilt. Stel je eerste doel in — het systeem houdt het bij en geeft advies op basis van je staat van de dag.</div>
+        <div style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:var(--sp-xs)">Wat wil je dit jaar bereiken?</div>
+        <div style="font-size:14px;color:var(--m);line-height:1.6;margin-bottom:var(--sp-lg)">Takumi werkt het beste als het weet waar je naartoe wilt. Stel je eerste doel in — het systeem houdt het bij en geeft advies op basis van je staat van de dag.</div>
         <button class="btn pri" style="width:100%;justify-content:center;font-size:15px;min-height:52px" onclick="checkSnoei()">+ Stel je eerste doel in</button>
       </div>`;
     return;
@@ -2612,7 +2634,7 @@ async function loadWorld(){
     if(!wi?.items)throw new Error('Geen geldige data ontvangen');
     const sc=s=>s==='Positief'?'sp':s==='Negatief'?'sn':'sm';
     const disclaimer=isLive
-      ?'<div style="font-size:10px;color:var(--teal);margin-top:8px;text-align:right">✓ Live webdata · '+new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})+'</div>'
+      ?'<div style="font-size:10px;color:var(--teal);margin-top:var(--sp-xs);text-align:right">✓ Live webdata · '+new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})+'</div>'
       :'<div style="font-size:10px;color:var(--acc);margin-top:10px;padding:8px 12px;border:1px solid rgba(196,83,42,.2);border-radius:var(--rs)">⚠ AI-schatting op basis van trainingsdata — geen live marktdata. Gebruik niet voor beleggingsbeslissingen.</div>';
     el.innerHTML=`<div class="wg">${wi.items.map(it=>`<div class="wc"><div class="wd ${sc(it.sentiment)}">${it.domain} · ${it.sentiment} · ${it.score}/10</div><div class="wh">${it.headline}</div><div class="ws">${it.summary}</div><div class="wi">Impact: ${it.impact}</div></div>`).join('')}</div>${wi.portfolioSignal?`<div class="card" style="border-left:3px solid var(--acc);padding:14px;margin-top:12px"><div class="ct">Portfolio signaal</div><div style="font-size:13px">${wi.portfolioSignal}</div></div>`:''}${disclaimer}`;
     toast('World Intelligence bijgewerkt'+(isLive?' (live)':''),'ok');
@@ -2640,10 +2662,10 @@ async function genReview(){
         <div class="rs"><div class="rv" style="color:var(--teal)">${r.actionsCompleted}</div><div class="rl">Acties voltooid</div></div>
         <div class="rs"><div class="rv" style="color:var(--acc)">${lp}</div><div class="rl">Positieve feedback</div></div>
       </div>
-      <div class="card" style="margin-bottom:16px"><div class="ct">Insights</div>${r.insights.map(i=>`<div class="ri"><div style="font-size:20px;flex-shrink:0">${i.ico}</div><div><strong>${i.title}</strong><div style="font-size:12px;color:var(--m);margin-top:3px">${i.body}</div></div></div>`).join('')}</div>
-      <div class="card" style="margin-bottom:16px"><div class="ct">Domein verdeling</div>${Object.entries(r.domainBreakdown).map(([d,v])=>`<div class="db2"><div class="db2-l"><span>${d}</span><span>${v}%</span></div><div class="db2-t"><div class="db2-f" style="width:${v}%"></div></div></div>`).join('')}</div>
+      <div class="card" style="margin-bottom:var(--sp-md)"><div class="ct">Insights</div>${r.insights.map(i=>`<div class="ri"><div style="font-size:20px;flex-shrink:0">${i.ico}</div><div><strong>${i.title}</strong><div style="font-size:12px;color:var(--m);margin-top:3px">${i.body}</div></div></div>`).join('')}</div>
+      <div class="card" style="margin-bottom:var(--sp-md)"><div class="ct">Domein verdeling</div>${Object.entries(r.domainBreakdown).map(([d,v])=>`<div class="db2"><div class="db2-l"><span>${d}</span><span>${v}%</span></div><div class="db2-t"><div class="db2-f" style="width:${v}%"></div></div></div>`).join('')}</div>
       <div class="card" style="border-left:3px solid var(--teal)"><div class="ct">Focus volgende week</div><div style="font-size:13px">${r.nextWeekFocus}</div>${r.patternNote?`<div style="font-size:11px;color:var(--m);margin-top:6px;font-style:italic">${r.patternNote}</div>`:''}</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--b);margin-top:8px"><span style="font-size:11px;color:var(--m)">週 Week cyclus · volgende laag</span><button onclick="go('rt')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">律 Maandpatroon →</button></div>`;
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--b);margin-top:var(--sp-xs)"><span style="font-size:11px;color:var(--m)">週 Week cyclus · volgende laag</span><button onclick="go('rt')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">律 Maandpatroon →</button></div>`;
     toast('Weekly review gegenereerd','ok');
   }catch(e){el.innerHTML=`<div class="card" style="color:var(--acc)">Genereren mislukt: ${e.message}<br><button class="btn sm" style="margin-top:10px" onclick="genReview()">↺ Opnieuw</button></div>`;}
 }
