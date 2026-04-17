@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Takumi Master 匠</title>
-<meta name="theme-color" content="#1a1916">
+<meta name="theme-color" content="#f5f0e8">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231a1916'/><text x='16' y='24' font-family='serif' font-size='20' text-anchor='middle' fill='%23c4532a'>匠</text></svg>">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Takumi">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23f5f0e8'/><text x='16' y='24' font-family='serif' font-size='20' text-anchor='middle' fill='%23c4532a'>匠</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&family=DM+Mono:wght@300;400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -79,17 +82,25 @@
 [data-theme="dark"] #theme-btn{color:rgba(255,255,255,.4)!important;border-color:rgba(255,255,255,.15)!important}
 [data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{background:#1e1d1a;color:#ede9e0;border-color:rgba(255,255,255,.1)}
 [data-theme="dark"] .tb{border-bottom-color:rgba(255,255,255,.07)}
-[data-theme="dark"] .btn{border-color:rgba(255,255,255,.18);color:#ede9e0}
-[data-theme="dark"] .btn:hover{background:rgba(255,255,255,.06)}
-[data-theme="dark"] .btn.gh{border-color:transparent;color:rgba(255,255,255,.45)}
-[data-theme="dark"] .btn.gh:hover{background:rgba(255,255,255,.07);color:#ede9e0}
+[data-theme="dark"] .btn{border-color:rgba(255,255,255,.22);color:#ede9e0;background:transparent}
+[data-theme="dark"] .btn:hover,[data-theme="dark"] .btn:active{background:rgba(255,255,255,.08)}
+[data-theme="dark"] .btn.gh{border-color:transparent;color:rgba(255,255,255,.5)}
+[data-theme="dark"] .btn.gh:hover{background:rgba(255,255,255,.08);color:#ede9e0}
 [data-theme="dark"] .btn.pri{background:#ede9e0;color:#181714;border-color:#ede9e0}
-[data-theme="dark"] .btn.pri:hover{background:#fff}
-[data-theme="dark"] .btn.sm{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7);min-height:36px}
-[data-theme="dark"] .ri-volgende-btn{border-color:rgba(255,255,255,.18);color:#ede9e0}
-[data-theme="dark"] .ri-anker-hd{border-bottom-color:rgba(255,255,255,.07)}
-[data-theme="dark"] .ck-synthese{background:#1e1d1a;border-left-color:var(--acc)}
-[data-theme="dark"] .ck-goals-strip .dashed{border-color:rgba(255,255,255,.2)}
+[data-theme="dark"] .btn.pri:hover{background:#fff;color:#181714}
+[data-theme="dark"] .btn.acc{background:var(--acc);color:#fff;border-color:var(--acc)}
+[data-theme="dark"] .btn.sm{border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.75);min-height:36px}
+[data-theme="dark"] .btn.sm.pri{background:#ede9e0;color:#181714;border-color:#ede9e0}
+[data-theme="dark"] .ri-volgende-btn{border-color:rgba(255,255,255,.2);color:#ede9e0;background:transparent}
+[data-theme="dark"] .ri-anker{border-bottom-color:rgba(255,255,255,.07)}
+[data-theme="dark"] .ck-synthese{background:#1e1d1a;border-left-color:var(--acc);color:#ede9e0}
+[data-theme="dark"] .do-box{background:#1e1d1a;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+[data-theme="dark"] .do-title{color:#ede9e0}
+[data-theme="dark"] .toast{background:#2a2825;color:#ede9e0;border-left-color:var(--acc)}
+[data-theme="dark"] .toast.ok{border-left-color:var(--teal)}
+[data-theme="dark"] .toast.err{border-left-color:#e55}
+[data-theme="dark"] .field label{color:rgba(255,255,255,.5)}
+[data-theme="dark"] select{background:#1e1d1a;color:#ede9e0;border-color:rgba(255,255,255,.15)}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--F);font-size:15px;font-weight:400;line-height:1.6}
 button,input,textarea,select{font-family:var(--F);font-size:13px;font-weight:500}
@@ -226,6 +237,8 @@ td{padding:10px;border-bottom:1px solid var(--b);font-size:12px}
 .aai{flex:1;border:1px solid var(--b);border-radius:var(--rs);padding:8px 11px;background:var(--paper);color:var(--ink);font-size:12px;outline:none}
 .aai:focus{border-color:var(--acc)}
 .do{display:none;position:fixed;inset:0;background:rgba(18,17,14,.6);z-index:200;align-items:center;justify-content:center}
+.do-box{background:var(--paper);border-radius:var(--r);padding:24px;width:min(440px,92vw);max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(18,17,14,.3)}
+.do-title{font-family:var(--FD);font-size:16px;font-weight:700;margin-bottom:20px;color:var(--ink)}
 .do.on{display:flex}
 .db{background:var(--paper);border-radius:var(--r);padding:26px;width:min(460px,90vw);max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(18,17,14,.25)}
 .dt{font-family:var(--FD);font-size:16px;font-weight:700;margin-bottom:4px}
@@ -580,19 +593,19 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <!-- HRV STRIP — betekenis eerst, getal als detail -->
     <div class="ck-stats-strip" id="ck-stats" style="border-left:3px solid var(--acc)">
       <div class="ck-stat" style="cursor:pointer" onclick="go('da')">
-        <span class="ck-stat-icon" style="font-family:var(--FJ);opacity:.8">心</span>
+        <span class="ck-stat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".6"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
         <span class="ck-stat-val" id="ck-stat-hrv">–</span>
         <span class="ck-stat-lbl" id="ck-stat-hrv-lbl">HRV</span>
       </div>
       <div class="ck-stat-div"></div>
       <div class="ck-stat" style="cursor:pointer" onclick="go('da')">
-        <span class="ck-stat-icon" style="font-family:var(--FJ);opacity:.8">眠</span>
+        <span class="ck-stat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".6"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
         <span class="ck-stat-val" id="ck-stat-sleep">–</span>
         <span class="ck-stat-lbl" id="ck-stat-sleep-lbl">SLAAP</span>
       </div>
       <div class="ck-stat-div"></div>
       <div class="ck-stat" style="cursor:pointer" onclick="go('da')">
-        <span class="ck-stat-icon" style="font-family:var(--FJ);opacity:.8">氣</span>
+        <span class="ck-stat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".6"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
         <span class="ck-stat-val" id="ck-stat-rec">–</span>
         <span class="ck-stat-lbl" id="ck-stat-rec-lbl">HERSTEL</span>
       </div>
