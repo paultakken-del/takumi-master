@@ -566,29 +566,32 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <div class="ck-date" id="ck-d"></div>
     </div>
 
-    <!-- HRV STRIP — above fold, most valuable data first -->
+    <!-- HRV STRIP — betekenis eerst, getal als detail -->
     <div class="ck-stats-strip" id="ck-stats" style="border-left:3px solid var(--acc)">
-      <div class="ck-stat">
+      <div class="ck-stat" style="cursor:pointer" onclick="go('da')">
         <span class="ck-stat-icon" style="font-family:var(--FJ);opacity:.8">心</span>
         <span class="ck-stat-val" id="ck-stat-hrv">–</span>
-        <span class="ck-stat-arrow" id="ck-stat-hrv-arr"></span>
-        <span class="ck-stat-lbl">HRV</span>
+        <span class="ck-stat-lbl" id="ck-stat-hrv-lbl">HRV</span>
       </div>
       <div class="ck-stat-div"></div>
-      <div class="ck-stat">
+      <div class="ck-stat" style="cursor:pointer" onclick="go('da')">
         <span class="ck-stat-icon" style="font-family:var(--FJ);opacity:.8">眠</span>
         <span class="ck-stat-val" id="ck-stat-sleep">–</span>
-        <span class="ck-stat-arrow" id="ck-stat-sleep-arr"></span>
-        <span class="ck-stat-lbl">slaap</span>
+        <span class="ck-stat-lbl" id="ck-stat-sleep-lbl">SLAAP</span>
       </div>
       <div class="ck-stat-div"></div>
-      <div class="ck-stat">
+      <div class="ck-stat" style="cursor:pointer" onclick="go('da')">
         <span class="ck-stat-icon" style="font-family:var(--FJ);opacity:.8">氣</span>
         <span class="ck-stat-val" id="ck-stat-rec">–</span>
-        <span class="ck-stat-arrow" id="ck-stat-rec-arr"></span>
-        <span class="ck-stat-lbl">herstel</span>
+        <span class="ck-stat-lbl" id="ck-stat-rec-lbl">HERSTEL</span>
       </div>
     </div>
+
+    <!-- SYNTHESE BRIEF — wat het systeem concludeert -->
+    <div id="ck-synthese" style="margin:16px 0 0;padding:14px 16px;background:var(--pw);border-radius:var(--rs);border-left:3px solid var(--acc);font-size:13px;line-height:1.6;color:var(--ink)"></div>
+
+    <!-- DOELEN VOORTGANG STRIP — max 3 actieve doelen -->
+    <div id="ck-goals-strip" style="margin:16px 0 0"></div>
 
     <!-- QUOTE -->
     <div style="padding:16px 24px 4px;text-align:center">
@@ -608,21 +611,21 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     </div>
 
     <div class="ck-balans" id="ck-balans"><div class="ck-balans-track"><div class="ck-balans-center"></div><div class="ck-balans-bar" id="ck-balans-bar"></div><div class="ck-balans-dot" id="ck-balans-dot"></div></div><div class="ck-balans-hint" id="ck-balans-hint"></div></div>
-    <!-- DAG VOORTGANG — stipjes -->
-    <div style="display:flex;justify-content:center;align-items:center;gap:20px;padding:16px 16px 0">
-      <div style="display:flex;align-items:center;gap:6px">
-        <div id="dot-ri" style="width:9px;height:9px;border-radius:50%;background:rgba(0,0,0,.1);transition:background .4s"></div>
-        <span style="font-size:10px;color:var(--m);font-family:var(--FJ)">習</span>
+    <!-- DAG VOORTGANG — leesbaar -->
+    <div style="display:flex;justify-content:center;align-items:center;gap:16px;padding:16px 16px 0">
+      <div id="dprog-ri" style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--m)">
+        <div id="dot-ri" style="width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.12);transition:background .4s;flex-shrink:0"></div>
+        <span>Rituelen</span>
       </div>
-      <div style="width:20px;height:1px;background:var(--b)"></div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <div id="dot-dy" style="width:9px;height:9px;border-radius:50%;background:rgba(0,0,0,.1);transition:background .4s"></div>
-        <span style="font-size:10px;color:var(--m);font-family:var(--FJ)">脈</span>
+      <div style="width:16px;height:1px;background:var(--b)"></div>
+      <div id="dprog-dy" style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--m)">
+        <div id="dot-dy" style="width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.12);transition:background .4s;flex-shrink:0"></div>
+        <span>Pulse</span>
       </div>
-      <div style="width:20px;height:1px;background:var(--b)"></div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <div id="dot-bo" style="width:9px;height:9px;border-radius:50%;background:rgba(0,0,0,.1);transition:background .4s"></div>
-        <span style="font-size:10px;color:var(--m);font-family:var(--FJ)">匠</span>
+      <div style="width:16px;height:1px;background:var(--b)"></div>
+      <div id="dprog-bo" style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--m)">
+        <div id="dot-bo" style="width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.12);transition:background .4s;flex-shrink:0"></div>
+        <span>Advies</span>
       </div>
     </div>
 
@@ -1075,10 +1078,20 @@ function markVandaag(key){
   updateDagVoortgang();
 }
 function updateDagVoortgang(){
-  var dots={ri:'dot-ri',dy:'dot-dy',bo:'dot-bo'};
-  Object.keys(dots).forEach(function(k){
-    var el=document.getElementById(dots[k]);
-    if(el)el.style.background=vandaag[k]?'var(--teal)':'rgba(0,0,0,.1)';
+  var items={ri:{dot:'dot-ri',prog:'dprog-ri',lbl:'Rituelen'},dy:{dot:'dot-dy',prog:'dprog-dy',lbl:'Pulse'},bo:{dot:'dot-bo',prog:'dprog-bo',lbl:'Advies'}};
+  Object.keys(items).forEach(function(k){
+    var cfg=items[k];
+    var dotEl=document.getElementById(cfg.dot);
+    var progEl=document.getElementById(cfg.prog);
+    if(dotEl)dotEl.style.background=vandaag[k]?'var(--teal)':'rgba(0,0,0,.12)';
+    if(progEl){
+      var span=progEl.querySelector('span');
+      if(span){
+        span.textContent=vandaag[k]?cfg.lbl+' ✓':cfg.lbl;
+        span.style.color=vandaag[k]?'var(--teal)':'var(--m)';
+        span.style.fontWeight=vandaag[k]?'600':'400';
+      }
+    }
   });
 }
 
@@ -1600,17 +1613,25 @@ function setCkOpening(el, val){
   RituelenData.binnenkomst = val;
   lsSet('tm2_rituelen', RituelenData);
   markNietNieuw();
-  // Briefing aanpassen op binnenkomst
-  var brief = document.getElementById('ck-brief-txt');
-  var msgs = {
-    fris:'Fris aanwezig. Gebruik deze helderheid voor diep werk vandaag.',
-    rustig:'Rustig en open. Een goede dag voor reflectie en luisteren.',
-    scherp:'Scherpe aandacht. Gebruik dit voor beslissingen en belangrijke gesprekken.',
-    zwaar:'Zwaar van start. Herstel staat centraal — geen grote keuzes vandaag.'
-  };
-  if(brief) brief.textContent = msgs[val] || brief.textContent;
-  toast('Binnenkomst: ' + val, 'ok');
-  // Emotie beïnvloedt de balans-as (Godai: 風 Fū stem)
+  // Adaptive response — synthese reageert direct op binnenkomst
+  const syn=document.getElementById('ck-synthese');
+  if(syn){
+    const hrv=S.hrv.rmssd||45;
+    const rec=S.hrv.recovery||7;
+    const goals=typeof GOALS!=='undefined'?GOALS:[];
+    const actief=goals.filter(g=>g.status==='Actief');
+    const urgentDoel=actief.find(g=>g.pct<25)||actief[0];
+    const doelTxt=urgentDoel?' Focus op '+urgentDoel.title+' ('+urgentDoel.pct+'%).':'';
+    const responses={
+      fris:{t:'Fris aanwezig',c:'Gebruik deze helderheid voor diep werk.',col:'var(--teal)'},
+      rustig:{t:'Rustig en open',c:'Goed moment voor reflectie en luisteren.',col:'var(--gold)'},
+      scherp:{t:'Scherpe aandacht',c:'Ideaal voor beslissingen en belangrijke gesprekken.',col:'var(--teal)'},
+      zwaar:{t:'Zwaar van start',c:'Herstel staat centraal — geen grote keuzes vandaag.',col:'var(--acc)'}
+    };
+    const r=responses[val]||responses.rustig;
+    syn.innerHTML='<span style="font-weight:600;color:'+r.col+'">'+r.t+'.</span> '+r.c+(doelTxt?' '+doelTxt:'');
+    syn.style.borderLeftColor=r.col;
+  }
   updateBalansWithEmotie(val);
 }
 
@@ -1759,102 +1780,98 @@ function initCK(){
   const slaap=S.hrv.sleep||7;
   const weekNum=Math.ceil(now.getDate()/7);
 
-  // ── STATS STRIP ───────────────────────────────────────────
+  // ── STATS STRIP — betekenis eerst ─────────────────────────
   const hrvEl=document.getElementById('ck-stat-hrv');
   const sleepEl=document.getElementById('ck-stat-sleep');
   const recEl=document.getElementById('ck-stat-rec');
-  const hrvArrEl=document.getElementById('ck-stat-hrv-arr');
-  const sleepArrEl=document.getElementById('ck-stat-sleep-arr');
-  const recArrEl=document.getElementById('ck-stat-rec-arr');
+  const hrvLbl=document.getElementById('ck-stat-hrv-lbl');
+  const sleepLbl=document.getElementById('ck-stat-sleep-lbl');
+  const recLbl=document.getElementById('ck-stat-rec-lbl');
   if(hrvEl){
-    hrvEl.textContent=hrv;
     const cl=hrv>=55?'ck-stat-good':hrv>=45?'ck-stat-warn':'ck-stat-bad';
+    hrvEl.textContent=hrv>=55?'Goed':hrv>=45?'Normaal':'Laag';
     hrvEl.className='ck-stat-val '+cl;
-    if(hrvArrEl)hrvArrEl.textContent=hrv>=55?'↑':hrv>=45?'→':'↓';
+    if(hrvLbl)hrvLbl.textContent=hrv+' rMSSD';
   }
   if(sleepEl){
-    sleepEl.textContent=slaap.toFixed(1)+'u';
     const cl=slaap>=7.5?'ck-stat-good':slaap>=6?'ck-stat-warn':'ck-stat-bad';
+    sleepEl.textContent=slaap>=7.5?'Goed':slaap>=6?'Normaal':'Kort';
     sleepEl.className='ck-stat-val '+cl;
-    if(sleepArrEl)sleepArrEl.textContent=slaap>=7.5?'↑':slaap>=6?'→':'↓';
+    if(sleepLbl)sleepLbl.textContent=slaap.toFixed(1)+'u';
   }
   if(recEl){
-    recEl.textContent=rec+'/10';
     const cl=rec>=8?'ck-stat-good':rec>=6?'ck-stat-warn':'ck-stat-bad';
+    recEl.textContent=rec>=8?'Top':rec>=6?'Normaal':'Rust';
     recEl.className='ck-stat-val '+cl;
-    if(recArrEl)recArrEl.textContent=rec>=8?'↑':rec>=6?'→':'↓';
+    if(recLbl)recLbl.textContent=rec+'/10';
   }
 
-  // ── HOOFD (mentale helderheid) ────────────────────────────
-  // Gebaseerd op: slaap + HRV + weekpatroon
+  // ── SYNTHESE BRIEF — wat het systeem concludeert ──────────
+  const syn=document.getElementById('ck-synthese');
+  if(syn){
+    const goals=typeof GOALS!=='undefined'?GOALS:[];
+    const actief=goals.filter(g=>g.status==='Actief');
+    const openActs=goals.flatMap(g=>g.actions||[]).filter(a=>!a.done);
+    const urgentDoel=actief.find(g=>g.pct<25)||actief[0];
+    var synText='';
+    if(rec<5||hrv<40){
+      synText='Herstelmodus. Je biometrie vraagt rust — plan geen grote beslissingen. Ideaal moment voor Rituelen en reflectie.';
+    } else if(rec>=8&&hrv>=55){
+      synText='Topdag. '+(urgentDoel?'Je '+urgentDoel.title+' vraagt aandacht ('+urgentDoel.pct+'%). ':'')+' Gebruik deze energie voor diep werk en beslissingen.';
+    } else if(actief.length===0){
+      synText='Geen actieve doelen. Stel vandaag je eerste doel in — dat is de basis voor alles wat het systeem voor je kan doen.';
+    } else {
+      synText='Normale staat. '+(urgentDoel?urgentDoel.title+' staat op '+urgentDoel.pct+'%. ':'')+''+(openActs.length>0?openActs.length+' open '+(openActs.length===1?'actie':'acties')+' wachten.':'Voortgang op koers.');
+    }
+    syn.textContent=synText;
+  }
+
+  // ── DOELEN STRIP ──────────────────────────────────────────
+  const strip=document.getElementById('ck-goals-strip');
+  if(strip){
+    const goals=typeof GOALS!=='undefined'?GOALS:[];
+    const actief=goals.filter(g=>g.status==='Actief').slice(0,3);
+    if(actief.length===0){
+      strip.innerHTML='<div onclick="go(\'gl\')" style="padding:12px 16px;border:1.5px dashed var(--b);border-radius:var(--rs);text-align:center;cursor:pointer;color:var(--m);font-size:13px;transition:border-color .12s" onmouseenter="this.style.borderColor=\'var(--acc)\'" onmouseleave="this.style.borderColor=\'var(--b)\'">'+'+ Stel je eerste doel in</div>';
+    } else {
+      strip.innerHTML=actief.map(function(g){
+        var pct=Math.max(0,Math.min(100,g.pct||0));
+        var col=pct<25?'var(--acc)':pct<75?'var(--gold)':'var(--teal)';
+        return'<div onclick="go(\'gl\')" style="margin-bottom:8px;cursor:pointer">'
+          +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'
+          +'<span style="font-size:13px;font-weight:500;color:var(--ink)">'+(g.ico||'◇')+' '+g.title+'</span>'
+          +'<span style="font-size:12px;color:'+col+';font-weight:600">'+pct+'%</span>'
+          +'</div>'
+          +'<div style="height:4px;background:var(--pw);border-radius:2px;overflow:hidden">'
+          +'<div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:2px;transition:width .4s"></div>'
+          +'</div>'
+          +'</div>';
+      }).join('');
+    }
+  }
+
+  // ── BALANS-AS ──────────────────────────────────────────────
   const slaapScore=Math.min(10,Math.round(slaap));
   const weekPenalty=weekNum===3?-1:0;
   const hoofdScore=Math.max(1,Math.min(10,Math.round(slaapScore+weekPenalty)));
-  document.getElementById('ck-hoofd-val').textContent=hoofdScore;
-  document.getElementById('ck-hoofd-sub').textContent=hoofdScore>=8?'helder':hoofdScore>=5?'normaal':'troebel';
-
-  // ── HART (emotionele toestand) ────────────────────────────
-  // Gebaseerd op: HRV rMSSD (parasympathisch)
-  // Hart = HRV (lichaam) + emotionele toon (geest) — 水 Sui
-  var emotie = RituelenData ? (RituelenData.binnenkomst || 'rustig') : 'rustig';
-  var emotieBonus = {fris:1, rustig:0, scherp:-1, zwaar:-2};
-  const hartScore=Math.min(10,Math.max(1,Math.round((hrv/60)*10) + (emotieBonus[emotie]||0)));
-  const hartKanji=document.getElementById('ck-hart-kanji');
-  var hartKleur = rec>=8?'var(--teal)':rec>=6?'var(--gold)':'var(--acc)';
-  if(emotie==='fris'&&rec>=5) hartKleur='var(--teal)';
-  if(emotie==='zwaar'&&rec<8) hartKleur='var(--acc)';
-  hartKanji.style.color=hartKleur;
-  hartKanji.classList.toggle('breathe',rec>=5&&emotie!=='zwaar');
-  document.getElementById('ck-hart-val').textContent=hrv;
-  var hartSub=rec>=8?'open':rec>=6?'rustig':'gespannen';
-  if(emotie==='fris'&&hartSub!=='open') hartSub='wakend';
-  if(emotie==='zwaar'&&hartSub==='open') hartSub='rustig';
-  document.getElementById('ck-hart-sub').textContent=hartSub;
-
-  // ── HARA (lichaamsenergie) ────────────────────────────────
-  // Gebaseerd op: herstelScore van HRV4Training
   const haraScore=rec;
-  document.getElementById('ck-hara-val').textContent=haraScore+'/10';
-  document.getElementById('ck-hara-sub').textContent=haraScore>=8?'sterk':haraScore>=6?'aanwezig':'laag';
-
-  // ── BALANS-AS ─────────────────────────────────────────────
-  // Centerpunt = 50%. Links=hoofd-dominant, rechts=hara-dominant
-  // Ideaal = gecentreerd. Imbalans = te ver naar één kant
-  const hh=hoofdScore/10;  // 0-1
-  const ha=haraScore/10;   // 0-1
-  const ha_hart=hartScore/10; // 0-1
-  // Positie op as: 0.5=perfect midden, <0.5=hoofd-dominant, >0.5=hara-dominant
-  const balansPos=0.5+(ha-hh)*0.35;
-  const clampedPos=Math.max(0.1,Math.min(0.9,balansPos));
+  const balansPos=Math.max(0.1,Math.min(0.9,0.5+(haraScore/10-hoofdScore/10)*0.35));
   const dot=document.getElementById('ck-balans-dot');
   const bar=document.getElementById('ck-balans-bar');
-  if(dot) dot.style.left=(clampedPos*100)+'%';
-  // Bar shows deviation from center
+  if(dot)dot.style.left=(balansPos*100)+'%';
   if(bar){
-    const dev=clampedPos-0.5;
+    const dev=balansPos-0.5;
     if(dev>=0){bar.style.left='50%';bar.style.width=(dev*100)+'%';}
     else{bar.style.left=(50+dev*100)+'%';bar.style.width=(Math.abs(dev)*100)+'%';}
     bar.style.background=Math.abs(dev)<0.1?'var(--teal)':Math.abs(dev)<0.25?'var(--gold)':'var(--acc)';
   }
   const hint=document.getElementById('ck-balans-hint');
   if(hint){
-    if(Math.abs(clampedPos-0.5)<0.08){hint.textContent='Gebalanceerd — hoofd en hara in harmonie';}
-    else if(clampedPos<0.5){hint.textContent='Hoofd-dominant — meer in het lichaam komen';}
-    else{hint.textContent='Hara-dominant — wat structuur en richting helpt';}
+    if(Math.abs(balansPos-0.5)<0.08)hint.textContent='In balans';
+    else if(balansPos<0.5)hint.textContent='Hoofd-dominant — kom in het lichaam';
+    else hint.textContent='Hara-dominant — wat richting helpt';
   }
 
-  // ── BRIEFING ──────────────────────────────────────────────
-  const brief=document.getElementById('ck-brief-txt');
-  const w3=weekNum===3?' Week 3 — houd het rustig.':'';
-  if(rec<5){brief.textContent='Hara vraagt herstel.'+w3+' Vandaag geen grote stappen.';}
-  else if(hoofdScore<5){brief.textContent='Hoofd is troebel — slaap speelt mee. Kleine taken, geen beslissingen.';}
-  else if(rec>=8&&hoofdScore>=7){brief.textContent='Goede staat van alle drie. Gebruik dit voor wat er echt toe doet.';}
-  else{brief.textContent='Normale staat.'+w3+' Werk met ritme en neem bewuste pauzes.';}
-
-  // ── FOOTER ────────────────────────────────────────────────
-  const openActs=GOALS.flatMap(g=>g.actions||[]).filter(a=>!a.done).length;
-  document.getElementById('ck-acts').textContent=openActs||'0';
-  document.getElementById('ck-week').textContent='W'+weekNum;
   initCkOpening();
 }
 
@@ -2421,8 +2438,18 @@ let activeGId=null;
 
 function renderGoals(){
   const act=GOALS.filter(g=>g.status==='Actief').length;
-  document.getElementById('g-sub').textContent=act+' actief · '+GOALS.length+' totaal';
+  document.getElementById('g-sub').textContent=GOALS.length===0?'Begin met je eerste doel':act+' actief · '+GOALS.length+' totaal';
   updateSnoeiIndicator();
+  if(GOALS.length===0){
+    document.getElementById('gg').innerHTML=`
+      <div style="padding:40px 24px;text-align:center">
+        <div style="font-family:var(--FJ);font-size:40px;opacity:.2;margin-bottom:16px">配</div>
+        <div style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px">Wat wil je dit jaar bereiken?</div>
+        <div style="font-size:14px;color:var(--m);line-height:1.6;margin-bottom:24px">Takumi werkt het beste als het weet waar je naartoe wilt. Stel je eerste doel in — het systeem houdt het bij en geeft advies op basis van je staat van de dag.</div>
+        <button class="btn pri" style="width:100%;justify-content:center;font-size:15px;min-height:52px" onclick="checkSnoei()">+ Stel je eerste doel in</button>
+      </div>`;
+    return;
+  }
   document.getElementById('gg').innerHTML=GOALS.map(g=>{
     const vitaal=g.pct<25?'Zaad — pas geplant':g.pct<50?'Groeit — eerste wortels':g.pct<75?'Bloeit — zichtbare groei':'Rijpt — bijna klaar';
     const kleur=g.pct<25?'var(--m)':g.pct<50?'var(--teal)':g.pct<75?'var(--gold)':'var(--acc)';
@@ -2436,8 +2463,8 @@ function renderGoals(){
       <div class="gd">${g.desc}</div>
       <div class="gp"><div class="gf" style="width:${g.pct}%;background:${g.color}"></div></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
-        <div style="font-size:10px;color:${kleur};font-family:var(--F)">${vitaal}</div>
-        <div style="font-size:10px;color:var(--m)">${g.actions.filter(a=>!a.done).length} open acties</div>
+        <div style="font-size:11px;color:${kleur};font-family:var(--F)">${vitaal}</div>
+        <div style="font-size:11px;color:var(--m)">${g.actions.filter(a=>!a.done).length} open acties</div>
       </div>
     </div>`;
   }).join('');
