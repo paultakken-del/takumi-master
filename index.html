@@ -537,16 +537,6 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
 
 /* ── STATS STRIP ── */
-.ck-stats-strip{display:flex;align-items:center;justify-content:space-between;margin:var(--sp-lg) 0 0;padding:14px 16px;background:var(--pw);border-radius:var(--rs)}
-.ck-stat{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;min-width:0;overflow:hidden}
-.ck-stat-icon{font-size:14px;opacity:.5;line-height:1}
-.ck-stat-val{font-family:var(--FD);font-size:15px;font-weight:700;color:var(--ink);line-height:1;white-space:nowrap}
-.ck-stat-arrow{font-size:12px;line-height:1;margin-top:-2px}
-.ck-stat-lbl{font-size:11px;letter-spacing:.04em;color:var(--m);opacity:.8;white-space:nowrap}
-.ck-stat-div{width:1px;height:24px;background:var(--b);flex-shrink:0}
-.ck-stat-good{color:var(--teal)!important}
-.ck-stat-warn{color:var(--gold)!important}
-.ck-stat-bad{color:var(--acc)!important}
 /* BALANS */
 /* THE WAVE — primaire signaal */
 .ck-wave-container{margin:var(--sp-md) 0 0;padding:16px 0 4px;position:relative}
@@ -1945,41 +1935,6 @@ function initCK(){
   const rec=S.hrv.recovery||7;
   const slaap=S.hrv.sleep||7;
   const weekNum=Math.ceil(now.getDate()/7);
-
-  // ── STATS STRIP — betekenis eerst ─────────────────────────
-  const hrvEl=document.getElementById('ck-stat-hrv');
-  const sleepEl=document.getElementById('ck-stat-sleep');
-  const recEl=document.getElementById('ck-stat-rec');
-  const hrvLbl=document.getElementById('ck-stat-hrv-lbl');
-  const sleepLbl=document.getElementById('ck-stat-sleep-lbl');
-  const recLbl=document.getElementById('ck-stat-rec-lbl');
-  if(hrvEl){
-    const cl=hrv>=55?'ck-stat-good':hrv>=45?'ck-stat-warn':'ck-stat-bad';
-    var hrvLabel=hrv>=55?'Goed':hrv>=45?'OK':'Laag';
-    var hrvDot=hrv>=55?'var(--teal)':hrv>=45?'var(--gold)':'var(--acc)';
-    hrvEl.innerHTML='<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+hrvDot+';margin-right:5px;vertical-align:middle"></span>'+hrvLabel;
-    hrvEl.className='ck-stat-val';
-    hrvEl.className='ck-stat-val '+cl;
-    if(hrvLbl)hrvLbl.textContent=hrv+' rMSSD';
-  }
-  if(sleepEl){
-    const cl=slaap>=7.5?'ck-stat-good':slaap>=6?'ck-stat-warn':'ck-stat-bad';
-    var sleepLabel=slaap>=7.5?'Goed':slaap>=6?'OK':'Kort';
-    var sleepDot=slaap>=7.5?'var(--teal)':slaap>=6?'var(--gold)':'var(--acc)';
-    sleepEl.innerHTML='<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+sleepDot+';margin-right:5px;vertical-align:middle"></span>'+sleepLabel;
-    sleepEl.className='ck-stat-val';
-    sleepEl.className='ck-stat-val '+cl;
-    if(sleepLbl)sleepLbl.textContent=slaap.toFixed(1)+'u';
-  }
-  if(recEl){
-    const cl=rec>=8?'ck-stat-good':rec>=6?'ck-stat-warn':'ck-stat-bad';
-    var recLabel=rec>=8?'Top':rec>=6?'OK':'Rust';
-    var recDot=rec>=8?'var(--teal)':rec>=6?'var(--gold)':'var(--acc)';
-    recEl.innerHTML='<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+recDot+';margin-right:5px;vertical-align:middle"></span>'+recLabel;
-    recEl.className='ck-stat-val';
-    recEl.className='ck-stat-val '+cl;
-    if(recLbl)recLbl.textContent=rec+'/10';
-  }
 
   // ── SYNTHESE BRIEF — wat het systeem concludeert ──────────
   const syn=document.getElementById('ck-synthese');
