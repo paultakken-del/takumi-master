@@ -72,9 +72,7 @@
 [data-theme="dark"] .ri-inp{background:#1e1d1a;border-color:rgba(255,255,255,.1);color:#ede9e0}
 [data-theme="dark"] .ri-textarea{background:#1e1d1a;border-color:rgba(255,255,255,.1);color:#ede9e0}
 [data-theme="dark"] .ri-inp-blok{background:#1e1d1a}
-[data-theme="dark"] .ri-lichaam-btn{background:#1e1d1a;border-color:rgba(255,255,255,.09);color:#ede9e0}
-[data-theme="dark"] .ri-lichaam-btn.on{background:#ede9e0;color:#181714}
-[data-theme="dark"] .ri-pill{background:#1e1d1a;border-color:rgba(255,255,255,.1);color:#ede9e0}
+[data-theme="dark"] [data-theme="dark"] .ri-pill{background:#1e1d1a;border-color:rgba(255,255,255,.1);color:#ede9e0}
 [data-theme="dark"] .ri-pill.on{background:#ede9e0;color:#181714}
 [data-theme="dark"] .dr-module{border-color:rgba(255,255,255,.08);background:#1e1d1a}
 [data-theme="dark"] .dr-step{border-bottom-color:rgba(255,255,255,.07)}
@@ -570,10 +568,10 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   <div class="sb-nav">
     <div class="sb-sec">Dag</div>
     <div class="ni on" data-v="ck"><span class="ico">⬡</span>Cockpit</div>
-    <div class="ni" data-v="dy"><span class="ico" style="font-family:var(--FJ)">脈</span>Dag Pulse</div>
+    <div class="ni" data-v="dy"><span class="ico" style="font-family:var(--FJ)">脈</span>Ochtend Start</div>
     <div class="ni" data-v="bo"><span class="ico">◈</span>Master Council</div>
     <div class="sb-sec">Avond</div>
-    <div class="ni" data-v="ri"><span class="ico">習</span>Avondritueel</div>
+    <div class="ni" data-v="ri"><span class="ico">習</span>Avond Check-out</div>
     <div class="sb-sec">Week · Maand</div>
     <div class="ni" id="nav-wr" data-v="wr"><span class="ico" style="font-family:var(--FJ)">週</span>Week Reflectie</div>
     <div class="ni" data-v="rt"><span class="ico" style="font-family:var(--FJ)">律</span>Maandpatroon</div>
@@ -680,7 +678,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <div style="display:flex;align-items:center;gap:0">
         <button onclick="go('dy')" style="flex:1;background:none;border:1.5px solid var(--acc);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;position:relative" onmouseenter="this.style.background='rgba(196,83,42,.06)'" onmouseleave="this.style.background='none'">
           <div style="width:36px;height:36px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:#fff">脈</div>
-          <span style="font-size:10px;color:var(--ink);letter-spacing:.04em">Dag Pulse</span>
+          <span style="font-size:10px;color:var(--ink);letter-spacing:.04em">Ochtend Start</span>
         </button>
         <div style="flex:1;height:1.5px;background:var(--b);position:relative"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--m)">→</div></div>
         <button onclick="raadpleegCouncil()" style="flex:1;background:none;border:1.5px solid var(--b);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s" onmouseenter="this.style.borderColor='var(--acc)'" onmouseleave="this.style.borderColor='var(--b)'">
@@ -691,7 +689,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--b);display:flex;align-items:center;justify-content:space-between">
         <span style="font-size:var(--text-xs);color:var(--m)">Vanavond</span>
         <button onclick="go('ri')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--m);-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:4px">
-          習 Avondritueel <span style="font-size:13px">→</span>
+          習 Avond Check-out <span style="font-size:13px">→</span>
         </button>
       </div>
     </div>
@@ -770,7 +768,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
 <!-- DAILY PULSE -->
 <div class="view" id="v-dy">
-  <div class="tb"><div><div class="tb-t" id="pulse-t">脈 Volledige Pulse Check</div><div class="tb-s">Energie · Loslaten · Board advies</div></div></div>
+  <div class="tb"><div><div class="tb-t" id="pulse-t">脈 Ochtend Start</div><div class="tb-s">Energie · Loslaten · Board advies</div></div></div>
   <div class="vs"><div class="pw2"><div class="pst" id="pst"></div><div id="pb"></div></div></div>
 </div>
 
@@ -938,8 +936,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <div class="view" id="v-ri">
   <div class="tb">
     <div>
-      <div class="tb-t">習 Avondritueel</div>
-      <div class="tb-s">Sluit de dag bewust af</div>
+      <div class="tb-t">習 Avond Check-out</div>
+      <div class="tb-s">Energie · Leren · Dankbaarheid</div>
     </div>
     <button class="btn sm pri" onclick="raadpleegVanuitRituelen()">匠 Council</button>
   </div>
@@ -1408,9 +1406,6 @@ function setLichaam(deel){
   lsSet('tm2_rituelen',RituelenData);
 }
 
-function slaLichaamOp(){
-  var txt = document.getElementById('ri-lichaam-txt').value.trim();
-  if(!txt && !RituelenData.lichaam){ toast('Vul eerst in wat je lichaam zegt', 'err'); return; }
   var signaal = (RituelenData.lichaam || 'onbekend') + ': ' + (txt || 'geen verdere toelichting');
   lsSet('tm2_rituelen', RituelenData);
   // Open board met lichaamssignaal
@@ -2184,7 +2179,7 @@ const MOODS=[{e:'🎯',l:'Gefocust'},{e:'🔥',l:'Gemotiveerd'},{e:'😌',l:'Rus
 const PSTEPS=['Energie','間 Loslaten','Board Insight'];
 
 function initPulse(){
-  document.getElementById('pulse-t').textContent='脈 Dag Pulse';
+  
   S.pulse={step:0,data:{}};drawPulse();
 }
 function drawPulse(){
@@ -3202,27 +3197,20 @@ function raadpleegCouncil(){
 
 
 function raadpleegVanuitRituelen(){
-  // Sla lichaam op als er iets in staat
-  var lichaamTxt = document.getElementById('ri-lichaam-txt');
-  if(lichaamTxt && lichaamTxt.value.trim() && typeof slaLichaamOp === 'function'){
-    RituelenData.lichaamTxt = lichaamTxt.value.trim();
-    lsSet('tm2_rituelen', RituelenData);
-  }
-  // Bouw context op vanuit rituelen
+  // Bouw avond context op
   var ctx = [];
   var gevers = (RituelenData.audit && RituelenData.audit.gevers || []).slice(0,2).map(function(g){return g.txt;});
   var nemers = (RituelenData.audit && RituelenData.audit.nemers || []).slice(0,2).map(function(n){return n.txt;});
-  if(gevers.length) ctx.push('Energiegevers: ' + gevers.join(', '));
-  if(nemers.length) ctx.push('Energienemers: ' + nemers.join(', '));
-  var lichaam = RituelenData.lichaam;
-  var lichTxt = RituelenData.lichaamTxt || (lichaamTxt ? lichaamTxt.value.trim() : '');
-  if(lichaam || lichTxt) ctx.push('Lichaam (' + (lichaam||'onbekend') + '): ' + (lichTxt||'geen toelichting'));
+  if(gevers.length) ctx.push('Energiegevers vandaag: ' + gevers.join(', '));
+  if(nemers.length) ctx.push('Energienemers vandaag: ' + nemers.join(', '));
+  var fouten = (RituelenData.fouten||[]).slice(0,1);
+  if(fouten.length) ctx.push('Les van vandaag: ' + fouten[0].les);
   var dank = (RituelenData.dank || []).slice(0,1).map(function(d){return d.txt;});
   if(dank.length) ctx.push('Dankbaar voor: ' + dank[0]);
   var binnenkomst = RituelenData.binnenkomst;
   if(binnenkomst){
     var bLabels={fris:'Fris',rustig:'Rustig',scherp:'Scherp',zwaar:'Zwaar'};
-    ctx.push('Binnenkomst: ' + (bLabels[binnenkomst]||binnenkomst));
+    ctx.push('Ochtend stemming: ' + (bLabels[binnenkomst]||binnenkomst));
   }
 
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
@@ -3233,7 +3221,7 @@ function raadpleegVanuitRituelen(){
     selAg('board');
     var ci = document.getElementById('ci');
     if(ci && ctx.length > 0){
-      var prompt = 'Dagelijkse praktijk: ' + ctx.join('. ') + '. Wat zie jij als meester dat ik zelf nog niet zie?';
+      var prompt = 'Avond check-out: ' + ctx.join('. ') + '. Wat zie jij als meester dat ik mee kan nemen naar morgen?';
       ci.value = prompt;
       ci.style.height = 'auto';
       ci.style.height = Math.min(ci.scrollHeight, 120) + 'px';
