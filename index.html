@@ -664,9 +664,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div class="ck-wave-container" id="ck-wave-container">
       <svg class="ck-wave-svg" id="ck-wave-svg" viewBox="0 0 320 80" preserveAspectRatio="none" height="80">
         <!-- Maandgolf (achtergrond) -->
-        <path id="wave-month" d="" fill="none" stroke="var(--b)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <path id="wave-month" d="" fill="none" stroke="var(--b)" stroke-width="1" stroke-dasharray="3 4" opacity=".5"/>
         <!-- Daggolf (voorgrond) -->
-        <path id="wave-day" d="" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+        <path id="wave-day" d="" fill="none" stroke="var(--ink)" stroke-opacity="0.2" stroke-width="2.5" stroke-linecap="round"/>
         <!-- Positiemarker -->
         <circle id="wave-dot" cx="160" cy="40" r="6" fill="var(--acc)"/>
         <circle id="wave-dot-ring" cx="160" cy="40" r="10" fill="none" stroke="var(--acc)" stroke-width="1.5" opacity=".35" style="animation:dotRingPulse 2.4s ease-in-out infinite"/>
@@ -2014,7 +2014,8 @@ function renderWave(moodOverride){
     dayPoints.push(i + ',' + y.toFixed(1));
   }
   dayPath.setAttribute('d', 'M' + dayPoints.join(' L'));
-  dayPath.setAttribute('stroke', phaseData.col);
+  dayPath.setAttribute('stroke', 'var(--ink)');
+  dayPath.setAttribute('stroke-opacity', '0.2');
   // Wave reveal — only animate on first draw
   var wsvg = document.getElementById('ck-wave-svg');
   if(wsvg && !wsvg.parentElement.classList.contains('wave-animate')){
@@ -2039,17 +2040,17 @@ function renderWave(moodOverride){
   var dotY = mid - Math.sin(posT) * amp;
   dotEl.setAttribute('cx', dotX.toFixed(1));
   dotEl.setAttribute('cy', dotY.toFixed(1));
-  dotEl.setAttribute('fill', phaseData.col);
+  dotEl.setAttribute('fill', 'var(--acc)');
   dotRing.setAttribute('cx', dotX.toFixed(1));
   dotRing.setAttribute('cy', dotY.toFixed(1));
-  dotRing.setAttribute('stroke', phaseData.col);
+  dotRing.setAttribute('stroke', 'var(--acc)');
 
   // Phase label
   var nameEl = document.getElementById('wave-phase-name');
   var subEl = document.getElementById('wave-phase-sub');
   if (nameEl) {
     nameEl.textContent = phaseData.name;
-    nameEl.style.color = phaseData.col;
+    nameEl.style.color = 'var(--acc)';
     nameEl.style.animation = 'none';
     requestAnimationFrame(function(){ nameEl.style.animation = ''; });
   }
