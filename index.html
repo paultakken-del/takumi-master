@@ -790,7 +790,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   <div class="tabs">
     <div class="tab on" onclick="stab('portfolio',this)">Portfolio</div>
     <div class="tab" onclick="stab('health',this)">Health & HRV</div>
-    <div class="tab" onclick="stab('apple',this)">Apple Watch</div>
+    <div class="tab" onclick="stab('apple',this)">📸 Screenshot</div>
     <div class="tab" onclick="stab('oura',this)">Oura Ring</div>
     <div class="tab" onclick="stab('degiro',this)">DeGiro</div>
   </div>
@@ -874,10 +874,25 @@ input[type=range]{width:100%;accent-color:var(--acc)}
           <input id="aw-rec" type="number" min="1" max="10" placeholder="7" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:10px 8px;background:var(--paper);color:var(--ink);font-size:16px;outline:none;text-align:center;-webkit-appearance:none">
         </div>
       </div>
-      <button class="btn pri" style="width:100%;justify-content:center" onclick="saveAppleWatchData()">Opslaan & Wave bijwerken</button>
-      <div id="aw-result" style="margin-top:10px;font-size:12px;color:var(--teal);text-align:center;display:none">✓ Data opgeslagen — Wave bijgewerkt</div>
+  <div class="tp" id="tp-apple">
+    <div class="card" style="margin-bottom:var(--sp-md)">
+      <div class="ct">Gezondheid app — Screenshot import</div>
+      <p style="font-size:13px;color:var(--m);line-height:1.7;margin-bottom:var(--sp-md)">Maak een screenshot van je Gezondheid app (HRV, slaap, hartslag). Takumi leest de waarden automatisch uit met AI en werkt je Wave bij.</p>
+      <div class="dz" id="health-dz"
+        onclick="document.getElementById('health-img').click()"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="event.preventDefault();this.classList.remove('drag');handleHealthScreenshot({target:{files:event.dataTransfer.files}})">
+        <input type="file" id="health-img" accept="image/*" style="display:none" onchange="handleHealthScreenshot(event)">
+        <div class="dz-ico">📸</div>
+        <div class="dz-t">Tik om screenshot te selecteren</div>
+        <div class="dz-s">Gezondheid · Apple Watch · Oura · elk formaat</div>
+      </div>
+      <button class="btn sm" style="margin-top:10px;width:100%" onclick="document.getElementById('health-img').click()">↑ Selecteer screenshot</button>
     </div>
+    <div id="health-r"></div>
   </div>
+  <div class="tp" id="tp-oura">
     <div class="card" style="margin-bottom:var(--sp-md)">
       <div class="ct">Oura Ring — Live koppeling</div>
       <p style="font-size:12px;color:var(--m);margin-bottom:14px">Genereer een Personal Access Token via <strong>cloud.ouraring.com/personal-access-tokens</strong> en plak hem hieronder. Data wordt lokaal opgeslagen.</p>
@@ -2839,6 +2854,97 @@ function copyShortcutURL(){
     document.body.removeChild(el);
     toast('URL gekopieerd','ok');
   });
+}
+
+async function handleHealthScreenshot(ev){
+  var file = ev.target.files && ev.target.files[0];
+  if(!file) return;
+  var resultEl = document.getElementById('health-r');
+  var dz = document.getElementById('health-dz');
+  if(resultEl) resultEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--m)"><span class="spin">⟳</span><div style="margin-top:8px;font-size:12px">Analyseren met AI...</div></div>';
+
+  try{
+    // Convert image to base64
+    var base64 = await new Promise(function(res, rej){
+      var r = new FileReader();
+      r.onload = function(){ res(r.result.split(',')[1]); };
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+
+    var mediaType = file.type || 'image/jpeg';
+
+    // Call Claude vision API
+    var resp = await fetch('/api/claude', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:400,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image', source:{type:'base64', media_type:mediaType, data:base64}},
+            {type:'text', text:'Dit is een screenshot van een gezondheidsapp (Apple Health, Oura, Garmin, etc.). Lees alle gezondheidswaarden uit die je kunt vinden. Return ALLEEN valid JSON zonder markdown:\n{"hrv":NUMBER_OR_NULL,"sleep_hours":NUMBER_OR_NULL,"recovery":NUMBER_OR_NULL,"hr":NUMBER_OR_NULL,"notes":"wat je hebt gevonden in max 20 woorden"}\n\nRegels:\n- hrv: HRV rMSSD in ms (getal, bijv 45)\n- sleep_hours: slaaptijd in uren (bijv 7.3)\n- recovery: herstel/readiness score. Als het een percentage is deel dan door 10 voor 0-10 schaal\n- hr: gemiddelde hartslag in bpm\n- Geef null als een waarde niet zichtbaar is\n- Geen tekst buiten JSON'}
+          ]
+        }]
+      })
+    });
+
+    var data = await resp.json();
+    var raw = (data.content||[]).filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+    raw = raw.replace(/```json|```/g,'').trim();
+
+    var parsed;
+    try{ parsed = JSON.parse(raw); }
+    catch(e){ var m=raw.match(/\{[\s\S]*\}/); if(m) parsed=JSON.parse(m[0]); }
+    if(!parsed) throw new Error('Kon geen gezondheidsdata lezen uit de screenshot');
+
+    // Apply found values
+    var changed = [];
+    if(parsed.hrv && parsed.hrv > 10 && parsed.hrv < 200){
+      S.hrv.rmssd = Math.round(parsed.hrv);
+      changed.push('HRV: '+S.hrv.rmssd+' rMSSD');
+    }
+    if(parsed.sleep_hours && parsed.sleep_hours > 1 && parsed.sleep_hours < 16){
+      S.hrv.sleep = Math.round(parsed.sleep_hours * 10) / 10;
+      changed.push('Slaap: '+S.hrv.sleep+'u');
+    }
+    if(parsed.recovery && parsed.recovery >= 1 && parsed.recovery <= 10){
+      S.hrv.recovery = Math.round(parsed.recovery * 10) / 10;
+      changed.push('Herstel: '+S.hrv.recovery+'/10');
+    }
+    if(parsed.hr && parsed.hr > 30 && parsed.hr < 220){
+      S.hrv.hr = Math.round(parsed.hr);
+      changed.push('Hartslag: '+S.hrv.hr+' bpm');
+    }
+
+    if(changed.length === 0) throw new Error('Geen gezondheidswaarden herkend. Probeer een duidelijkere screenshot.');
+
+    lsSet('tm2_hrv', S.hrv);
+    renderWave();
+
+    if(resultEl) resultEl.innerHTML =
+      '<div class="card" style="border-left:3px solid var(--teal)">'
+      +'<div class="ct" style="color:var(--teal)">✓ Ingelezen</div>'
+      +'<div style="font-size:13px;line-height:1.8;color:var(--ink)">'+changed.join('<br>')+'</div>'
+      +(parsed.notes?'<div style="font-size:11px;color:var(--m);margin-top:8px">'+parsed.notes+'</div>':'')
+      +'<button class="btn sm" style="margin-top:12px;width:100%" onclick="go(\'ck\')">↑ Bekijk Wave</button>'
+      +'</div>';
+
+    toast(changed.length+' waarden geïmporteerd ✓','ok');
+
+  }catch(err){
+    if(resultEl) resultEl.innerHTML =
+      '<div class="card" style="border-left:3px solid var(--acc)">'
+      +'<div style="font-size:13px;color:var(--acc);margin-bottom:8px">'+err.message+'</div>'
+      +'<div style="font-size:12px;color:var(--m)">Tip: maak een screenshot van het HRV of slaapoverzicht in de Gezondheid app, niet van een grafiek.</div>'
+      +'</div>';
+    toast(err.message,'err');
+  }
+
+  // Reset file input so same file can be selected again
+  ev.target.value = '';
 }
 
 function saveAppleWatchData(){
