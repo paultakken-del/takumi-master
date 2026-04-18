@@ -390,6 +390,20 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .wave-animate #wave-day{animation:waveReveal 1.8s .15s cubic-bezier(.25,.1,.25,1) both}
 .wave-animate #wave-month{animation:waveReveal 2.4s .05s cubic-bezier(.25,.1,.25,1) both}
 .wave-phase-animate{animation:phaseIn .4s ease both}
+
+/* SPOTIFY MUZIEKSTRIP */
+.ck-music{margin:var(--sp-md) 0 0;animation:phaseIn .4s ease both}
+.ck-music-inner{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--pw);border-radius:var(--r);border-left:3px solid #1DB954;position:relative}
+.ck-music-ico{width:36px;height:36px;border-radius:8px;background:#1DB954;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ck-music-ico svg{width:18px;height:18px;fill:#fff}
+.ck-music-info{flex:1;min-width:0}
+.ck-music-genre{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#1DB954;margin-bottom:2px;font-weight:600}
+.ck-music-name{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ck-music-sub{font-size:11px;color:var(--m);margin-top:1px}
+.ck-music-btn{background:#1DB954;border:none;border-radius:20px;padding:7px 14px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.04em;white-space:nowrap;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+.ck-music-btn:active{opacity:.8}
+[data-theme="dark"] .ck-music-inner{background:#1a1916;border-color:#1DB954}
+[data-theme="dark"] .ck-music-name{color:#ede9e0}
 .ck-opening{margin:24px 0 0;padding:16px;background:transparent;border-radius:var(--r);border:1px solid var(--b);opacity:.9}
 .ck-opening-q{font-family:var(--F);font-size:14px;font-style:italic;letter-spacing:.02em;color:var(--ink);margin-bottom:14px;text-align:center;opacity:.75}
 .ck-opening-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;place-items:center}
@@ -648,6 +662,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
         <div class="ck-card" data-val="zwaar" onclick="setCkOpening(this,'zwaar')"><div class="ck-card-k"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="7" r="3"/><line x1="12" y1="10" x2="12" y2="16"/><path d="M7 16 Q7 20 12 20 Q17 20 17 16"/><line x1="7" y1="16" x2="17" y2="16"/></svg></div><div class="ck-card-l">Zwaar</div></div>
       </div>
     </div>
+    <!-- SPOTIFY MUZIEKSTRIP -->
+    <div class="ck-music" id="ck-music" style="display:none"></div>
 
         <!-- THE WAVE — primair energiesignaal -->
     <div class="ck-wave-container" id="ck-wave-container">
@@ -1731,6 +1747,7 @@ function setCkOpening(el, val){
   }
   renderWave(val);
   updateBalansWithEmotie(val);
+  showMusicSuggestie(val);
 }
 
 function updateBalansWithEmotie(val){
@@ -1968,6 +1985,74 @@ function renderWave(moodOverride){
   window._waveScore = w.score;
 }
 
+
+// ── SPOTIFY MUZIEKKOMPAS ────────────────────────────────────────────
+var SPOTIFY_PLAYLISTS = {
+  // Per wave-fase: basis playlist
+  dal:     {name:'Deep Sleep Sounds', genre:'Ambient · Herstel', sub:'60-75 BPM · Rust en herstel', uri:'spotify:playlist:37i9dQZF1DWZd79rJ6a7lp', url:'https://open.spotify.com/playlist/37i9dQZF1DWZd79rJ6a7lp'},
+  stijgend:{name:'Lo-Fi Morning', genre:'Lo-Fi · Opbouw', sub:'80-95 BPM · Langzame opstart', uri:'spotify:playlist:37i9dQZF1DX4sWSpwq3LiO', url:'https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO'},
+  vlak:    {name:'Deep Focus', genre:'Instrumentaal · Flow', sub:'90-110 BPM · Diepe concentratie', uri:'spotify:playlist:37i9dQZF1DWZeKCadgRdKQ', url:'https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ'},
+  top:     {name:'Mood Booster', genre:'Upbeat · Actief', sub:'115-130 BPM · Piekenergie', uri:'spotify:playlist:37i9dQZF1DX3rxVfibe1L0', url:'https://open.spotify.com/playlist/37i9dQZF1DX3rxVfibe1L0'},
+  dalend:  {name:'Afternoon Acoustic', genre:'Acoustic · Afronden', sub:'85-100 BPM · Rustiger tempo', uri:'spotify:playlist:37i9dQZF1DX4E3UdUs7fUx', url:'https://open.spotify.com/playlist/37i9dQZF1DX4E3UdUs7fUx'}
+};
+
+// Stemming overschrijft fase als het conflicteert
+var STEMMING_OVERRIDE = {
+  // Als stemming zwaar is, altijd herstel ongeacht fase
+  zwaar: 'dal',
+  // rustig: één fase terug
+  rustig: null  // gebruik fase zelf
+};
+
+function getSpotifyPlaylist(mood, phase){
+  // Zwaar? Altijd herstelplaylist, ongeacht wave-fase
+  if(mood === 'zwaar') return SPOTIFY_PLAYLISTS.dal;
+  // Scherp + top = volledige boost
+  if(mood === 'scherp' && phase === 'top') return SPOTIFY_PLAYLISTS.top;
+  // Fris + herstel = opbouw, niet te rustig
+  if(mood === 'fris' && phase === 'dal') return SPOTIFY_PLAYLISTS.stijgend;
+  // Rustig + actief = vlak (geen harde muziek)
+  if(mood === 'rustig' && (phase === 'top' || phase === 'dalend')) return SPOTIFY_PLAYLISTS.vlak;
+  // Default: volg de wave-fase
+  return SPOTIFY_PLAYLISTS[phase] || SPOTIFY_PLAYLISTS.vlak;
+}
+
+function showMusicSuggestie(mood){
+  var phase = window._wavePhase || 'vlak';
+  var pl = getSpotifyPlaylist(mood, phase);
+  var el = document.getElementById('ck-music');
+  if(!el) return;
+  el.style.display = 'block';
+  el.innerHTML =
+    '<div class="ck-music-inner">' +
+    '<div class="ck-music-ico"><svg viewBox="0 0 168 168"><path d="M84 0C37.6 0 0 37.6 0 84s37.6 84 84 84 84-37.6 84-84S130.4 0 84 0zm38.6 121.3c-1.5 2.5-4.8 3.3-7.3 1.8-20-12.2-45.2-15-74.9-8.2-2.9.7-5.7-1.1-6.4-4-.7-2.9 1.1-5.7 4-6.4 32.5-7.4 60.4-4.2 82.9 9.5 2.5 1.5 3.3 4.8 1.8 7.3zm10.3-22.9c-1.9 3.1-6 4.1-9.1 2.2-22.9-14.1-57.8-18.1-84.8-9.9-3.5 1.1-7.2-.9-8.3-4.4-1-3.5.9-7.2 4.4-8.3 31-9.4 69.5-4.9 95.7 11.3 3.1 1.9 4.1 6 2.1 9.1zm.9-23.8c-27.5-16.3-72.8-17.8-99-9.8-4.2 1.3-8.7-1.1-10-5.3-1.3-4.2 1.1-8.7 5.3-10C60.6 40.2 110.1 41.9 141.3 60.5c3.8 2.3 5.1 7.2 2.8 11-2.2 3.8-7.1 5-11 2.7"/></svg></div>' +
+    '<div class="ck-music-info">' +
+    '<div class="ck-music-genre">' + pl.genre + '</div>' +
+    '<div class="ck-music-name">' + pl.name + '</div>' +
+    '<div class="ck-music-sub">' + pl.sub + '</div>' +
+    '</div>' +
+    '<button class="ck-music-btn" onclick="openSpotify('' + pl.url + '','' + pl.uri + '')" title="Open in Spotify">▶ Spelen</button>' +
+    '</div>';
+}
+
+function openSpotify(url, uri){
+  // Try app deeplink first, fall back to web
+  var a = document.createElement('a');
+  a.href = uri;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  // Fallback to web after 500ms if app didn't open
+  setTimeout(function(){ window.open(url, '_blank'); }, 500);
+}
+
+// Show on init if stemming already known
+function initMusicSuggestie(){
+  var mood = RituelenData && RituelenData.binnenkomst;
+  if(mood && window._wavePhase) showMusicSuggestie(mood);
+}
+
 function initCK(){
   const now=new Date(),h=now.getHours();
   const gr=h<5?'Goede nacht':h<12?'Goedemorgen':h<17?'Goedemiddag':'Goedenavond';
@@ -2026,6 +2111,7 @@ function initCK(){
   // ── THE WAVE ──────────────────────────────────────────────
   renderWave();
   initCkOpening();
+  initMusicSuggestie();
   // Mark anim as done so return visits don't re-flash
   requestAnimationFrame(function(){
     var el=document.getElementById('v-ck');
