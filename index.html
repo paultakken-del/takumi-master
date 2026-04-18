@@ -946,8 +946,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   <div class="vs" style="padding:0">
 
     <!-- ANKER 1: 気 ENERGIE TERUGBLIK -->
-    <div class="ri-anker" id="ri-a1" onclick="riToggle(1)">
-      <div class="ri-anker-hd">
+    <div class="ri-anker" id="ri-a1">
+      <div class="ri-anker-hd" onclick="riToggle(1)" style="cursor:pointer">
         <div class="ri-anker-ico" style="background:rgba(40,137,122,.12);color:var(--teal)">気</div>
         <div class="ri-anker-info">
           <div class="ri-anker-titel">Energie terugblik</div>
@@ -962,7 +962,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
             <div id="ri-gevers-list" class="ri-list"></div>
             <div class="ri-inp-row">
               <input id="ri-gever-inp" type="text" class="ri-inp" placeholder="Wat gaf je energie vandaag?" onkeydown="if(event.key==='Enter')addAudit('gever')">
-              <button class="ri-add-btn ri-teal-btn" onclick="event.stopPropagation();addAudit('gever')">+</button>
+              <button class="ri-add-btn ri-teal-btn" onclick="addAudit('gever')">+</button>
             </div>
           </div>
           <div class="ri-inp-blok ri-acc">
@@ -970,17 +970,17 @@ input[type=range]{width:100%;accent-color:var(--acc)}
             <div id="ri-nemers-list" class="ri-list"></div>
             <div class="ri-inp-row">
               <input id="ri-nemer-inp" type="text" class="ri-inp" placeholder="Wat kostte energie vandaag?" onkeydown="if(event.key==='Enter')addAudit('nemer')">
-              <button class="ri-add-btn ri-acc-btn" onclick="event.stopPropagation();addAudit('nemer')">+</button>
+              <button class="ri-add-btn ri-acc-btn" onclick="addAudit('nemer')">+</button>
             </div>
           </div>
         </div>
-        <button class="ri-volgende-btn" onclick="event.stopPropagation();riToggle(1);riToggle(2)">道 Leren →</button>
+        <button class="ri-volgende-btn" onclick="riToggle(1);riToggle(2)">道 Leren →</button>
       </div>
     </div>
 
     <!-- ANKER 2: 道 LEREN -->
-    <div class="ri-anker" id="ri-a2" onclick="riToggle(2)">
-      <div class="ri-anker-hd">
+    <div class="ri-anker" id="ri-a2">
+      <div class="ri-anker-hd" onclick="riToggle(2)" style="cursor:pointer">
         <div class="ri-anker-ico" style="background:rgba(122,74,138,.1);color:#7a4a8a">道</div>
         <div class="ri-anker-info">
           <div class="ri-anker-titel">Leren</div>
@@ -994,14 +994,14 @@ input[type=range]{width:100%;accent-color:var(--acc)}
           <input id="ri-fout-inp" type="text" class="ri-inp" placeholder="De fout of het patroon..." onclick="event.stopPropagation()">
           <input id="ri-les-inp" type="text" class="ri-inp" placeholder="De les die ik trek..." onclick="event.stopPropagation()">
         </div>
-        <button class="btn sm" style="width:100%;margin-bottom:12px" onclick="event.stopPropagation();addFout()">+ Vastleggen</button>
-        <button class="ri-volgende-btn" onclick="event.stopPropagation();riToggle(2);riToggle(3)">✦ Dankbaarheid →</button>
+        <button class="btn sm" style="width:100%;margin-bottom:12px" onclick="addFout()">+ Vastleggen</button>
+        <button class="ri-volgende-btn" onclick="riToggle(2);riToggle(3)">✦ Dankbaarheid →</button>
       </div>
     </div>
 
     <!-- ANKER 3: ✦ DANKBAARHEID -->
-    <div class="ri-anker" id="ri-a3" onclick="riToggle(3)" style="border-bottom:none">
-      <div class="ri-anker-hd">
+    <div class="ri-anker" id="ri-a3" style="border-bottom:none">
+      <div class="ri-anker-hd" onclick="riToggle(3)" style="cursor:pointer">
         <div class="ri-anker-ico" style="background:rgba(196,157,42,.1);color:var(--gold)">✦</div>
         <div class="ri-anker-info">
           <div class="ri-anker-titel">Dankbaarheid</div>
@@ -1013,9 +1013,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
         <div id="ri-dank-list" class="ri-list" style="margin-bottom:10px"></div>
         <div class="ri-inp-row">
           <input id="ri-dank-inp" type="text" class="ri-inp" placeholder="Ik ben dankbaar voor..." onkeydown="if(event.key==='Enter')addDank()" onclick="event.stopPropagation()">
-          <button class="ri-add-btn" style="background:var(--gold);border-color:var(--gold);color:#fff" onclick="event.stopPropagation();addDank()">+</button>
+          <button class="ri-add-btn" style="background:var(--gold);border-color:var(--gold);color:#fff" onclick="addDank()">+</button>
         </div>
-        <button class="ri-volgende-btn" style="background:var(--acc);color:#fff;border-color:var(--acc)" onclick="event.stopPropagation();raadpleegVanuitRituelen()">匠 Dagafsluiting met Council →</button>
+        <button class="ri-volgende-btn" style="background:var(--acc);color:#fff;border-color:var(--acc)" onclick="raadpleegVanuitRituelen()">匠 Dagafsluiting met Council →</button>
       </div>
     </div>
 
