@@ -1397,28 +1397,6 @@ function renderDank(){
   }).join('');
 }
 
-function setLichaam(deel){
-  ['hoofd','hart','hara'].forEach(function(d){
-    var el=document.getElementById('li-'+d);
-    if(el) el.classList.toggle('on', d===deel);
-  });
-  RituelenData.lichaam=deel;
-  lsSet('tm2_rituelen',RituelenData);
-}
-
-  var signaal = (RituelenData.lichaam || 'onbekend') + ': ' + (txt || 'geen verdere toelichting');
-  lsSet('tm2_rituelen', RituelenData);
-  // Open board met lichaamssignaal
-  go('bo');
-  setTimeout(function(){
-    selAg('board');
-    var inp = document.getElementById('ci');
-    if(inp) inp.value = 'Lichamelijk signaal: ' + signaal + '. Wat betekent dit voor mijn dag en beslissingen?';
-    send();
-  }, 300);
-}
-
-
 // ── 律 RITME & SEIZOEN ────────────────────────────────────────
 var RitmeData = ls('tm2_ritme', {rustWeken:[], maList:[], pulseHistory:[]});
 
