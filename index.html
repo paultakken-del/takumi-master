@@ -1409,6 +1409,27 @@ function renderDank(){
 // ── 律 RITME & SEIZOEN ────────────────────────────────────────
 var RitmeData = ls('tm2_ritme', {rustWeken:[], maList:[], pulseHistory:[]});
 
+// ── HRV DAGHISTORIE ───────────────────────────────────────────────────
+var HrvHistory = ls('tm2_hrv_history', []); // [{date, rmssd, sleep, recovery, source}]
+
+function saveHrvDay(source){
+  var today = new Date().toISOString().slice(0,10);
+  var entry = {
+    date: today,
+    rmssd: S.hrv.rmssd || 0,
+    sleep: S.hrv.sleep || 0,
+    recovery: S.hrv.recovery || 0,
+    source: source || 'handmatig'
+  };
+  // Update today's entry or add new
+  var idx = HrvHistory.findIndex(function(h){ return h.date === today; });
+  if(idx >= 0) HrvHistory[idx] = entry;
+  else HrvHistory.unshift(entry);
+  // Keep max 60 days
+  if(HrvHistory.length > 60) HrvHistory = HrvHistory.slice(0, 60);
+  lsSet('tm2_hrv_history', HrvHistory);
+}
+
 function go_rt(){
   analyzeRhythm();
   renderKalender();
@@ -1416,22 +1437,43 @@ function go_rt(){
 }
 
 function renderHrvCard(){
-  var tok = ls('tm2_oura_token','');
-  var trendEl = document.getElementById('rt-trend');
-  var insightEl = document.getElementById('rt-insight');
-  var card = document.getElementById('rt-hrv-card');
-  if(!tok){
-    // Geen Oura: subtiele enkele regel, geen grote lege kaart
-    if(card) card.style.padding = '0';
-    if(trendEl) trendEl.innerHTML = '';
-    if(insightEl) insightEl.innerHTML = '<div style="padding:10px 0;font-size:11px;color:var(--m)">Geen HRV data — <button onclick="go(\'da\')" style="background:none;border:none;cursor:pointer;color:var(--acc);font-size:11px;padding:0;font-family:var(--F)">Koppel Oura in Data Hub →</button></div>';
-    // Verberg de kaart-header visueel door card te verkleinen
-    if(card){card.style.padding='12px 16px';card.querySelector('.ct').style.display='none';}
+  var el = document.getElementById('rt-trend');
+  var insight = document.getElementById('rt-insight');
+  var geenOura = document.getElementById('rt-geen-oura');
+  if(!el) return;
+
+  var history = HrvHistory.slice(0, 14).filter(function(h){ return h.rmssd > 0; });
+
+  if(!history.length){
+    if(geenOura) geenOura.style.display = 'flex';
+    // Also try Oura if token exists
+    if(ls('tm2_oura_token','')) loadOuraHistory();
     return;
   }
-  if(card){card.style.padding='';var ct=card.querySelector('.ct');if(ct)ct.style.display='';}
-  // Token aanwezig: laad automatisch
-  loadOuraHistory();
+  if(geenOura) geenOura.style.display = 'none';
+
+  var vals = history.map(function(h){ return h.rmssd; });
+  var avg = Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length);
+  var max = Math.max.apply(null,vals), min = Math.min.apply(null,vals);
+
+  var bars = history.slice().reverse().map(function(h){
+    var v = h.rmssd;
+    var pct = max===min ? 60 : Math.round(30+((v-min)/(max-min))*50);
+    var col = v >= avg+3 ? 'var(--teal)' : v <= avg-5 ? 'var(--acc)' : 'var(--m)';
+    var dateStr = new Date(h.date).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">' +
+      '<div style="font-size:9px;color:var(--m)">' + v + '</div>' +
+      '<div style="width:100%;height:' + pct + 'px;background:' + col + ';border-radius:3px 3px 0 0;min-height:6px"></div>' +
+      '<div style="font-size:8px;color:var(--m);writing-mode:vertical-rl;transform:rotate(180deg);height:24px;overflow:hidden">' + dateStr + '</div>' +
+      '</div>';
+  }).join('');
+
+  el.innerHTML = '<div style="display:flex;align-items:flex-end;gap:3px;padding:4px 0;height:110px">' + bars + '</div>';
+
+  var sources = history.map(function(h){return h.source;}).filter(function(s,i,a){return a.indexOf(s)===i;});
+  var src = sources.includes('oura') ? 'Oura' : sources.includes('screenshot') ? 'Screenshot' : 'Handmatig';
+  if(insight) insight.innerHTML = 'Gem. ' + avg + ' rMSSD · ' + history.length + ' dagen · bron: ' + src +
+    ' · <span style="color:var(--teal)">●</span> boven gem. <span style="color:var(--acc)">●</span> herstel';
 }
 
 function analyzeRhythm(){
@@ -1533,6 +1575,11 @@ async function loadOuraHistory(){
     if(latest && latest.average_hrv){
       S.hrv.rmssd = Math.round(latest.average_hrv);
       lsSet('tm2_hrv', S.hrv);
+      // Bulk import Oura history into HrvHistory
+      HrvHistory = days.map(function(d){
+        return {date:d.day, rmssd:Math.round(d.average_hrv||0), sleep:Math.round((d.total_sleep_duration||0)/360)/10, recovery:Math.round((d.efficiency||70)/10), source:'oura'};
+      }).reverse().slice(0,60);
+      lsSet('tm2_hrv_history', HrvHistory);
       WAVE_BASELINE_HRV = avg; // gebruik 14-daags gemiddelde als persoonlijke baseline
       lsSet('tm2_wave_baseline', avg);
       analyzeRhythm();
@@ -2689,6 +2736,7 @@ function importFromURL(){
     if(!isNaN(hr)&&hr>30&&hr<220){S.hrv.hr=Math.round(hr);changed=true;}
     if(changed){
       lsSet('tm2_hrv',S.hrv);
+      saveHrvDay('url');
       // Clean URL without reloading
       window.history.replaceState({},'',window.location.pathname);
       toast('Apple Watch data geïmporteerd ✓','ok');
@@ -2777,6 +2825,7 @@ async function handleHealthScreenshot(ev){
     if(changed.length === 0) throw new Error('Geen gezondheidswaarden herkend. Probeer een duidelijkere screenshot.');
 
     lsSet('tm2_hrv', S.hrv);
+    saveHrvDay('screenshot');
     renderWave();
 
     if(resultEl) resultEl.innerHTML =
@@ -2811,6 +2860,7 @@ function saveAppleWatchData(){
   if(!isNaN(sleep)&&sleep>1&&sleep<16)S.hrv.sleep=Math.round(sleep*10)/10;
   if(!isNaN(rec)&&rec>=1&&rec<=10)S.hrv.recovery=Math.round(rec);
   lsSet('tm2_hrv',S.hrv);
+  saveHrvDay('handmatig');
   var res=document.getElementById('aw-result');
   if(res){res.style.display='block';setTimeout(function(){res.style.display='none';},3000);}
   renderWave();
