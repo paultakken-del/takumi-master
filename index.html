@@ -576,7 +576,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div class="ni" data-v="ri"><span class="ico">習</span>Avond Check-out</div>
     <div class="sb-sec">Week · Maand</div>
     <div class="ni" id="nav-wr" data-v="wr"><span class="ico" style="font-family:var(--FJ)">週</span>Week Reflectie</div>
-    <div class="ni" data-v="rt"><span class="ico" style="font-family:var(--FJ)">律</span>Maandpatroon</div>
+    <div class="ni" data-v="rt"><span class="ico" style="font-family:var(--FJ)">律</span>Ritme & Herstel</div>
     <div class="sb-sec">Strategie</div>
     <div class="ni" data-v="gl"><span class="ico">◇</span>Doelen</div>
     <div class="ni" data-v="wc"><span class="ico">○</span>World Context</div>
@@ -865,52 +865,48 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <!-- WEEKLY REVIEW -->
 <div class="view" id="v-wr">
   <div class="tb"><div><div class="tb-t">律 Week Reflectie <span id="wr-vrijdag-badge" style="display:none;font-size:10px;background:var(--acc);color:#fff;padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:middle">Vandaag</span></div><div class="tb-s" id="wr-w">Wekelijkse terugblik — inzichten, patronen, lessen</div></div><button class="btn sm pri" onclick="genReview()">⚡ Genereer</button></div>
-  <div class="vs" id="wr-body"><div style="text-align:center;padding:60px;color:var(--m)">Klik "⚡ Genereer" voor je wekelijkse AI review</div><div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--b);margin-top:var(--sp-xs)"><span style="font-size:11px;color:var(--m)">週 Week cyclus · volgende laag</span><button onclick="go('rt')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">律 Maandpatroon <span style="font-size:14px">→</span></button></div></div>
+  <div class="vs" id="wr-body"><div style="text-align:center;padding:60px;color:var(--m)">Klik "⚡ Genereer" voor je wekelijkse AI review</div><div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--b);margin-top:var(--sp-xs)"><span style="font-size:11px;color:var(--m)">週 Week cyclus · volgende laag</span><button onclick="go('rt')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">律 Ritme & Herstel <span style="font-size:14px">→</span></button></div></div>
 </div>
 
 
 <!-- RITME & SEIZOEN -->
 <div class="view" id="v-rt">
   <div class="tb">
-    <div><div class="tb-t">律 Maandpatroon</div><div class="tb-s">Waar sta je deze maand?</div></div>
+    <div><div class="tb-t">律 Ritme & Herstel</div><div class="tb-s">Jouw maandcyclus en herstelplanning</div></div>
   </div>
   <div class="vs">
 
-    <!-- MAAND POSITIE + PATROON als één verhaal -->
+    <!-- WAAR STA JE NU — wave-fase + weekpositie als één verhaal -->
     <div class="card" style="margin-bottom:var(--sp-md)">
-      <div class="ct" style="display:flex;justify-content:space-between;align-items:center">
-        <span>Deze maand</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="ct" style="margin-bottom:0">Waar sta je nu</div>
         <span id="rt-week-badge" style="font-size:var(--text-xs);color:var(--m)"></span>
       </div>
-      <div id="rt-weekpos" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px"></div>
-      <div id="rt-patroon" style="font-size:12px;line-height:1.7;padding:12px 14px;background:var(--pw);border-radius:var(--rs);border-left:3px solid var(--acc);color:var(--ink)"></div>
+      <div id="rt-weekpos" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px"></div>
+      <div id="rt-patroon" style="font-size:13px;line-height:1.7;padding:14px 16px;background:var(--pw);border-radius:var(--rs);border-left:3px solid var(--acc);color:var(--ink)"></div>
     </div>
 
-    <!-- HRV TREND — conditioneel -->
+    <!-- HRV TREND — contextual link to wave -->
     <div class="card" style="margin-bottom:var(--sp-md)" id="rt-hrv-card">
-      <div class="ct">HRV · 14 dagen</div>
-      <div id="rt-trend" style="padding:4px 0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="ct" style="margin-bottom:0">HRV trend · 14 dagen</div>
+        <button onclick="loadOuraHistory()" style="background:none;border:none;font-size:12px;color:var(--m);cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:var(--F)">↺</button>
+      </div>
+      <div id="rt-trend">
         <div id="rt-geen-oura" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
-          <span style="font-size:12px;color:var(--m);font-style:italic">Geen HRV data gekoppeld</span>
-          <button onclick="go('da')" style="background:none;border:none;font-size:12px;color:var(--acc);cursor:pointer;-webkit-tap-highlight-color:transparent">Oura koppelen →</button>
+          <span style="font-size:12px;color:var(--m);font-style:italic">Koppel Oura of importeer een screenshot</span>
+          <button onclick="go('da')" style="background:none;border:none;font-size:12px;color:var(--acc);cursor:pointer;-webkit-tap-highlight-color:transparent">Data Hub →</button>
         </div>
       </div>
-      <div id="rt-insight" style="font-size:11px;color:var(--m);margin-top:4px;padding:0 2px"></div>
+      <div id="rt-insight" style="font-size:11px;color:var(--m);margin-top:6px;padding:0 2px;line-height:1.6"></div>
     </div>
 
-    <!-- RUSTENWEKEN -->
+    <!-- HERSTELWEKEN — planning -->
     <div class="card">
-      <div class="ct">Rustenweken</div>
+      <div class="ct">Herstelweken</div>
+      <p style="font-size:12px;color:var(--m);line-height:1.6;margin-bottom:12px">Plan bewust rustmomenten in — een herstelweek per maand voorkomt chronische vermoeidheid.</p>
       <div id="rt-kalender"></div>
-      <button onclick="openRustweek()" style="width:100%;margin-top:14px;padding:11px;border:1.5px solid var(--acc);border-radius:var(--rs);background:none;font-size:12px;color:var(--acc);cursor:pointer;font-family:var(--F);-webkit-tap-highlight-color:transparent;letter-spacing:.04em">+ Rustweek plannen</button>
-    </div>
-
-    <!-- VOLGENDE STAP -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:var(--sp-xs);padding:14px 16px;border-top:1px solid var(--b)">
-      <span style="font-size:11px;color:var(--m)">律 Maand cyclus · volgende laag</span>
-      <button onclick="go('gl')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">
-        配 Doelen <span style="font-size:14px">→</span>
-      </button>
+      <button onclick="openRustweek()" style="width:100%;margin-top:14px;padding:12px;border:1.5px solid var(--acc);border-radius:var(--rs);background:none;font-size:13px;color:var(--acc);cursor:pointer;font-family:var(--F);-webkit-tap-highlight-color:transparent;letter-spacing:.04em;font-weight:500">+ Herstelweek plannen</button>
     </div>
 
   </div>
@@ -919,7 +915,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <!-- RUSTWEEK DIALOG -->
 <div class="do" id="rt-d" onclick="if(event.target===this)closeRustweek()">
   <div class="do-box">
-    <div class="do-title">律 Rustweek plannen</div>
+    <div class="do-title">Herstelweek plannen</div>
     <div class="field"><label>Startdatum</label><input type="date" id="rt-start" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:9px;background:var(--paper);color:var(--ink);font-size:13px;outline:none"></div>
     <div class="field"><label>Type</label>
       <select id="rt-type" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:9px;background:var(--paper);color:var(--ink);font-size:13px;outline:none">
