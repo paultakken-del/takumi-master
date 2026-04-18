@@ -654,13 +654,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
     <!-- DAGELIJKSE OPENING — micro-ritueel -->
     <div class="ck-opening" id="ck-opening">
-      <div class="ck-opening-q">Hoe kom je vandaag binnen?</div>
-      <div class="ck-opening-cards" id="ck-opening-cards">
-        <div class="ck-card" data-val="fris" onclick="setCkOpening(this,'fris')"><div class="ck-card-k"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.9" y1="4.9" x2="7.1" y2="7.1"/><line x1="16.9" y1="16.9" x2="19.1" y2="19.1"/><line x1="19.1" y1="4.9" x2="16.9" y2="7.1"/><line x1="7.1" y1="16.9" x2="4.9" y2="19.1"/></svg></div><div class="ck-card-l">Fris</div></div>
-        <div class="ck-card" data-val="rustig" onclick="setCkOpening(this,'rustig')"><div class="ck-card-k"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 12 Q6 8 10 12 Q14 16 18 12 Q20 10 22 12"/></svg></div><div class="ck-card-l">Rustig</div></div>
-        <div class="ck-card" data-val="scherp" onclick="setCkOpening(this,'scherp')"><div class="ck-card-k"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="10" x2="12" y2="4"/><line x1="18" y1="10" x2="12" y2="4"/></svg></div><div class="ck-card-l">Scherp</div></div>
-        <div class="ck-card" data-val="zwaar" onclick="setCkOpening(this,'zwaar')"><div class="ck-card-k"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="7" r="3"/><line x1="12" y1="10" x2="12" y2="16"/><path d="M7 16 Q7 20 12 20 Q17 20 17 16"/><line x1="7" y1="16" x2="17" y2="16"/></svg></div><div class="ck-card-l">Zwaar</div></div>
-      </div>
+      <div class="ck-opening-q" id="ck-opening-q"></div>
+      <div class="ck-opening-cards" id="ck-opening-cards"></div>
     </div>
     <!-- SPOTIFY MUZIEKSTRIP -->
     <div class="ck-music" id="ck-music" style="display:none"></div>
@@ -1737,13 +1732,28 @@ function setCkOpening(el, val){
     const actief=goals.filter(g=>g.status==='Actief');
     const urgentDoel=actief.find(g=>g.pct<25)||actief[0];
     const doelTxt=urgentDoel?' Focus op '+urgentDoel.title+' ('+urgentDoel.pct+'%).':'';
-    const responses={
-      fris:{t:'Fris aanwezig',c:'Gebruik deze helderheid voor diep werk.',col:'var(--teal)'},
-      rustig:{t:'Rustig en open',c:'Goed moment voor reflectie en luisteren.',col:'var(--gold)'},
-      scherp:{t:'Scherpe aandacht',c:'Ideaal voor beslissingen en belangrijke gesprekken.',col:'var(--teal)'},
-      zwaar:{t:'Zwaar van start',c:'Herstel staat centraal — geen grote keuzes vandaag.',col:'var(--acc)'}
+    var dagdeel = getDagdeel();
+    var responses = {
+      ochtend: {
+        fris:   {t:'Fris aanwezig',    c:'Gebruik deze helderheid voor diep werk.',          col:'var(--teal)'},
+        rustig: {t:'Rustig van start', c:'Goed moment voor reflectie en luisteren.',          col:'var(--gold)'},
+        scherp: {t:'Scherpe aandacht', c:'Ideaal voor beslissingen en belangrijke gesprekken.',col:'var(--teal)'},
+        zwaar:  {t:'Zwaar van start',  c:'Herstel staat centraal — geen grote keuzes vandaag.',col:'var(--acc)'}
+      },
+      middag: {
+        fris:   {t:'In flow',          c:'Hou het vast — diep werk nu, sociaal later.',        col:'var(--teal)'},
+        rustig: {t:'Dag vertraagt',    c:'Normaal. Plan een korte pauze en herstart daarna.',  col:'var(--gold)'},
+        scherp: {t:'Gefocust',         c:'Goed moment voor beslissingen en complexe taken.',   col:'var(--teal)'},
+        zwaar:  {t:'Overladen dag',    c:'Laat niet-urgente zaken los. Ruimte creëren is werk.',col:'var(--acc)'}
+      },
+      avond: {
+        fris:   {t:'Dag afgesloten',   c:'Goed gedaan. Rituelen en rust nu verdient.',         col:'var(--teal)'},
+        rustig: {t:'Rustige afronding',c:'Ideaal. Avond Check-out sluit de cirkel.',           col:'var(--gold)'},
+        scherp: {t:'Gemengde dag',     c:'Noteer wat bleef hangen — dat verwerkt het beter.',  col:'var(--gold)'},
+        zwaar:  {t:'Uitgeput',         c:'Geen analyse. Eten, bewegen, slapen. Morgen opnieuw.',col:'var(--acc)'}
+      }
     };
-    const r=responses[val]||responses.rustig;
+    const r = (responses[dagdeel]||responses.ochtend)[val] || responses.ochtend.rustig;
     syn.innerHTML='<span style="font-weight:600;color:'+r.col+'">'+r.t+'.</span> '+r.c+(doelTxt?' '+doelTxt:'');
     syn.style.borderLeftColor=r.col;
   }
@@ -1756,11 +1766,72 @@ function updateBalansWithEmotie(val){
   // Wave handles mood integration now via renderWave(val)
 }
 
+// ── DAGDEEL CONFIG ─────────────────────────────────────────────────
+var CK_DAGDELEN = {
+  ochtend: {
+    q: 'Hoe kom je vandaag binnen?',
+    sub: 'Begin met aanwezig zijn. Niet met presteren.',
+    cards: [
+      {val:'fris',   lbl:'Fris',   ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.9" y1="4.9" x2="7.1" y2="7.1"/><line x1="16.9" y1="16.9" x2="19.1" y2="19.1"/><line x1="19.1" y1="4.9" x2="16.9" y2="7.1"/><line x1="7.1" y1="16.9" x2="4.9" y2="19.1"/></svg>'},
+      {val:'rustig', lbl:'Rustig',  ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 12 Q6 8 10 12 Q14 16 18 12 Q20 10 22 12"/></svg>'},
+      {val:'scherp', lbl:'Scherp',  ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="10" x2="12" y2="4"/><line x1="18" y1="10" x2="12" y2="4"/></svg>'},
+      {val:'zwaar',  lbl:'Zwaar',   ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="7" r="3"/><line x1="12" y1="10" x2="12" y2="16"/><path d="M7 16 Q7 20 12 20 Q17 20 17 16"/><line x1="7" y1="16" x2="17" y2="16"/></svg>'}
+    ]
+  },
+  middag: {
+    q: 'Hoe verloopt je dag?',
+    sub: 'Een eerlijk beeld. Geen oordeel.',
+    cards: [
+      {val:'fris',   lbl:'In flow',    ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'},
+      {val:'rustig', lbl:'Vertraagd',  ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'},
+      {val:'scherp', lbl:'Gefocust',   ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/></svg>'},
+      {val:'zwaar',  lbl:'Overladen',  ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>'}
+    ]
+  },
+  avond: {
+    q: 'Hoe sluit je de dag af?',
+    sub: 'Wat neem je mee. Wat laat je achter.',
+    cards: [
+      {val:'fris',   lbl:'Voldaan',   ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'},
+      {val:'rustig', lbl:'Rustig',    ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'},
+      {val:'scherp', lbl:'Gemengd',   ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 12 Q6 8 10 12 Q14 16 18 12 Q20 10 22 12"/></svg>'},
+      {val:'zwaar',  lbl:'Uitgeput',  ico:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="7" r="3"/><line x1="12" y1="10" x2="12" y2="16"/><path d="M7 16 Q7 20 12 20 Q17 20 17 16"/><line x1="7" y1="16" x2="17" y2="16"/></svg>'}
+    ]
+  }
+};
+
+function getDagdeel(h){
+  if(h === undefined) h = new Date().getHours();
+  if(h >= 5  && h < 12) return 'ochtend';
+  if(h >= 12 && h < 18) return 'middag';
+  return 'avond';
+}
+
 function initCkOpening(){
-  var saved = RituelenData.binnenkomst;
-  if(saved){
-    var card = document.querySelector('.ck-card[data-val="' + saved + '"]');
-    if(card) card.classList.add('on');
+  var h = new Date().getHours();
+  var dagdeel = getDagdeel(h);
+  var cfg = CK_DAGDELEN[dagdeel];
+
+  // Update question
+  var qEl = document.getElementById('ck-opening-q');
+  var cardsEl = document.getElementById('ck-opening-cards');
+  if(qEl) qEl.textContent = cfg.q;
+
+  // Render cards
+  if(cardsEl){
+    var saved = RituelenData.binnenkomst;
+    cardsEl.innerHTML = cfg.cards.map(function(c){
+      var isOn = saved === c.val;
+      return '<div class="ck-card' + (isOn?' on':'') + '" data-val="' + c.val + '" onclick="setCkOpening(this,\'' + c.val + '\')">' +
+        '<div class="ck-card-k">' + c.ico + '</div>' +
+        '<div class="ck-card-l">' + c.lbl + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  // Show music if already picked
+  if(RituelenData.binnenkomst && window._wavePhase){
+    showMusicSuggestie(RituelenData.binnenkomst);
   }
 }
 
@@ -1990,12 +2061,13 @@ function renderWave(moodOverride){
 
 // ── SPOTIFY MUZIEKKOMPAS ────────────────────────────────────────────
 var SPOTIFY_PLAYLISTS = {
-  // Per wave-fase: basis playlist
-  dal:     {name:'Deep Sleep Sounds', genre:'Ambient · Herstel', sub:'60-75 BPM · Rust en herstel', uri:'spotify:playlist:37i9dQZF1DWZd79rJ6a7lp', url:'https://open.spotify.com/playlist/37i9dQZF1DWZd79rJ6a7lp'},
-  stijgend:{name:'Lo-Fi Morning', genre:'Lo-Fi · Opbouw', sub:'80-95 BPM · Langzame opstart', uri:'spotify:playlist:37i9dQZF1DX4sWSpwq3LiO', url:'https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO'},
-  vlak:    {name:'Deep Focus', genre:'Instrumentaal · Flow', sub:'90-110 BPM · Diepe concentratie', uri:'spotify:playlist:37i9dQZF1DWZeKCadgRdKQ', url:'https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ'},
-  top:     {name:'Mood Booster', genre:'Upbeat · Actief', sub:'115-130 BPM · Piekenergie', uri:'spotify:playlist:37i9dQZF1DX3rxVfibe1L0', url:'https://open.spotify.com/playlist/37i9dQZF1DX3rxVfibe1L0'},
-  dalend:  {name:'Afternoon Acoustic', genre:'Acoustic · Afronden', sub:'85-100 BPM · Rustiger tempo', uri:'spotify:playlist:37i9dQZF1DX4E3UdUs7fUx', url:'https://open.spotify.com/playlist/37i9dQZF1DX4E3UdUs7fUx'}
+  dal:     {name:'Deep Sleep Sounds',    genre:'Ambient · Herstel',      sub:'60-75 BPM · Rust en herstel',       uri:'spotify:playlist:37i9dQZF1DWZd79rJ6a7lp', url:'https://open.spotify.com/playlist/37i9dQZF1DWZd79rJ6a7lp'},
+  stijgend:{name:'Lo-Fi Morning',        genre:'Lo-Fi · Opbouw',          sub:'80-95 BPM · Langzame opstart',      uri:'spotify:playlist:37i9dQZF1DX4sWSpwq3LiO', url:'https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO'},
+  vlak:    {name:'Deep Focus',           genre:'Instrumentaal · Flow',    sub:'90-110 BPM · Diepe concentratie',  uri:'spotify:playlist:37i9dQZF1DWZeKCadgRdKQ', url:'https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ'},
+  top:     {name:'Mood Booster',         genre:'Upbeat · Actief',         sub:'115-130 BPM · Piekenergie',         uri:'spotify:playlist:37i9dQZF1DX3rxVfibe1L0', url:'https://open.spotify.com/playlist/37i9dQZF1DX3rxVfibe1L0'},
+  dalend:  {name:'Afternoon Acoustic',   genre:'Acoustic · Afronden',     sub:'85-100 BPM · Rustiger tempo',       uri:'spotify:playlist:37i9dQZF1DX4E3UdUs7fUx', url:'https://open.spotify.com/playlist/37i9dQZF1DX4E3UdUs7fUx'},
+  avond:   {name:'Evening Acoustic',     genre:'Acoustic · Avond',        sub:'70-85 BPM · Dag loslaten',          uri:'spotify:playlist:37i9dQZF1DX4E3UdUs7fUx', url:'https://open.spotify.com/playlist/37i9dQZF1DXfptdb1DqoHx'},
+  uitgeput:{name:'Peaceful Piano',       genre:'Piano · Diepe rust',      sub:'50-70 BPM · Herstel & stilte',      uri:'spotify:playlist:37i9dQZF1DX4sWSpwq3LiO', url:'https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO'}
 };
 
 // Stemming overschrijft fase als het conflicteert
@@ -2007,15 +2079,14 @@ var STEMMING_OVERRIDE = {
 };
 
 function getSpotifyPlaylist(mood, phase){
-  // Zwaar? Altijd herstelplaylist, ongeacht wave-fase
+  var dagdeel = getDagdeel();
+  if(dagdeel === 'avond'){
+    return mood === 'zwaar' ? SPOTIFY_PLAYLISTS.uitgeput : SPOTIFY_PLAYLISTS.avond;
+  }
   if(mood === 'zwaar') return SPOTIFY_PLAYLISTS.dal;
-  // Scherp + top = volledige boost
   if(mood === 'scherp' && phase === 'top') return SPOTIFY_PLAYLISTS.top;
-  // Fris + herstel = opbouw, niet te rustig
   if(mood === 'fris' && phase === 'dal') return SPOTIFY_PLAYLISTS.stijgend;
-  // Rustig + actief = vlak (geen harde muziek)
   if(mood === 'rustig' && (phase === 'top' || phase === 'dalend')) return SPOTIFY_PLAYLISTS.vlak;
-  // Default: volg de wave-fase
   return SPOTIFY_PLAYLISTS[phase] || SPOTIFY_PLAYLISTS.vlak;
 }
 
