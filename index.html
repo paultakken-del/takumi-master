@@ -603,7 +603,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div class="sb-sec">Dag</div>
     <div class="ni on" data-v="ck"><span class="ico">⬡</span>Cockpit</div>
     <div class="ni" data-v="dy"><span class="ico" style="font-family:var(--FJ)">脈</span>Ochtend Start</div>
-    <div class="ni" data-v="bo"><span class="ico">◈</span>Master Council</div>
+    <div class="ni" data-v="bo"><span class="ico">◈</span>Raad van Meesters</div>
     <div class="sb-sec">Avond</div>
     <div class="ni" data-v="ri"><span class="ico">習</span>Avond Check-out</div>
     <div class="sb-sec">Week · Maand</div>
@@ -611,7 +611,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div class="ni" data-v="rt"><span class="ico" style="font-family:var(--FJ)">律</span>Ritme & Herstel</div>
     <div class="sb-sec">Strategie</div>
     <div class="ni" data-v="gl"><span class="ico">◇</span>Doelen</div>
-    <div class="ni" data-v="wc"><span class="ico">○</span>World Context</div>
+    <div class="ni" data-v="wc"><span class="ico">○</span>Wereldcontext</div>
     <div class="sb-sec">Data</div>
     <div class="ni" data-v="da"><span class="ico">▤</span>Data Hub</div>
   </div>
@@ -985,7 +985,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
             </div>
           </div>
         </div>
-        <button class="ri-volgende-btn" onclick="riToggle(1);riToggle(2)">道 Leren →</button>
+        <div style="font-size:10px;color:var(--teal);text-align:center;margin-bottom:8px;min-height:14px" id="ri-save-1"></div>
+        <button class="ri-volgende-btn" onclick="riToggle(1);riToggle(2)">Leren →</button>
       </div>
     </div>
 
@@ -1006,7 +1007,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
           <input id="ri-les-inp" type="text" class="ri-inp" placeholder="De les die ik trek..." onclick="event.stopPropagation()">
         </div>
         <button class="btn sm" style="width:100%;margin-bottom:12px" onclick="addFout()">+ Vastleggen</button>
-        <button class="ri-volgende-btn" onclick="riToggle(2);riToggle(3)">✦ Dankbaarheid →</button>
+        <div style="font-size:10px;color:var(--teal);text-align:center;margin-bottom:8px;min-height:14px" id="ri-save-2"></div>
+        <button class="ri-volgende-btn" onclick="riToggle(2);riToggle(3)">Dankbaarheid →</button>
       </div>
     </div>
 
@@ -1048,7 +1050,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <!-- MOBILE NAV -->
 <nav id="mob"><div class="mn2">
   <div class="mi2 on" data-v="ck"><div class="mico">⬡</div><div class="mlb">Cockpit</div></div>
-  <div class="mi2" data-v="bo"><div class="mico">◈</div><div class="mlb">Board</div></div>
+  <div class="mi2" data-v="bo"><div class="mico">◈</div><div class="mlb">Raad</div></div>
   <div class="mi2" data-v="gl"><div class="mico">◇</div><div class="mlb">Doelen</div></div>
   <div class="mi2" data-v="da"><div class="mico">▤</div><div class="mlb">Data</div></div>
   <div class="mi2" data-v="ri"><div class="mico">習</div><div class="mlb">Rituelen</div></div>
@@ -1119,8 +1121,10 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <script>
 'use strict';
 // ── STATE ──────────────────────────────────────────────────────────
-function ls(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}}
-function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+var _uid=(function(){try{var u=JSON.parse(localStorage.getItem('tm2_user')||'{}');return u.id||u.email||'default';}catch{return 'default';}}());
+function _ukey(k){return k.startsWith('tm2_user')||k.startsWith('tm2_lf')?k:k+'__'+_uid;}
+function ls(k,d){try{var v=localStorage.getItem(_ukey(k));return v?JSON.parse(v):d}catch{return d}}
+function lsSet(k,v){try{localStorage.setItem(_ukey(k),JSON.stringify(v))}catch{}}
 
 const S={
   cur:'board',
@@ -1370,6 +1374,7 @@ function addAudit(type){
   renderAudit();
   riUpdatePreviews();
   toast(type === 'gever' ? '▲ Energiegever opgeslagen' : '▼ Energienemer opgeslagen', 'ok');
+  var si=document.getElementById('ri-save-1');if(si){si.textContent='✓ Opgeslagen';setTimeout(function(){si.textContent='';},3000);}
 }
 
 function renderAudit(){
@@ -1393,7 +1398,8 @@ function addFout(){
   document.getElementById('ri-les-inp').value = '';
   renderFouten();
   riUpdatePreviews();
-  toast('Fout toegevoegd aan de muur — moed!', 'ok');
+  toast('Fout toegevoegd — moed!', 'ok');
+  var si2=document.getElementById('ri-save-2');if(si2){si2.textContent='✓ Opgeslagen';setTimeout(function(){si2.textContent='';},3000);}
 }
 
 function renderFouten(){
@@ -2053,13 +2059,13 @@ function renderWave(moodOverride){
 
 // ── SPOTIFY MUZIEKKOMPAS ────────────────────────────────────────────
 var SPOTIFY_PLAYLISTS = {
-  dal:     {name:'Deep Sleep Sounds',    genre:'Ambient · Herstel',      sub:'60-75 BPM · Rust en herstel',       uri:'spotify:playlist:37i9dQZF1DWZd79rJ6a7lp', url:'https://open.spotify.com/playlist/37i9dQZF1DWZd79rJ6a7lp'},
+  dal:     {name:'432 Hz Healing Tones', genre:'432 Hz · Zenuwstelsel',   sub:'432 Hz stemming · Diepe herstel',   uri:'spotify:playlist:37i9dQZF1DX1s9knjP51Oa', url:'https://open.spotify.com/playlist/37i9dQZF1DX1s9knjP51Oa'},
   stijgend:{name:'Lo-Fi Morning',        genre:'Lo-Fi · Opbouw',          sub:'80-95 BPM · Langzame opstart',      uri:'spotify:playlist:37i9dQZF1DX4sWSpwq3LiO', url:'https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO'},
-  vlak:    {name:'Deep Focus',           genre:'Instrumentaal · Flow',    sub:'90-110 BPM · Diepe concentratie',  uri:'spotify:playlist:37i9dQZF1DWZeKCadgRdKQ', url:'https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ'},
-  top:     {name:'Mood Booster',         genre:'Upbeat · Actief',         sub:'115-130 BPM · Piekenergie',         uri:'spotify:playlist:37i9dQZF1DX3rxVfibe1L0', url:'https://open.spotify.com/playlist/37i9dQZF1DX3rxVfibe1L0'},
-  dalend:  {name:'Afternoon Acoustic',   genre:'Acoustic · Afronden',     sub:'85-100 BPM · Rustiger tempo',       uri:'spotify:playlist:37i9dQZF1DX4E3UdUs7fUx', url:'https://open.spotify.com/playlist/37i9dQZF1DX4E3UdUs7fUx'},
-  avond:   {name:'Evening Acoustic',     genre:'Acoustic · Avond',        sub:'70-85 BPM · Dag loslaten',          uri:'spotify:playlist:37i9dQZF1DX4E3UdUs7fUx', url:'https://open.spotify.com/playlist/37i9dQZF1DXfptdb1DqoHx'},
-  uitgeput:{name:'Peaceful Piano',       genre:'Piano · Diepe rust',      sub:'50-70 BPM · Herstel & stilte',      uri:'spotify:playlist:37i9dQZF1DX4sWSpwq3LiO', url:'https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO'}
+  vlak:    {name:'Deep Focus',           genre:'Instrumentaal · Flow',    sub:'90-110 BPM · Diepe concentratie',   uri:'spotify:playlist:37i9dQZF1DWZeKCadgRdKQ', url:'https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ'},
+  top:     {name:'Mood Booster',         genre:'Upbeat · Actief',         sub:'115-130 BPM · Piekenergie',          uri:'spotify:playlist:37i9dQZF1DX3rxVfibe1L0', url:'https://open.spotify.com/playlist/37i9dQZF1DX3rxVfibe1L0'},
+  dalend:  {name:'Afternoon Acoustic',   genre:'Acoustic · Afronden',     sub:'85-100 BPM · Rustiger tempo',        uri:'spotify:playlist:37i9dQZF1DX4E3UdUs7fUx', url:'https://open.spotify.com/playlist/37i9dQZF1DX4E3UdUs7fUx'},
+  avond:   {name:'432 Hz Evening',       genre:'432 Hz · Avond',          sub:'432 Hz · Dag loslaten & ontspannen', uri:'spotify:playlist:37i9dQZF1DX1s9knjP51Oa', url:'https://open.spotify.com/playlist/37i9dQZF1DX1s9knjP51Oa'},
+  uitgeput:{name:'432 Hz Deep Healing',  genre:'432 Hz · Diepe rust',     sub:'432 Hz · Zenuwstelsel kalmeren',     uri:'spotify:playlist:37i9dQZF1DX1s9knjP51Oa', url:'https://open.spotify.com/playlist/37i9dQZF1DX1s9knjP51Oa'}
 };
 
 // Stemming overschrijft fase als het conflicteert
@@ -2409,7 +2415,10 @@ function drawPulse(){
     B.innerHTML=`<div class="pq">Energie</div>
       <div class="ph2">Hoe is je energieniveau op dit moment?</div>
       <div class="rw"><div class="rval" id="ev">${data.energy||6}</div><input type="range" min="1" max="10" value="${data.energy||6}" oninput="document.getElementById('ev').textContent=this.value;S.pulse.data.energy=+this.value"></div>
-      <div class="pn"><button class="btn pri" onclick="S.pulse.step++;drawPulse()">Verder →</button></div>`;
+      <div class="pn">
+        <button class="btn sm gh" onclick="lsSet('tm2_pulse_energy',S.pulse.data.energy||6);toast('Energie opgeslagen ✓','ok')">↓ Opslaan</button>
+        <button class="btn pri" onclick="S.pulse.step++;drawPulse()">Verder →</button>
+      </div>`;
     S.pulse.data.energy=S.pulse.data.energy||6;
   }else if(step===1){
     var isFriday = new Date().getDay() === 5;
@@ -2438,8 +2447,9 @@ function drawPulse(){
           var fri=document.getElementById('fri-les');
           if(fri)S.pulse.data.friLes=fri.value;
           lsSet('tm2_ritme',RitmeData);
+          toast('Opgeslagen ✓','ok');
           S.pulse.step++;drawPulse()
-        ">Verder →</button>
+        ">Opslaan & Verder →</button>
       </div>`;
   }else if(step===2){
     const sum='energie '+(data.energy||6)+'/10, stemming '+(RituelenData&&RituelenData.binnenkomst||'–');
