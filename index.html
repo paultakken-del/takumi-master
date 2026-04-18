@@ -393,16 +393,16 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
 /* SPOTIFY MUZIEKSTRIP */
 .ck-music{margin:var(--sp-md) 0 0;animation:phaseIn .4s ease both}
-.ck-music-inner{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--pw);border-radius:var(--r);border-left:3px solid #1DB954;position:relative}
-.ck-music-ico{width:36px;height:36px;border-radius:8px;background:#1DB954;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ck-music-inner{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--pw);border-radius:var(--r);border-left:3px solid var(--acc);position:relative}
+.ck-music-ico{width:36px;height:36px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ck-music-ico svg{width:18px;height:18px;fill:#fff}
 .ck-music-info{flex:1;min-width:0}
-.ck-music-genre{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#1DB954;margin-bottom:2px;font-weight:600}
+.ck-music-genre{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:2px;font-weight:600}
 .ck-music-name{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ck-music-sub{font-size:11px;color:var(--m);margin-top:1px}
-.ck-music-btn{background:#1DB954;border:none;border-radius:20px;padding:7px 14px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.04em;white-space:nowrap;-webkit-tap-highlight-color:transparent;flex-shrink:0}
-.ck-music-btn:active{opacity:.8}
-[data-theme="dark"] .ck-music-inner{background:#1a1916;border-color:#1DB954}
+.ck-music-btn{background:none;border:1.5px solid var(--acc);border-radius:20px;padding:7px 14px;color:var(--acc);font-size:11px;font-weight:600;cursor:pointer;letter-spacing:.04em;white-space:nowrap;-webkit-tap-highlight-color:transparent;flex-shrink:0;transition:all .12s}
+.ck-music-btn:active,.ck-music-btn:hover{background:var(--acc);color:#fff}
+[data-theme="dark"] .ck-music-inner{background:#1e1d1a;border-left-color:var(--acc)}
 [data-theme="dark"] .ck-music-name{color:#ede9e0}
 .ck-opening{margin:24px 0 0;padding:16px;background:transparent;border-radius:var(--r);border:1px solid var(--b);opacity:.9}
 .ck-opening-q{font-family:var(--F);font-size:14px;font-style:italic;letter-spacing:.02em;color:var(--ink);margin-bottom:14px;text-align:center;opacity:.75}
@@ -2138,7 +2138,13 @@ function openSpotify(url, uri){
 // Show on init if stemming already known
 function initMusicSuggestie(){
   var mood = RituelenData && RituelenData.binnenkomst;
-  if(mood && window._wavePhase) showMusicSuggestie(mood);
+  if(mood) showMusicSuggestie(mood); // _wavePhase always set after renderWave
+  else {
+    // No mood yet: show generic suggestion based on wave phase and time
+    var phase = window._wavePhase || 'vlak';
+    var pl = getSpotifyPlaylist('rustig', phase);
+    showMusicSuggestie('rustig');
+  }
 }
 
 function initCK(){
