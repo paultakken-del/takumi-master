@@ -1350,6 +1350,8 @@ function renderBinnenkomst(){
       '<div class="bc-ico" style="font-family:' + (b.jp?'var(--FJ)':'inherit') + ';font-size:28px;line-height:1;margin-bottom:4px">' + b.ico + '</div>' +
       '<div class="bc-lbl">' + b.lbl.replace('\n','<br>') + '</div>' +
       '</div>';
+  var sbtn = document.getElementById('spotify-btn');
+  if(sbtn){ sbtn.setAttribute('data-url', pl.url); sbtn.setAttribute('data-uri', pl.uri); sbtn.onclick = function(){ openSpotify(this.getAttribute('data-url'), this.getAttribute('data-uri')); }; }
   }).join('');
   var tekst = document.getElementById('ri-binnenkomst-tekst');
   if(tekst && RituelenData.binnenkomst !== null){
