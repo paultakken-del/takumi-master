@@ -382,6 +382,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ck-footer-dot{opacity:.3}
 /* COCKPIT OPENING */
 .ck-greeting-anim #ck-icon-circle{animation:ckIconPulse .6s cubic-bezier(.34,1.56,.64,1) forwards}
+.ck-did-anim #ck-icon-circle,.ck-did-anim #ck-g,.ck-did-anim #ck-d,.ck-did-anim #ck-quote,.ck-did-anim #ck-quote-auth{animation:none!important;opacity:inherit}
 .ck-greeting-anim #ck-g{animation:ckGreetIn .45s ease forwards}
 .ck-greeting-anim #ck-d{animation:ckDateIn .45s .1s ease both}
 .ck-greeting-anim #ck-quote{animation:quoteIn .5s .5s ease both}
@@ -615,7 +616,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <div id="mn">
 
 <!-- COCKPIT -->
-<div class="view on" id="v-ck">
+<div class="view on ck-greeting-anim" id="v-ck">
   <div class="vs" style="padding-top:0">
 
     <!-- GREETING + HRV ABOVE FOLD -->
@@ -1912,9 +1913,11 @@ function renderWave(moodOverride){
   }
   dayPath.setAttribute('d', 'M' + dayPoints.join(' L'));
   dayPath.setAttribute('stroke', phaseData.col);
-  // Wave reveal animation
+  // Wave reveal — only animate on first draw
   var wsvg = document.getElementById('ck-wave-svg');
-  if(wsvg){ wsvg.parentElement.classList.remove('wave-animate'); void wsvg.parentElement.offsetWidth; wsvg.parentElement.classList.add('wave-animate'); }
+  if(wsvg && !wsvg.parentElement.classList.contains('wave-animate')){
+    wsvg.parentElement.classList.add('wave-animate');
+  }
 
   // Month wave: flatter background wave
   var monthPoints = [];
@@ -1943,11 +1946,10 @@ function renderWave(moodOverride){
   var nameEl = document.getElementById('wave-phase-name');
   var subEl = document.getElementById('wave-phase-sub');
   if (nameEl) {
-    nameEl.classList.remove('wave-phase-animate');
-    void nameEl.offsetWidth;
     nameEl.textContent = phaseData.name;
     nameEl.style.color = phaseData.col;
-    nameEl.classList.add('wave-phase-animate');
+    nameEl.style.animation = 'none';
+    requestAnimationFrame(function(){ nameEl.style.animation = ''; });
   }
   if (subEl) subEl.textContent = phaseData.sub;
 
@@ -2025,6 +2027,11 @@ function initCK(){
   // ── THE WAVE ──────────────────────────────────────────────
   renderWave();
   initCkOpening();
+  // Mark anim as done so return visits don't re-flash
+  requestAnimationFrame(function(){
+    var el=document.getElementById('v-ck');
+    if(el) setTimeout(function(){el.classList.add('ck-did-anim');},900);
+  });
 }
 
 // ── BOARD ──────────────────────────────────────────────────────────
