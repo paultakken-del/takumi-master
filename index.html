@@ -790,6 +790,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   <div class="tabs">
     <div class="tab on" onclick="stab('portfolio',this)">Portfolio</div>
     <div class="tab" onclick="stab('health',this)">Health & HRV</div>
+    <div class="tab" onclick="stab('apple',this)">Apple Watch</div>
     <div class="tab" onclick="stab('oura',this)">Oura Ring</div>
     <div class="tab" onclick="stab('degiro',this)">DeGiro</div>
   </div>
@@ -809,7 +810,74 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     </div>
     <div id="hrv-r"></div>
   </div>
-  <div class="tp" id="tp-oura">
+  <div class="tp" id="tp-apple">
+    <div class="card" style="margin-bottom:var(--sp-md)">
+      <div class="ct">Apple Watch — via Siri Shortcut</div>
+      <p style="font-size:13px;color:var(--m);line-height:1.7;margin-bottom:var(--sp-md)">Maak één keer een Shortcut aan. Daarna stuurt hij elke ochtend je HRV en slaapdata naar Takumi — Wave wordt automatisch bijgewerkt.</p>
+
+      <!-- Stap-voor-stap -->
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--b)">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px">Open Shortcuts op je iPhone</div>
+            <div style="font-size:12px;color:var(--m);line-height:1.5">Tik op + → Nieuwe Shortcut → Voeg actie toe</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--b)">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px">Voeg 3× "Zoek gezondheidssamples" toe</div>
+            <div style="font-size:12px;color:var(--m);line-height:1.6">① Hartritmevariabiliteit (HRV) · Afgelopen 24 uur · Gemiddelde<br>② Slaapanalyse · Afgelopen 24 uur · Som<br>③ Hartslag · Afgelopen 24 uur · Gemiddelde</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--b)">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px">Voeg "Open URL" toe</div>
+            <div style="font-size:12px;color:var(--m);line-height:1.5">Plak de URL hieronder. Vervang de variabelen door de Shortcut-outputs van stap 2.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px">Automatisering instellen (optioneel)</div>
+            <div style="font-size:12px;color:var(--m);line-height:1.5">Shortcuts → Automatisering → + → Tijdstip → 07:00 → Shortcut uitvoeren</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- URL template -->
+    <div class="card" style="margin-bottom:var(--sp-md)">
+      <div class="ct">Shortcut URL template</div>
+      <div style="background:var(--pw);border-radius:var(--rs);padding:12px;font-size:11px;font-family:monospace;line-height:1.8;word-break:break-all;color:var(--ink);margin-bottom:10px" id="shortcut-url-display">https://app.takumi-master.com/?hrv=[HRV]&amp;sleep=[SLAAP]&amp;recovery=[HERSTEL]&amp;hr=[HARTSLAG]</div>
+      <button class="btn" style="width:100%;justify-content:center" onclick="copyShortcutURL()">⎘ Kopieer URL template</button>
+      <div id="copy-ok" style="display:none;font-size:11px;color:var(--teal);text-align:center;margin-top:8px">✓ Gekopieerd naar klembord</div>
+    </div>
+
+    <!-- Handmatig invoer als fallback -->
+    <div class="card">
+      <div class="ct">Handmatig invoeren</div>
+      <p style="font-size:12px;color:var(--m);margin-bottom:var(--sp-md);line-height:1.6">Geen Shortcut? Vul je ochtendwaarden direct in. HRV vind je in de Gezondheid app → Hart → Hartritmevariabiliteit.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:var(--sp-md)">
+        <div>
+          <label style="font-size:11px;color:var(--m);display:block;margin-bottom:4px">HRV (rMSSD)</label>
+          <input id="aw-hrv" type="number" min="10" max="150" placeholder="45" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:10px 8px;background:var(--paper);color:var(--ink);font-size:16px;outline:none;text-align:center;-webkit-appearance:none">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--m);display:block;margin-bottom:4px">Slaap (uren)</label>
+          <input id="aw-sleep" type="number" min="2" max="12" step="0.1" placeholder="7.5" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:10px 8px;background:var(--paper);color:var(--ink);font-size:16px;outline:none;text-align:center;-webkit-appearance:none">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--m);display:block;margin-bottom:4px">Herstel (1-10)</label>
+          <input id="aw-rec" type="number" min="1" max="10" placeholder="7" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:10px 8px;background:var(--paper);color:var(--ink);font-size:16px;outline:none;text-align:center;-webkit-appearance:none">
+        </div>
+      </div>
+      <button class="btn pri" style="width:100%;justify-content:center" onclick="saveAppleWatchData()">Opslaan & Wave bijwerken</button>
+      <div id="aw-result" style="margin-top:10px;font-size:12px;color:var(--teal);text-align:center;display:none">✓ Data opgeslagen — Wave bijgewerkt</div>
+    </div>
+  </div>
     <div class="card" style="margin-bottom:var(--sp-md)">
       <div class="ct">Oura Ring — Live koppeling</div>
       <p style="font-size:12px;color:var(--m);margin-bottom:14px">Genereer een Personal Access Token via <strong>cloud.ouraring.com/personal-access-tokens</strong> en plak hem hieronder. Data wordt lokaal opgeslagen.</p>
@@ -2735,7 +2803,62 @@ function toggleTheme(){
   if(btn) btn.textContent = currentTheme === 'dark' ? '☀' : '🌙';
 }
 
+// ── APPLE WATCH URL IMPORT ─────────────────────────────────────────
+function importFromURL(){
+  try{
+    var params=new URLSearchParams(window.location.search);
+    var hrv=parseFloat(params.get('hrv'));
+    var sleep=parseFloat(params.get('sleep'));
+    var rec=parseFloat(params.get('recovery'));
+    var hr=parseFloat(params.get('hr'));
+    if(isNaN(hrv)&&isNaN(sleep)&&isNaN(rec))return;
+    var changed=false;
+    if(!isNaN(hrv)&&hrv>10&&hrv<200){S.hrv.rmssd=Math.round(hrv);changed=true;}
+    if(!isNaN(sleep)&&sleep>1&&sleep<16){S.hrv.sleep=Math.round(sleep*10)/10;changed=true;}
+    if(!isNaN(rec)&&rec>=1&&rec<=10){S.hrv.recovery=Math.round(rec);changed=true;}
+    if(!isNaN(hr)&&hr>30&&hr<220){S.hrv.hr=Math.round(hr);changed=true;}
+    if(changed){
+      lsSet('tm2_hrv',S.hrv);
+      // Clean URL without reloading
+      window.history.replaceState({},'',window.location.pathname);
+      toast('Apple Watch data geïmporteerd ✓','ok');
+    }
+  }catch(e){}
+}
+
+function copyShortcutURL(){
+  var url='https://app.takumi-master.com/?hrv=[HRV]&sleep=[SLAAP]&recovery=[HERSTEL]&hr=[HARTSLAG]';
+  navigator.clipboard.writeText(url).then(function(){
+    var ok=document.getElementById('copy-ok');
+    if(ok){ok.style.display='block';setTimeout(function(){ok.style.display='none';},2500);}
+  }).catch(function(){
+    // Fallback for older iOS
+    var el=document.createElement('textarea');
+    el.value=url;el.style.position='fixed';el.style.opacity='0';
+    document.body.appendChild(el);el.select();document.execCommand('copy');
+    document.body.removeChild(el);
+    toast('URL gekopieerd','ok');
+  });
+}
+
+function saveAppleWatchData(){
+  var hrv=parseFloat(document.getElementById('aw-hrv').value);
+  var sleep=parseFloat(document.getElementById('aw-sleep').value);
+  var rec=parseFloat(document.getElementById('aw-rec').value);
+  if(isNaN(hrv)&&isNaN(sleep)&&isNaN(rec)){toast('Vul minimaal één waarde in','err');return;}
+  if(!isNaN(hrv)&&hrv>10&&hrv<200)S.hrv.rmssd=Math.round(hrv);
+  if(!isNaN(sleep)&&sleep>1&&sleep<16)S.hrv.sleep=Math.round(sleep*10)/10;
+  if(!isNaN(rec)&&rec>=1&&rec<=10)S.hrv.recovery=Math.round(rec);
+  lsSet('tm2_hrv',S.hrv);
+  var res=document.getElementById('aw-result');
+  if(res){res.style.display='block';setTimeout(function(){res.style.display='none';},3000);}
+  renderWave();
+  initCK();
+  toast('Data opgeslagen — Wave bijgewerkt','ok');
+}
+
 // ── BOOT ───────────────────────────────────────────────────────────
+importFromURL(); // check voor Apple Watch URL params
 applyTheme(currentTheme);
 if(S.port)renderPort();
 initCK();
