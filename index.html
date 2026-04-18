@@ -690,19 +690,6 @@ input[type=range]{width:100%;accent-color:var(--acc)}
         </div>
       </div>
     </div>
-    <!-- DAG VOORTGANG -->
-    <div style="display:flex;justify-content:center;align-items:center;gap:16px;padding:16px 16px 0">
-      <div id="dprog-dy" style="display:flex;align-items:center;gap:5px;font-size:var(--text-xs);color:var(--m)">
-        <div id="dot-dy" style="width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.12);transition:background .4s;flex-shrink:0"></div>
-        <span>Pulse</span>
-      </div>
-      <div style="width:16px;height:1px;background:var(--b)"></div>
-      <div id="dprog-bo" style="display:flex;align-items:center;gap:5px;font-size:var(--text-xs);color:var(--m)">
-        <div id="dot-bo" style="width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.12);transition:background .4s;flex-shrink:0"></div>
-        <span>Advies</span>
-      </div>
-    </div>
-
     <!-- DAG CYCLUS — drie stappen -->
     <div style="padding:16px 16px 0">
       <div style="font-size:var(--text-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--m);margin-bottom:var(--sp-sm)">Dag cyclus</div>
@@ -712,14 +699,14 @@ input[type=range]{width:100%;accent-color:var(--acc)}
           <span style="font-size:9px;color:var(--ink);letter-spacing:.03em">Ochtend</span>
         </button>
         <div style="flex:.6;height:1.5px;background:var(--b);position:relative"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:9px;color:var(--m)">→</div></div>
-        <button onclick="raadpleegCouncil()" style="flex:1;background:none;border:1.5px solid var(--b);border-radius:var(--r);padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s" onmouseenter="this.style.borderColor='var(--acc)'" onmouseleave="this.style.borderColor='var(--b)'">
-          <div style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:16px;color:var(--ink)">匠</div>
-          <span style="font-size:9px;color:var(--m);letter-spacing:.03em">Council</span>
+        <button id="pill-bo" onclick="raadpleegCouncil()" style="flex:1;background:none;border:1.5px solid var(--b);border-radius:var(--r);padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s">
+          <div id="pill-bo-ico" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:16px;color:var(--ink)">匠</div>
+          <span id="pill-bo-lbl" style="font-size:9px;color:var(--m);letter-spacing:.03em">Council</span>
         </button>
         <div style="flex:.6;height:1.5px;background:var(--b);position:relative"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:9px;color:var(--m)">→</div></div>
-        <button onclick="go('ri')" style="flex:1;background:none;border:1.5px solid var(--b);border-radius:var(--r);padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s" onmouseenter="this.style.borderColor='var(--acc)'" onmouseleave="this.style.borderColor='var(--b)'">
-          <div style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:16px;color:var(--ink)">習</div>
-          <span style="font-size:9px;color:var(--m);letter-spacing:.03em">Avond</span>
+        <button id="pill-ri" onclick="go('ri')" style="flex:1;background:none;border:1.5px solid var(--b);border-radius:var(--r);padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s">
+          <div id="pill-ri-ico" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:16px;color:var(--ink)">習</div>
+          <span id="pill-ri-lbl" style="font-size:9px;color:var(--m);letter-spacing:.03em">Avond</span>
         </button>
       </div>
     </div>
@@ -1160,21 +1147,26 @@ function markVandaag(key){
   updateDagVoortgang();
 }
 function updateDagVoortgang(){
-  var items={dy:{dot:'dot-dy',prog:'dprog-dy',lbl:'Pulse'},bo:{dot:'dot-bo',prog:'dprog-bo',lbl:'Advies'}};
-  Object.keys(items).forEach(function(k){
-    var cfg=items[k];
-    var dotEl=document.getElementById(cfg.dot);
-    var progEl=document.getElementById(cfg.prog);
-    if(dotEl)dotEl.style.background=vandaag[k]?'var(--teal)':'rgba(0,0,0,.12)';
-    if(progEl){
-      var span=progEl.querySelector('span');
-      if(span){
-        span.textContent=vandaag[k]?cfg.lbl+' ✓':cfg.lbl;
-        span.style.color=vandaag[k]?'var(--teal)':'var(--m)';
-        span.style.fontWeight=vandaag[k]?'600':'400';
-      }
-    }
-  });
+  // Council pill
+  var pillBo = document.getElementById('pill-bo');
+  var pillBoIco = document.getElementById('pill-bo-ico');
+  var pillBoLbl = document.getElementById('pill-bo-lbl');
+  if(pillBo){
+    var done = vandaag.bo;
+    pillBo.style.borderColor = done ? 'var(--acc)' : 'var(--b)';
+    if(pillBoIco){ pillBoIco.style.borderColor = done ? 'var(--acc)' : 'var(--b)'; pillBoIco.style.color = done ? 'var(--acc)' : 'var(--ink)'; }
+    if(pillBoLbl){ pillBoLbl.textContent = done ? 'Council ✓' : 'Council'; pillBoLbl.style.color = done ? 'var(--acc)' : 'var(--m)'; pillBoLbl.style.fontWeight = done ? '600' : '400'; }
+  }
+  // Avond pill
+  var pillRi = document.getElementById('pill-ri');
+  var pillRiIco = document.getElementById('pill-ri-ico');
+  var pillRiLbl = document.getElementById('pill-ri-lbl');
+  if(pillRi){
+    var doneRi = vandaag.ri;
+    pillRi.style.borderColor = doneRi ? 'var(--acc)' : 'var(--b)';
+    if(pillRiIco){ pillRiIco.style.borderColor = doneRi ? 'var(--acc)' : 'var(--b)'; pillRiIco.style.color = doneRi ? 'var(--acc)' : 'var(--ink)'; }
+    if(pillRiLbl){ pillRiLbl.textContent = doneRi ? 'Avond ✓' : 'Avond'; pillRiLbl.style.color = doneRi ? 'var(--acc)' : 'var(--m)'; pillRiLbl.style.fontWeight = doneRi ? '600' : '400'; }
+  }
 }
 
 // ── CONTEXT HELPERS ────────────────────────────────────────────────
@@ -1712,7 +1704,7 @@ function go(id){
   if(id==='dy'){initPulse();markVandaag('dy');}
   if(id==='gl')renderGoals();
   if(id==='rt'){go_rt();}
-  if(id==='ri'){go_ri();}
+  if(id==='ri'){go_ri();markVandaag('ri');}
 }
 document.querySelectorAll('[data-v]').forEach(el=>el.addEventListener('click',()=>go(el.dataset.v)));
 
