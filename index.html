@@ -2052,7 +2052,7 @@ async function send(){
     S.chat[S.cur].push({
       role:'assistant',
       content:'Stilte-advies\n\nHRV: ' + S.hrv.rmssd + ' rMSSD, Energie: ' + lastPulseEnergy + '/10, Herstel: ' + S.hrv.recovery + '/10.\n\nDe meester weet wanneer niet te handelen. Vandaag is zo een dag.\n\nBoard advies:\n- Sla deze vraag op voor morgen\n- Prioriteit: herstel en rust\n- Urgent? Typ urgent in je vraag\n\nMa: de juiste actie is soms geen actie.',
-            toolsUsed:[],
+      toolsUsed:[],
       score:10
     });
     lsSet('tm2_chat',S.chat);
