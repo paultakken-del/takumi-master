@@ -277,6 +277,15 @@ td{padding:10px;border-bottom:1px solid var(--b);font-size:12px}
 .toast{background:var(--ink);color:#fff;padding:10px 16px;border-radius:var(--rs);font-size:12px;animation:tin .2s ease;border-left:3px solid var(--acc);white-space:nowrap}
 .toast.ok{border-left-color:var(--teal)}.toast.err{border-left-color:#e55}
 @keyframes tin{from{opacity:0;transform:translateY(8px)}}
+@keyframes ckGreetIn{0%{opacity:0;transform:translateY(-10px) scale(.97)}100%{opacity:1;transform:none}}
+@keyframes ckDateIn{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:none}}
+@keyframes ckIconPulse{0%{transform:scale(1)}40%{transform:scale(1.12)}70%{transform:scale(.96)}100%{transform:scale(1)}}
+@keyframes waveReveal{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0% 0 0)}}
+@keyframes waveDotPulse{0%,100%{opacity:1;r:6}50%{opacity:.5;r:9}}
+@keyframes phaseIn{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:none}}
+@keyframes quoteIn{0%{opacity:0;transform:translateY(4px)}100%{opacity:.6;transform:none}}
+@keyframes quoteAuthIn{0%{opacity:0}100%{opacity:.35}}
+@keyframes dotRingPulse{0%,100%{r:10;opacity:.35}50%{r:16;opacity:.08}}
 .wg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:16px}
 .wc{background:var(--pc);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
 .wd{font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
@@ -372,6 +381,14 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ck-footer-item{cursor:default;user-select:none}
 .ck-footer-dot{opacity:.3}
 /* COCKPIT OPENING */
+.ck-greeting-anim #ck-icon-circle{animation:ckIconPulse .6s cubic-bezier(.34,1.56,.64,1) forwards}
+.ck-greeting-anim #ck-g{animation:ckGreetIn .45s ease forwards}
+.ck-greeting-anim #ck-d{animation:ckDateIn .45s .1s ease both}
+.ck-greeting-anim #ck-quote{animation:quoteIn .5s .5s ease both}
+.ck-greeting-anim #ck-quote-auth{animation:quoteAuthIn .4s .7s ease both}
+.wave-animate #wave-day{animation:waveReveal .7s .1s cubic-bezier(.4,0,.2,1) both}
+.wave-animate #wave-month{animation:waveReveal .9s .05s cubic-bezier(.4,0,.2,1) both}
+.wave-phase-animate{animation:phaseIn .4s ease both}
 .ck-opening{margin:24px 0 0;padding:16px;background:transparent;border-radius:var(--r);border:1px solid var(--b);opacity:.9}
 .ck-opening-q{font-family:var(--F);font-size:14px;font-style:italic;letter-spacing:.02em;color:var(--ink);margin-bottom:14px;text-align:center;opacity:.75}
 .ck-opening-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;place-items:center}
@@ -640,7 +657,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
         <path id="wave-day" d="" fill="none" stroke-width="2.5" stroke-linecap="round"/>
         <!-- Positiemarker -->
         <circle id="wave-dot" cx="160" cy="40" r="6" fill="var(--acc)"/>
-        <circle id="wave-dot-ring" cx="160" cy="40" r="10" fill="none" stroke="var(--acc)" stroke-width="1.5" opacity=".35"/>
+        <circle id="wave-dot-ring" cx="160" cy="40" r="10" fill="none" stroke="var(--acc)" stroke-width="1.5" opacity=".35" style="animation:dotRingPulse 2.4s ease-in-out infinite"/>
       </svg>
       <div class="ck-wave-phase">
         <div class="ck-wave-phase-name" id="wave-phase-name">–</div>
@@ -1895,6 +1912,9 @@ function renderWave(moodOverride){
   }
   dayPath.setAttribute('d', 'M' + dayPoints.join(' L'));
   dayPath.setAttribute('stroke', phaseData.col);
+  // Wave reveal animation
+  var wsvg = document.getElementById('ck-wave-svg');
+  if(wsvg){ wsvg.parentElement.classList.remove('wave-animate'); void wsvg.parentElement.offsetWidth; wsvg.parentElement.classList.add('wave-animate'); }
 
   // Month wave: flatter background wave
   var monthPoints = [];
@@ -1922,7 +1942,13 @@ function renderWave(moodOverride){
   // Phase label
   var nameEl = document.getElementById('wave-phase-name');
   var subEl = document.getElementById('wave-phase-sub');
-  if (nameEl) { nameEl.textContent = phaseData.name; nameEl.style.color = phaseData.col; }
+  if (nameEl) {
+    nameEl.classList.remove('wave-phase-animate');
+    void nameEl.offsetWidth;
+    nameEl.textContent = phaseData.name;
+    nameEl.style.color = phaseData.col;
+    nameEl.classList.add('wave-phase-animate');
+  }
   if (subEl) subEl.textContent = phaseData.sub;
 
   // Detail metrics
