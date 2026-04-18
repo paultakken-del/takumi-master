@@ -2033,8 +2033,10 @@ function showMusicSuggestie(mood){
     '<div class="ck-music-name">' + pl.name + '</div>' +
     '<div class="ck-music-sub">' + pl.sub + '</div>' +
     '</div>' +
-    '<button class="ck-music-btn" onclick="openSpotify('' + pl.url + '','' + pl.uri + '')" title="Open in Spotify">▶ Spelen</button>' +
+    '<button class="ck-music-btn" id="spotify-play-btn" title="Open in Spotify">▶ Spelen</button>' +
     '</div>';
+  var _sb=document.getElementById('spotify-play-btn');
+  if(_sb){var _pu=pl.url,_pi=pl.uri;_sb.onclick=function(){openSpotify(_pu,_pi);}; }
 }
 
 function openSpotify(url, uri){
