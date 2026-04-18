@@ -58,8 +58,7 @@
 [data-theme="dark"] .ck-card.on{background:var(--acc);border-color:var(--acc);color:#fff}
 [data-theme="dark"] .ck-triad-item{background:transparent}
 [data-theme="dark"] .ck-triad-center{background:transparent}
-[data-theme="dark"] .ck-balans-track{background:rgba(255,255,255,.08)}
-[data-theme="dark"] .ck-passief{padding:16px 0 0;border-top:1px solid var(--b);margin-top:12px}
+[data-theme="dark"] [data-theme="dark"] .ck-passief{padding:16px 0 0;border-top:1px solid var(--b);margin-top:12px}
 [data-theme="dark"] .fi{background:#1e1d1a;border-color:rgba(255,255,255,.07)}
 [data-theme="dark"] .ci{background:#1e1d1a;border-color:rgba(255,255,255,.12);color:#ede9e0}
 [data-theme="dark"] .ac{background:#1e1d1a}
@@ -362,13 +361,6 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ck-triad-sub{font-family:var(--F);font-size:10px;color:var(--m)}
 
 /* BALANS-AS */
-.ck-balans{margin:20px 24px 0}
-.ck-balans-label{display:flex;justify-content:space-between;align-items:center;font-family:var(--F);font-size:10px;color:var(--m);letter-spacing:.08em;text-transform:uppercase;margin-bottom:var(--sp-xs)}
-.ck-balans-track{position:relative;height:6px;background:var(--pw);border-radius:3px;overflow:visible}
-.ck-balans-center{position:absolute;left:50%;top:-2px;width:1px;height:10px;background:var(--bm)}
-.ck-balans-bar{position:absolute;top:0;left:50%;height:6px;border-radius:3px;background:var(--acc);transition:all .6s ease;width:0;transform-origin:left}
-.ck-balans-dot{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--ink);border:2px solid var(--paper);transform:translate(-50%,-50%);transition:left .6s ease;left:50%}
-.ck-balans-hint{font-family:var(--F);font-size:11px;color:var(--m);text-align:center;margin-top:10px;min-height:16px}
 
 /* BRIEFING */
 .ck-brief{margin:20px 16px 0;padding:14px 16px 14px 18px;background:transparent;border-radius:var(--r);border:1px solid var(--b);border-left:3px solid var(--acc);text-align:left}
@@ -556,12 +548,18 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ck-stat-warn{color:var(--gold)!important}
 .ck-stat-bad{color:var(--acc)!important}
 /* BALANS */
-.ck-balans{margin:10px 20px 0}
-.ck-balans-track{position:relative;height:4px;background:var(--pw);border-radius:2px}
-.ck-balans-center{position:absolute;left:50%;top:-2px;width:1px;height:8px;background:var(--bm)}
-.ck-balans-bar{position:absolute;top:0;left:50%;height:4px;border-radius:2px;background:var(--acc);transition:all .6s ease;width:0;transform-origin:left}
-.ck-balans-dot{position:absolute;top:50%;width:10px;height:10px;border-radius:50%;background:var(--ink);border:2px solid var(--paper);transform:translate(-50%,-50%);transition:left .6s ease;left:50%}
-.ck-balans-hint{font-size:10px;color:var(--m);text-align:center;margin-top:6px;min-height:14px;letter-spacing:.04em}
+/* THE WAVE — primaire signaal */
+.ck-wave-container{margin:var(--sp-md) 0 0;padding:16px 0 4px;position:relative}
+.ck-wave-svg{width:100%;display:block;overflow:visible;padding:0 4px}
+.ck-wave-phase{text-align:center;margin-top:12px}
+.ck-wave-phase-name{font-family:var(--FD);font-size:22px;font-weight:700;color:var(--ink);line-height:1}
+.ck-wave-phase-sub{font-size:var(--text-xs);color:var(--m);margin-top:5px;line-height:1.6;max-width:260px;margin-left:auto;margin-right:auto}
+.ck-wave-detail{display:flex;justify-content:center;gap:24px;margin-top:14px;padding-top:12px;border-top:1px solid var(--b)}
+.ck-wave-metric{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ck-wave-metric:active{opacity:.7}
+.ck-wave-metric-val{font-family:var(--FD);font-size:13px;font-weight:600;color:var(--ink);line-height:1}
+.ck-wave-metric-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--m)}
+[data-theme="dark"] .ck-wave-detail{border-top-color:rgba(255,255,255,.08)}
 /* BUTTONS */
 .ck-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px 16px 0}
 .ck-btn-pulse{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:20px 12px;border:1px solid var(--b);border-radius:var(--r);background:var(--paper);color:var(--ink);font-family:var(--F);font-size:12px;cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent;min-height:68px}
@@ -619,27 +617,6 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <div class="ck-date" id="ck-d"></div>
     </div>
 
-    <!-- HRV STRIP — betekenis eerst, getal als detail -->
-    <div class="ck-stats-strip" id="ck-stats" style="border-left:3px solid var(--acc)">
-      <div class="ck-stat" style="cursor:pointer" onclick="go('da')">
-        <span class="ck-stat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".6"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
-        <span class="ck-stat-val" id="ck-stat-hrv">–</span>
-        <span class="ck-stat-lbl" id="ck-stat-hrv-lbl">HRV</span>
-      </div>
-      <div class="ck-stat-div"></div>
-      <div class="ck-stat" style="cursor:pointer" onclick="go('da')">
-        <span class="ck-stat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".6"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
-        <span class="ck-stat-val" id="ck-stat-sleep">–</span>
-        <span class="ck-stat-lbl" id="ck-stat-sleep-lbl">SLAAP</span>
-      </div>
-      <div class="ck-stat-div"></div>
-      <div class="ck-stat" style="cursor:pointer" onclick="go('da')">
-        <span class="ck-stat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".6"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-        <span class="ck-stat-val" id="ck-stat-rec">–</span>
-        <span class="ck-stat-lbl" id="ck-stat-rec-lbl">HERSTEL</span>
-      </div>
-    </div>
-
     <!-- SYNTHESE BRIEF — wat het systeem concludeert -->
     <div id="ck-synthese" style="margin:var(--sp-md) 0 0;padding:14px 16px;background:var(--pw);border-radius:var(--rs);border-left:3px solid var(--acc);font-size:13px;line-height:1.6;color:var(--ink)"></div>
 
@@ -663,7 +640,36 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       </div>
     </div>
 
-    <div class="ck-balans" id="ck-balans"><div class="ck-balans-track"><div class="ck-balans-center"></div><div class="ck-balans-bar" id="ck-balans-bar"></div><div class="ck-balans-dot" id="ck-balans-dot"></div></div><div class="ck-balans-hint" id="ck-balans-hint"></div></div>
+        <!-- THE WAVE — primair energiesignaal -->
+    <div class="ck-wave-container" id="ck-wave-container">
+      <svg class="ck-wave-svg" id="ck-wave-svg" viewBox="0 0 320 80" preserveAspectRatio="none" height="80">
+        <!-- Maandgolf (achtergrond) -->
+        <path id="wave-month" d="" fill="none" stroke="var(--b)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <!-- Daggolf (voorgrond) -->
+        <path id="wave-day" d="" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Positiemarker -->
+        <circle id="wave-dot" cx="160" cy="40" r="6" fill="var(--acc)"/>
+        <circle id="wave-dot-ring" cx="160" cy="40" r="10" fill="none" stroke="var(--acc)" stroke-width="1.5" opacity=".35"/>
+      </svg>
+      <div class="ck-wave-phase">
+        <div class="ck-wave-phase-name" id="wave-phase-name">–</div>
+        <div class="ck-wave-phase-sub" id="wave-phase-sub"></div>
+      </div>
+      <div class="ck-wave-detail" onclick="go('da')">
+        <div class="ck-wave-metric">
+          <span class="ck-wave-metric-val" id="ck-stat-hrv">–</span>
+          <span class="ck-wave-metric-lbl">HRV rMSSD</span>
+        </div>
+        <div class="ck-wave-metric">
+          <span class="ck-wave-metric-val" id="ck-stat-sleep">–</span>
+          <span class="ck-wave-metric-lbl">Slaap</span>
+        </div>
+        <div class="ck-wave-metric">
+          <span class="ck-wave-metric-val" id="ck-stat-rec">–</span>
+          <span class="ck-wave-metric-lbl">Herstel</span>
+        </div>
+      </div>
+    </div>
     <!-- DAG VOORTGANG — leesbaar -->
     <div style="display:flex;justify-content:center;align-items:center;gap:16px;padding:16px 16px 0">
       <div id="dprog-ri" style="display:flex;align-items:center;gap:5px;font-size:var(--text-xs);color:var(--m)">
@@ -1165,6 +1171,8 @@ function portCtx(){
 }
 function allCtx(){
   var lines=[];
+  var phaseLabels={dal:'Herstel (dal)',stijgend:'Opbouw (stijgend)',vlak:'Normaal',top:'Actief (top)',dalend:'Afronden (dalend)'};
+  if(window._wavePhase) lines.push('Wave: '+( phaseLabels[window._wavePhase]||window._wavePhase));
   lines.push('Portfolio: '+portCtx());
   lines.push('HRV: rMSSD '+S.hrv.rmssd+' (baseline 53, delta '+(S.hrv.rmssd-53>=0?'+':'')+(S.hrv.rmssd-53)+'), herstel '+S.hrv.recovery+'/10, slaap '+S.hrv.sleep+'u');
   if(GOALS&&GOALS.length){
@@ -1561,12 +1569,15 @@ async function loadOuraHistory(){
     if(el) el.innerHTML = '<div style="display:flex;align-items:flex-end;gap:3px;padding:4px 0;height:110px">' + bars + '</div>';
     var insight = document.getElementById('rt-insight');
     if(insight) insight.innerHTML = '14-daags gem.: ' + avg + ' rMSSD · <span style="color:var(--teal)">groen</span> = boven gem. · <span style="color:var(--acc)">rood</span> = herstel · ' + vals.length + ' metingen · <button onclick="loadOuraHistory()" style="background:none;border:none;cursor:pointer;color:var(--m);font-size:11px;padding:0;font-family:var(--F)">↺ vernieuwen</button>';
-    // Update S.hrv with latest
+    // Update S.hrv with latest + set personal wave baseline
     var latest = days[days.length-1];
     if(latest && latest.average_hrv){
       S.hrv.rmssd = Math.round(latest.average_hrv);
       lsSet('tm2_hrv', S.hrv);
+      WAVE_BASELINE_HRV = avg; // gebruik 14-daags gemiddelde als persoonlijke baseline
+      lsSet('tm2_wave_baseline', avg);
       analyzeRhythm();
+      renderWave(); // herbereken wave met nieuwe baseline
     }
     toast('HRV trend geladen: ' + days.length + ' dagen','ok');
   } catch(err){
@@ -1695,40 +1706,12 @@ function setCkOpening(el, val){
     syn.innerHTML='<span style="font-weight:600;color:'+r.col+'">'+r.t+'.</span> '+r.c+(doelTxt?' '+doelTxt:'');
     syn.style.borderLeftColor=r.col;
   }
+  renderWave(val);
   updateBalansWithEmotie(val);
 }
 
 function updateBalansWithEmotie(val){
-  // Emotionele toon verschuift de balans subtiel
-  // fris=+hart, rustig=neutraal, scherp=+hoofd, zwaar=-hara
-  var emotieOffset = {fris:0.04, rustig:0, scherp:-0.06, zwaar:0.06};
-  var offset = emotieOffset[val] || 0;
-  // Lees huidige dot positie en verschuif
-  var dot = document.getElementById('ck-balans-dot');
-  var bar = document.getElementById('ck-balans-bar');
-  var hint = document.getElementById('ck-balans-hint');
-  if(!dot) return;
-  // Huidige positie uit left style
-  var cur = parseFloat(dot.style.left) / 100 || 0.5;
-  var newPos = Math.max(0.1, Math.min(0.9, cur + offset));
-  dot.style.left = (newPos * 100) + '%';
-  // Bar update
-  if(bar){
-    var dev = newPos - 0.5;
-    if(dev >= 0){ bar.style.left='50%'; bar.style.width=(dev*100)+'%'; }
-    else{ bar.style.left=(50+dev*100)+'%'; bar.style.width=(Math.abs(dev)*100)+'%'; }
-    bar.style.background = Math.abs(dev)<0.1?'var(--teal)':Math.abs(dev)<0.25?'var(--gold)':'var(--acc)';
-  }
-  // Hint — gecombineerde boodschap
-  if(hint){
-    var hintMsgs = {
-      fris: newPos < 0.45 ? 'Hoofd-dominant, maar frisse energie vloeit.' : 'Balans met frisse energie — goede dag.',
-      rustig: Math.abs(newPos-0.5)<0.08 ? 'In balans — rustig aanwezig.' : newPos<0.5 ? 'Hoofd-dominant — laat het lichaam ook spreken.' : 'Hara-dominant — wat structuur helpt.',
-      scherp: 'Mentale scherpte dominant — gebruik dit bewust.',
-      zwaar: 'Hara vraagt aandacht — herstel heeft voorrang.'
-    };
-    hint.textContent = hintMsgs[val] || hint.textContent;
-  }
+  // Wave handles mood integration now via renderWave(val)
 }
 
 function initCkOpening(){
@@ -1832,6 +1815,126 @@ function renderQuote(){
   });
 })();
 
+// ── THE WAVE ENGINE ────────────────────────────────────────────────
+var WAVE_BASELINE_HRV = ls('tm2_wave_baseline', 53);
+var WAVE_BASELINE_SLEEP = 7.5;
+
+var WAVE_PHASES = {
+  dal:     {name:'Herstel',    col:'#4A7C8E', sub:'Geen grote beslissingen. Biometrie vraagt rust — rituelen en loslaten staan centraal.'},
+  stijgend:{name:'Opbouw',     col:'#b5872a', sub:'Je herstelt. Bouw structuur op met kleine, concrete stappen.'},
+  vlak:    {name:'Normaal',    col:'var(--m)', sub:'Stabiele dag. Werk met ritme en neem bewuste pauzes.'},
+  top:     {name:'Actief',     col:'#28897a', sub:'Topmoment. Gebruik deze energie voor diep werk en beslissingen.'},
+  dalend:  {name:'Afronden',   col:'var(--gold)', sub:'Energie daalt. Sluit lopende zaken af, geen nieuwe grote starts.'}
+};
+
+function calcWave(){
+  var hrv = S.hrv.rmssd || 45;
+  var rec = S.hrv.recovery || 7;
+  var slaap = S.hrv.sleep || 7;
+  var mood = RituelenData ? RituelenData.binnenkomst : 'rustig';
+  var weekNum = Math.ceil(new Date().getDate() / 7);
+
+  // Relatief aan persoonlijke baseline
+  var hrvDelta = (hrv - WAVE_BASELINE_HRV) / WAVE_BASELINE_HRV; // -1 tot +1
+  var sleepDelta = (slaap - WAVE_BASELINE_SLEEP) / WAVE_BASELINE_SLEEP;
+  var recNorm = (rec - 5) / 5; // -1 tot +1 (5 = neutraal)
+
+  var moodScore = {fris: 0.3, scherp: 0.2, rustig: 0, zwaar: -0.6}[mood] || 0;
+  var weekPenalty = weekNum === 3 ? -0.2 : 0;
+
+  // Gewogen score — relatief aan eigen baseline
+  var score = (hrvDelta * 0.35) + (recNorm * 0.25) + (sleepDelta * 0.20) + (moodScore * 0.20) + weekPenalty;
+  score = Math.max(-1, Math.min(1, score));
+
+  var phase;
+  if      (score < -0.4) phase = 'dal';
+  else if (score < -0.1) phase = 'stijgend';
+  else if (score <  0.1) phase = 'vlak';
+  else if (score <  0.45) phase = 'top';
+  else                   phase = 'dalend';
+
+  return {score: score, phase: phase};
+}
+
+function renderWave(moodOverride){
+  var w = calcWave();
+  if(moodOverride) {
+    var moodScore = {fris:0.3,scherp:0.2,rustig:0,zwaar:-0.6}[moodOverride]||0;
+    w.score = Math.max(-1, Math.min(1, w.score * 0.8 + moodScore * 0.2));
+    if(w.score < -0.4) w.phase='dal';
+    else if(w.score < -0.1) w.phase='stijgend';
+    else if(w.score < 0.1) w.phase='vlak';
+    else if(w.score < 0.45) w.phase='top';
+    else w.phase='dalend';
+  }
+
+  var phaseData = WAVE_PHASES[w.phase];
+
+  // Draw SVG wave
+  var svg = document.getElementById('ck-wave-svg');
+  var dayPath = document.getElementById('wave-day');
+  var monthPath = document.getElementById('wave-month');
+  var dotEl = document.getElementById('wave-dot');
+  var dotRing = document.getElementById('wave-dot-ring');
+  if (!svg || !dayPath) return;
+
+  // Day wave: sine curve, position marker at wave position
+  // score -1..+1 maps to phase 0..2π on the sine
+  var W = 320, H = 80, mid = H / 2, amp = 28;
+  var dayPoints = [];
+  for (var i = 0; i <= W; i += 4) {
+    var t = (i / W) * Math.PI * 2;
+    var y = mid - Math.sin(t) * amp;
+    dayPoints.push(i + ',' + y.toFixed(1));
+  }
+  dayPath.setAttribute('d', 'M' + dayPoints.join(' L'));
+  dayPath.setAttribute('stroke', phaseData.col);
+
+  // Month wave: flatter background wave
+  var monthPoints = [];
+  for (var j = 0; j <= W; j += 8) {
+    var tm = (j / W) * Math.PI * 2;
+    var weekNum = Math.ceil(new Date().getDate() / 7);
+    var monthOffset = ((weekNum - 1) / 4) * Math.PI * 2;
+    var ym = mid - Math.sin(tm + monthOffset) * 14;
+    monthPoints.push(j + ',' + ym.toFixed(1));
+  }
+  monthPath.setAttribute('d', 'M' + monthPoints.join(' L'));
+
+  // Position dot: score -1..+1 → x position, y = sine at that x
+  // Score maps to position 0.1..0.9 of wave cycle
+  var posT = ((w.score + 1) / 2) * Math.PI * 2; // 0..2π
+  var dotX = ((w.score + 1) / 2) * W;
+  var dotY = mid - Math.sin(posT) * amp;
+  dotEl.setAttribute('cx', dotX.toFixed(1));
+  dotEl.setAttribute('cy', dotY.toFixed(1));
+  dotEl.setAttribute('fill', phaseData.col);
+  dotRing.setAttribute('cx', dotX.toFixed(1));
+  dotRing.setAttribute('cy', dotY.toFixed(1));
+  dotRing.setAttribute('stroke', phaseData.col);
+
+  // Phase label
+  var nameEl = document.getElementById('wave-phase-name');
+  var subEl = document.getElementById('wave-phase-sub');
+  if (nameEl) { nameEl.textContent = phaseData.name; nameEl.style.color = phaseData.col; }
+  if (subEl) subEl.textContent = phaseData.sub;
+
+  // Detail metrics
+  var hrv = S.hrv.rmssd || 45;
+  var rec = S.hrv.recovery || 7;
+  var slaap = S.hrv.sleep || 7;
+  var hrvEl = document.getElementById('ck-stat-hrv');
+  var sleepEl = document.getElementById('ck-stat-sleep');
+  var recEl = document.getElementById('ck-stat-rec');
+  if (hrvEl) hrvEl.textContent = hrv + ' rMSSD';
+  if (sleepEl) sleepEl.textContent = slaap.toFixed(1) + 'u';
+  if (recEl) recEl.textContent = rec + '/10';
+
+  // Store wave state globally for allCtx
+  window._wavePhase = w.phase;
+  window._waveScore = w.score;
+}
+
 function initCK(){
   const now=new Date(),h=now.getHours();
   const gr=h<5?'Goede nacht':h<12?'Goedemorgen':h<17?'Goedemiddag':'Goedenavond';
@@ -1922,28 +2025,8 @@ function initCK(){
     }
   }
 
-  // ── BALANS-AS ──────────────────────────────────────────────
-  const slaapScore=Math.min(10,Math.round(slaap));
-  const weekPenalty=weekNum===3?-1:0;
-  const hoofdScore=Math.max(1,Math.min(10,Math.round(slaapScore+weekPenalty)));
-  const haraScore=rec;
-  const balansPos=Math.max(0.1,Math.min(0.9,0.5+(haraScore/10-hoofdScore/10)*0.35));
-  const dot=document.getElementById('ck-balans-dot');
-  const bar=document.getElementById('ck-balans-bar');
-  if(dot)dot.style.left=(balansPos*100)+'%';
-  if(bar){
-    const dev=balansPos-0.5;
-    if(dev>=0){bar.style.left='50%';bar.style.width=(dev*100)+'%';}
-    else{bar.style.left=(50+dev*100)+'%';bar.style.width=(Math.abs(dev)*100)+'%';}
-    bar.style.background=Math.abs(dev)<0.1?'var(--teal)':Math.abs(dev)<0.25?'var(--gold)':'var(--acc)';
-  }
-  const hint=document.getElementById('ck-balans-hint');
-  if(hint){
-    if(Math.abs(balansPos-0.5)<0.08)hint.textContent='In balans';
-    else if(balansPos<0.5)hint.textContent='Hoofd-dominant — kom in het lichaam';
-    else hint.textContent='Hara-dominant — wat richting helpt';
-  }
-
+  // ── THE WAVE ──────────────────────────────────────────────
+  renderWave();
   initCkOpening();
 }
 
@@ -2817,36 +2900,9 @@ function setCkOpeningByVal(val){
 
 
 function updateHaraFromPulse(energyVal){
-  // Live Hara update vanuit pulse energie slider
-  var haraEl = document.getElementById('ck-hara-val');
-  var haraSub = document.getElementById('ck-hara-sub');
-  var score = Math.round(energyVal);
-  if(haraEl) haraEl.textContent = score + '/10';
-  if(haraSub) haraSub.textContent = score>=8?'sterk':score>=6?'aanwezig':'laag';
-  // Ook balans updaten
-  var dot = document.getElementById('ck-balans-dot');
-  var bar = document.getElementById('ck-balans-bar');
-  var hint = document.getElementById('ck-balans-hint');
-  if(!dot) return;
-  // Herbereken balans met nieuwe energie
-  var hrv = S.hrv.rmssd || 45;
-  var hoofdScore = Math.min(10, Math.round(S.hrv.sleep || 7));
-  var haraScore = score;
-  var hartScore = Math.min(10, Math.max(1, Math.round((hrv/60)*10)));
-  var balansPos = 0.5 + (haraScore/10 - hoofdScore/10) * 0.35;
-  var clampedPos = Math.max(0.1, Math.min(0.9, balansPos));
-  dot.style.left = (clampedPos * 100) + '%';
-  if(bar){
-    var dev = clampedPos - 0.5;
-    if(dev >= 0){ bar.style.left='50%'; bar.style.width=(dev*100)+'%'; }
-    else{ bar.style.left=(50+dev*100)+'%'; bar.style.width=(Math.abs(dev)*100)+'%'; }
-    bar.style.background = Math.abs(dev)<0.1?'var(--teal)':Math.abs(dev)<0.25?'var(--gold)':'var(--acc)';
-  }
-  if(hint){
-    hint.textContent = Math.abs(clampedPos-0.5)<0.08 ? 'Gebalanceerd' :
-      clampedPos < 0.5 ? 'Hoofd-dominant — meer in het lichaam komen' :
-      'Hara-dominant — wat structuur helpt';
-  }
+  // Live wave update vanuit pulse energie slider
+  S.hrv.recovery = Math.round(energyVal);
+  renderWave();
 }
 
 
