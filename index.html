@@ -570,9 +570,10 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   <div class="sb-nav">
     <div class="sb-sec">Dag</div>
     <div class="ni on" data-v="ck"><span class="ico">⬡</span>Cockpit</div>
-    <div class="ni" data-v="ri"><span class="ico">習</span>Rituelen</div>
     <div class="ni" data-v="dy"><span class="ico" style="font-family:var(--FJ)">脈</span>Dag Pulse</div>
     <div class="ni" data-v="bo"><span class="ico">◈</span>Master Council</div>
+    <div class="sb-sec">Avond</div>
+    <div class="ni" data-v="ri"><span class="ico">習</span>Avondritueel</div>
     <div class="sb-sec">Week · Maand</div>
     <div class="ni" id="nav-wr" data-v="wr"><span class="ico" style="font-family:var(--FJ)">週</span>Week Reflectie</div>
     <div class="ni" data-v="rt"><span class="ico" style="font-family:var(--FJ)">律</span>Maandpatroon</div>
@@ -660,13 +661,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
         </div>
       </div>
     </div>
-    <!-- DAG VOORTGANG — leesbaar -->
+    <!-- DAG VOORTGANG -->
     <div style="display:flex;justify-content:center;align-items:center;gap:16px;padding:16px 16px 0">
-      <div id="dprog-ri" style="display:flex;align-items:center;gap:5px;font-size:var(--text-xs);color:var(--m)">
-        <div id="dot-ri" style="width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.12);transition:background .4s;flex-shrink:0"></div>
-        <span>Rituelen</span>
-      </div>
-      <div style="width:16px;height:1px;background:var(--b)"></div>
       <div id="dprog-dy" style="display:flex;align-items:center;gap:5px;font-size:var(--text-xs);color:var(--m)">
         <div id="dot-dy" style="width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.12);transition:background .4s;flex-shrink:0"></div>
         <span>Pulse</span>
@@ -678,24 +674,24 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       </div>
     </div>
 
-    <!-- DAG CYCLUS — drie geneste stappen -->
+    <!-- DAG CYCLUS — drie stappen -->
     <div style="padding:16px 16px 0">
       <div style="font-size:var(--text-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--m);margin-bottom:var(--sp-sm)">Dag cyclus</div>
       <div style="display:flex;align-items:center;gap:0">
-        <button onclick="go('ri')" style="flex:1;background:none;border:1.5px solid var(--acc);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;position:relative" onmouseenter="this.style.background='rgba(196,83,42,.06)'" onmouseleave="this.style.background='none'">
-          <div style="width:36px;height:36px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:#fff">習</div>
-          <span style="font-size:10px;color:var(--ink);letter-spacing:.04em">Rituelen</span>
-          <div id="onb-badge" style="display:none;position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--acc);color:#fff;font-size:8px;padding:2px 7px;border-radius:var(--rs);white-space:nowrap;letter-spacing:.04em;transition:opacity .4s">Begin hier</div>
-        </button>
-        <div style="flex:1;height:1.5px;background:var(--b);position:relative"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--m)">→</div></div>
-        <button onclick="go('dy')" style="flex:1;background:none;border:1.5px solid var(--b);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s" onmouseenter="this.style.borderColor='var(--acc)'" onmouseleave="this.style.borderColor='var(--b)'">
-          <div style="width:36px;height:36px;border-radius:50%;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:var(--ink)">脈</div>
-          <span style="font-size:10px;color:var(--m);letter-spacing:.04em">Pulse</span>
+        <button onclick="go('dy')" style="flex:1;background:none;border:1.5px solid var(--acc);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;position:relative" onmouseenter="this.style.background='rgba(196,83,42,.06)'" onmouseleave="this.style.background='none'">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:#fff">脈</div>
+          <span style="font-size:10px;color:var(--ink);letter-spacing:.04em">Dag Pulse</span>
         </button>
         <div style="flex:1;height:1.5px;background:var(--b);position:relative"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--m)">→</div></div>
         <button onclick="raadpleegCouncil()" style="flex:1;background:none;border:1.5px solid var(--b);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s" onmouseenter="this.style.borderColor='var(--acc)'" onmouseleave="this.style.borderColor='var(--b)'">
           <div style="width:36px;height:36px;border-radius:50%;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:var(--ink)">匠</div>
           <span style="font-size:10px;color:var(--m);letter-spacing:.04em">Council</span>
+        </button>
+      </div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--b);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:var(--text-xs);color:var(--m)">Vanavond</span>
+        <button onclick="go('ri')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--m);-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:4px">
+          習 Avondritueel <span style="font-size:13px">→</span>
         </button>
       </div>
     </div>
@@ -774,7 +770,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
 <!-- DAILY PULSE -->
 <div class="view" id="v-dy">
-  <div class="tb"><div><div class="tb-t" id="pulse-t">脈 Volledige Pulse Check</div><div class="tb-s">Uitgebreide check-in · HRV · Top 3 · Council insight</div></div></div>
+  <div class="tb"><div><div class="tb-t" id="pulse-t">脈 Volledige Pulse Check</div><div class="tb-s">Energie · Loslaten · Board advies</div></div></div>
   <div class="vs"><div class="pw2"><div class="pst" id="pst"></div><div id="pb"></div></div></div>
 </div>
 
@@ -942,108 +938,92 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <div class="view" id="v-ri">
   <div class="tb">
     <div>
-      <div class="tb-t">習 Dagelijkse Praktijk</div>
-      <div class="tb-s">Vier ankers — tik om te openen</div>
+      <div class="tb-t">習 Avondritueel</div>
+      <div class="tb-s">Sluit de dag bewust af</div>
     </div>
     <button class="btn sm pri" onclick="raadpleegVanuitRituelen()">匠 Council</button>
   </div>
   <div class="vs" style="padding:0">
 
-    <!-- ANKER 1: 気 ENERGIE -->
+    <!-- ANKER 1: 気 ENERGIE TERUGBLIK -->
     <div class="ri-anker" id="ri-a1" onclick="riToggle(1)">
       <div class="ri-anker-hd">
         <div class="ri-anker-ico" style="background:rgba(40,137,122,.12);color:var(--teal)">気</div>
         <div class="ri-anker-info">
-          <div class="ri-anker-titel">Energie</div>
-          <div class="ri-anker-preview" id="ri-prev1">Wat geeft, wat neemt?</div>
+          <div class="ri-anker-titel">Energie terugblik</div>
+          <div class="ri-anker-preview" id="ri-prev1">Wat gaf energie, wat kostte het?</div>
         </div>
         <div class="ri-anker-chev" id="ri-chev1">›</div>
       </div>
       <div class="ri-anker-body" id="ri-body1">
         <div class="ri-2col">
           <div class="ri-inp-blok ri-teal">
-            <div class="ri-inp-label">▲ Geeft energie</div>
+            <div class="ri-inp-label">▲ Gaf energie</div>
             <div id="ri-gevers-list" class="ri-list"></div>
             <div class="ri-inp-row">
-              <input id="ri-gever-inp" type="text" class="ri-inp" placeholder="Wat geeft je energie?" onkeydown="if(event.key==='Enter')addAudit('gever')">
+              <input id="ri-gever-inp" type="text" class="ri-inp" placeholder="Wat gaf je energie vandaag?" onkeydown="if(event.key==='Enter')addAudit('gever')">
               <button class="ri-add-btn ri-teal-btn" onclick="event.stopPropagation();addAudit('gever')">+</button>
             </div>
           </div>
           <div class="ri-inp-blok ri-acc">
-            <div class="ri-inp-label">▼ Kost energie</div>
+            <div class="ri-inp-label">▼ Kostte energie</div>
             <div id="ri-nemers-list" class="ri-list"></div>
             <div class="ri-inp-row">
-              <input id="ri-nemer-inp" type="text" class="ri-inp" placeholder="Wat kost je energie?" onkeydown="if(event.key==='Enter')addAudit('nemer')">
+              <input id="ri-nemer-inp" type="text" class="ri-inp" placeholder="Wat kostte energie vandaag?" onkeydown="if(event.key==='Enter')addAudit('nemer')">
               <button class="ri-add-btn ri-acc-btn" onclick="event.stopPropagation();addAudit('nemer')">+</button>
             </div>
           </div>
         </div>
-        <button class="ri-volgende-btn" onclick="event.stopPropagation();riToggle(1);riToggle(2)">体 Lichaam →</button>
+        <button class="ri-volgende-btn" onclick="event.stopPropagation();riToggle(1);riToggle(2)">道 Leren →</button>
       </div>
     </div>
 
-    <!-- ANKER 2: 体 LICHAAM -->
+    <!-- ANKER 2: 道 LEREN -->
     <div class="ri-anker" id="ri-a2" onclick="riToggle(2)">
-      <div class="ri-anker-hd">
-        <div class="ri-anker-ico" style="background:rgba(196,83,42,.08);color:var(--acc)">体</div>
-        <div class="ri-anker-info">
-          <div class="ri-anker-titel">Lichaam</div>
-          <div class="ri-anker-preview" id="ri-prev2">Scan — hoofd · hart · buik</div>
-        </div>
-        <div class="ri-anker-chev" id="ri-chev2">›</div>
-      </div>
-      <div class="ri-anker-body" id="ri-body2">
-        <textarea id="ri-lichaam-txt" class="ri-textarea" placeholder="Bijv: mijn schouders zijn gespannen, buik rustig..." rows="3" onclick="event.stopPropagation()"></textarea>
-        <button class="ri-volgende-btn" onclick="event.stopPropagation();riToggle(2);riToggle(3)">道場 Leren →</button>
-      </div>
-    </div>
-
-    <!-- ANKER 3: 道場 LEREN -->
-    <div class="ri-anker" id="ri-a3" onclick="riToggle(3)">
       <div class="ri-anker-hd">
         <div class="ri-anker-ico" style="background:rgba(122,74,138,.1);color:#7a4a8a">道</div>
         <div class="ri-anker-info">
           <div class="ri-anker-titel">Leren</div>
-          <div class="ri-anker-preview" id="ri-prev3">Fout & les vastleggen</div>
+          <div class="ri-anker-preview" id="ri-prev2">Fout & les van vandaag</div>
         </div>
-        <div class="ri-anker-chev" id="ri-chev3">›</div>
+        <div class="ri-anker-chev" id="ri-chev2">›</div>
       </div>
-      <div class="ri-anker-body" id="ri-body3">
+      <div class="ri-anker-body" id="ri-body2">
         <div id="ri-fouten-list" class="ri-list" style="margin-bottom:10px"></div>
         <div class="ri-2col" style="margin-bottom:var(--sp-xs)">
           <input id="ri-fout-inp" type="text" class="ri-inp" placeholder="De fout of het patroon..." onclick="event.stopPropagation()">
           <input id="ri-les-inp" type="text" class="ri-inp" placeholder="De les die ik trek..." onclick="event.stopPropagation()">
         </div>
         <button class="btn sm" style="width:100%;margin-bottom:12px" onclick="event.stopPropagation();addFout()">+ Vastleggen</button>
-        <button class="ri-volgende-btn" onclick="event.stopPropagation();riToggle(3);riToggle(4)">✦ Dankbaarheid →</button>
+        <button class="ri-volgende-btn" onclick="event.stopPropagation();riToggle(2);riToggle(3)">✦ Dankbaarheid →</button>
       </div>
     </div>
 
-    <!-- ANKER 4: ✦ DANKBAARHEID -->
-    <div class="ri-anker" id="ri-a4" onclick="riToggle(4)" style="border-bottom:none">
+    <!-- ANKER 3: ✦ DANKBAARHEID -->
+    <div class="ri-anker" id="ri-a3" onclick="riToggle(3)" style="border-bottom:none">
       <div class="ri-anker-hd">
         <div class="ri-anker-ico" style="background:rgba(196,157,42,.1);color:var(--gold)">✦</div>
         <div class="ri-anker-info">
           <div class="ri-anker-titel">Dankbaarheid</div>
-          <div class="ri-anker-preview" id="ri-prev4">Sluit de dag</div>
+          <div class="ri-anker-preview" id="ri-prev3">Sluit de dag</div>
         </div>
-        <div class="ri-anker-chev" id="ri-chev4">›</div>
+        <div class="ri-anker-chev" id="ri-chev3">›</div>
       </div>
-      <div class="ri-anker-body" id="ri-body4">
+      <div class="ri-anker-body" id="ri-body3">
         <div id="ri-dank-list" class="ri-list" style="margin-bottom:10px"></div>
         <div class="ri-inp-row">
           <input id="ri-dank-inp" type="text" class="ri-inp" placeholder="Ik ben dankbaar voor..." onkeydown="if(event.key==='Enter')addDank()" onclick="event.stopPropagation()">
           <button class="ri-add-btn" style="background:var(--gold);border-color:var(--gold);color:#fff" onclick="event.stopPropagation();addDank()">+</button>
         </div>
-        <button class="ri-volgende-btn" style="background:var(--acc);color:#fff;border-color:var(--acc)" onclick="event.stopPropagation();raadpleegVanuitRituelen()">匠 Raadpleeg Council →</button>
+        <button class="ri-volgende-btn" style="background:var(--acc);color:#fff;border-color:var(--acc)" onclick="event.stopPropagation();raadpleegVanuitRituelen()">匠 Dagafsluiting met Council →</button>
       </div>
     </div>
 
-    <!-- VOLGENDE STAP IN CYCLUS -->
+    <!-- VOLGENDE STAP -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--b)">
-      <span style="font-size:11px;color:var(--m)">Dag cyclus · stap 1 van 3</span>
-      <button onclick="go('dy')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">
-        脈 Dag Pulse <span style="font-size:14px">→</span>
+      <span style="font-size:11px;color:var(--m)">Avond cyclus · dag afsluiten</span>
+      <button onclick="go('wr')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--acc);display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent">
+        週 Week Reflectie <span style="font-size:14px">→</span>
       </button>
     </div>
 
@@ -1156,7 +1136,7 @@ function markVandaag(key){
   updateDagVoortgang();
 }
 function updateDagVoortgang(){
-  var items={ri:{dot:'dot-ri',prog:'dprog-ri',lbl:'Rituelen'},dy:{dot:'dot-dy',prog:'dprog-dy',lbl:'Pulse'},bo:{dot:'dot-bo',prog:'dprog-bo',lbl:'Advies'}};
+  var items={dy:{dot:'dot-dy',prog:'dprog-dy',lbl:'Pulse'},bo:{dot:'dot-bo',prog:'dprog-bo',lbl:'Advies'}};
   Object.keys(items).forEach(function(k){
     var cfg=items[k];
     var dotEl=document.getElementById(cfg.dot);
@@ -1302,41 +1282,29 @@ function go_ri(){
   renderFouten();
   renderDank();
   riUpdatePreviews();
-  // Open first anker by default if nothing is open
-  var anyOpen = [1,2,3,4].some(function(i){ return document.getElementById('ri-a'+i) && document.getElementById('ri-a'+i).classList.contains('open'); });
+  var anyOpen = [1,2,3].some(function(i){ return document.getElementById('ri-a'+i) && document.getElementById('ri-a'+i).classList.contains('open'); });
   if(!anyOpen) riToggle(1);
 }
 
 function riToggle(n){
-  for(var i=1;i<=4;i++){
+  for(var i=1;i<=3;i++){
     var el=document.getElementById('ri-a'+i);
     if(!el)continue;
-    if(i===n){
-      el.classList.toggle('open');
-    } else {
-      el.classList.remove('open');
-    }
+    if(i===n){ el.classList.toggle('open'); } else { el.classList.remove('open'); }
   }
 }
 
 function riUpdatePreviews(){
-  // Energie preview
   var gevers=(RituelenData.audit&&RituelenData.audit.gevers||[]).length;
   var nemers=(RituelenData.audit&&RituelenData.audit.nemers||[]).length;
   var p1=document.getElementById('ri-prev1');
-  if(p1)p1.textContent=gevers||nemers?(gevers+' gever'+(gevers!==1?'s':'')+' · '+nemers+' nemer'+(nemers!==1?'s':'')):'Wat geeft, wat neemt?';
-  // Lichaam preview
-  var lichTxt=document.getElementById('ri-lichaam-txt');
-  var p2=document.getElementById('ri-prev2');
-  if(p2)p2.textContent=(lichTxt&&lichTxt.value.trim())||RituelenData.lichaamTxt||'Scan — hoofd · hart · buik';
-  // Leren preview
+  if(p1)p1.textContent=gevers||nemers?(gevers+' gever'+(gevers!==1?'s':'')+' · '+nemers+' nemer'+(nemers!==1?'s':'')):'Wat gaf energie, wat kostte het?';
   var fouten=(RituelenData.fouten||[]).length;
-  var p3=document.getElementById('ri-prev3');
-  if(p3)p3.textContent=fouten?(fouten+' les'+(fouten!==1?'sen':'')+' vastgelegd'):'Fout & les vastleggen';
-  // Dankbaarheid preview
+  var p2=document.getElementById('ri-prev2');
+  if(p2)p2.textContent=fouten?(fouten+' les'+(fouten!==1?'sen':'')+' vastgelegd'):'Fout & les van vandaag';
   var dank=(RituelenData.dank||[]).length;
-  var p4=document.getElementById('ri-prev4');
-  if(p4)p4.textContent=dank?(dank+' moment'+(dank!==1?'en':'')+' van dankbaarheid'):'Sluit de dag';
+  var p3=document.getElementById('ri-prev3');
+  if(p3)p3.textContent=dank?(dank+' moment'+(dank!==1?'en':'')+' van dankbaarheid'):'Sluit de dag';
 }
 
 function renderBinnenkomst(){
@@ -1685,7 +1653,7 @@ function go(id){
   if(id==='dy'){initPulse();markVandaag('dy');}
   if(id==='gl')renderGoals();
   if(id==='rt'){go_rt();}
-  if(id==='ri'){go_ri();markVandaag('ri');}
+  if(id==='ri'){go_ri();}
 }
 document.querySelectorAll('[data-v]').forEach(el=>el.addEventListener('click',()=>go(el.dataset.v)));
 
@@ -2213,12 +2181,72 @@ function confRej(){
 
 // ── DAILY PULSE ────────────────────────────────────────────────────
 const MOODS=[{e:'🎯',l:'Gefocust'},{e:'🔥',l:'Gemotiveerd'},{e:'😌',l:'Rustig'},{e:'😴',l:'Moe'},{e:'😰',l:'Gestrest'},{e:'💡',l:'Creatief'},{e:'😟',l:'Onrustig'},{e:'🙏',l:'Dankbaar'}];
-const PSTEPS=['Binnenkomst','Energie','HRV & Slaap','Top 3 vandaag','間 Loslaten','Board Insight'];
+const PSTEPS=['Energie','間 Loslaten','Board Insight'];
 
 function initPulse(){
-  const eve=new Date().getHours()>=17;
-  document.getElementById('pulse-t').textContent=eve?'Avond Check-out':'Ochtend Check-in';
-  S.pulse={step:0,data:{},eve};drawPulse();
+  document.getElementById('pulse-t').textContent='脈 Dag Pulse';
+  S.pulse={step:0,data:{}};drawPulse();
+}
+function drawPulse(){
+  const{step,data}=S.pulse;
+  document.getElementById('pst').innerHTML=PSTEPS.map((_,i)=>`<div class="ps${i<step?' done':i===step?' cur':''}"></div>`).join('');
+  const B=document.getElementById('pb');
+  if(step===0){
+    B.innerHTML=`<div class="pq">Energie</div>
+      <div class="ph2">Hoe is je energieniveau op dit moment?</div>
+      <div class="rw"><div class="rval" id="ev">${data.energy||6}</div><input type="range" min="1" max="10" value="${data.energy||6}" oninput="document.getElementById('ev').textContent=this.value;S.pulse.data.energy=+this.value"></div>
+      <div class="pn"><button class="btn pri" onclick="S.pulse.step++;drawPulse()">Verder →</button></div>`;
+    S.pulse.data.energy=S.pulse.data.energy||6;
+  }else if(step===1){
+    var isFriday = new Date().getDay() === 5;
+    var vrijdagExtra = isFriday ? `
+      <div style="margin-top:16px;padding:14px;background:rgba(40,137,122,.08);border-radius:var(--rs);border-left:3px solid var(--teal)">
+        <div style="font-size:11px;font-weight:600;color:var(--teal);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">律 Vrijdagsritueel</div>
+        <div style="font-size:12px;color:var(--m);margin-bottom:6px">Energiegever van de week:</div>
+        <input type="text" id="fri-gever" placeholder="Bijv: Deep work sessie" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:8px;font-size:14px;background:var(--paper);color:var(--ink);margin-bottom:8px">
+        <div style="font-size:12px;color:var(--m);margin-bottom:6px">Geleerde les:</div>
+        <input type="text" id="fri-les" placeholder="Wat nam je mee?" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:8px;font-size:14px;background:var(--paper);color:var(--ink)">
+      </div>` : '';
+    B.innerHTML=`<div class="pq">間 Ma — Loslaten</div>
+      <div class="ph2">De meester weet wanneer te loslaten. Wat geef je los?</div>
+      <div style="margin-bottom:var(--sp-md)">
+        <input type="text" id="ma-inp1" placeholder="Bijv: De urgentie om alles af te ronden" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:11px 13px;font-size:15px;background:var(--paper);color:var(--ink);margin-bottom:var(--sp-xs)">
+        <input type="text" id="ma-inp2" placeholder="Bijv: Controle over wat ik niet kan beïnvloeden" style="width:100%;border:1px solid var(--b);border-radius:var(--rs);padding:11px 13px;font-size:15px;background:var(--paper);color:var(--ink)">
+      </div>
+      ${vrijdagExtra}
+      <div class="pn">
+        <button class="btn gh sm" onclick="S.pulse.step--;drawPulse()">← Terug</button>
+        <button class="btn pri" onclick="
+          var ma1=document.getElementById('ma-inp1').value.trim();
+          var ma2=document.getElementById('ma-inp2').value.trim();
+          if(ma1){S.pulse.data.ma1=ma1;RitmeData.maList.unshift({txt:ma1,done:false,ts:new Date().toISOString()});}
+          if(ma2){S.pulse.data.ma2=ma2;RitmeData.maList.unshift({txt:ma2,done:false,ts:new Date().toISOString()});}
+          var fri=document.getElementById('fri-les');
+          if(fri)S.pulse.data.friLes=fri.value;
+          lsSet('tm2_ritme',RitmeData);
+          S.pulse.step++;drawPulse()
+        ">Verder →</button>
+      </div>`;
+  }else if(step===2){
+    const sum='energie '+(data.energy||6)+'/10, stemming '+(RituelenData&&RituelenData.binnenkomst||'–');
+    B.innerHTML=`<div class="pq">Board Insight</div>
+      <div class="ph2">Je pulse van vandaag</div>
+      <div class="card" style="margin-bottom:var(--sp-md)">
+        <div style="font-size:13px;line-height:1.8">
+          Energie <strong>${data.energy||6}/10</strong>${data.ma1?'<br>Loslaten: <em>'+data.ma1+'</em>':''}
+        </div>
+      </div>
+      <div class="pn">
+        <button class="btn gh sm" onclick="go('ck')">Naar Cockpit</button>
+        <button class="btn pri" onclick="
+          document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+          document.querySelectorAll('[data-v]').forEach(el=>el.classList.toggle('on',el.dataset.v==='bo'));
+          var vbo=document.getElementById('v-bo');if(vbo){vbo.classList.add('on');vbo.classList.remove('grid-mode');}
+          renderGrid();renderChat();upCtx();upLearn();markVandaag('bo');
+          setTimeout(function(){selAg('board');var ci=document.getElementById('ci');if(ci){ci.value='Dag pulse: ${sum}. Losgelaten: '+(S.pulse.data.ma1||'niets')+'. Wat zie jij?';ci.style.height='auto';ci.style.height=Math.min(ci.scrollHeight,120)+'px';}var cm=document.getElementById('cm');if(cm)setTimeout(function(){cm.scrollTop=cm.scrollHeight;},200);},200)
+        ">Board advies →</button>
+      </div>`;
+  }
 }
 function drawPulse(){
   const{step,data}=S.pulse;
