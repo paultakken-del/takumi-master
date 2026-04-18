@@ -3167,18 +3167,13 @@ function openWarrior(agentId){
 
 function updateGreetIcon(){
   var h = new Date().getHours();
-  var kanji, color;
-  if(h >= 5 && h < 12){
-    kanji = '朝'; color = '#c4832a'; // ochtend — warm goud
-  } else if(h >= 12 && h < 17){
-    kanji = '昼'; color = 'var(--acc)'; // middag — accent
-  } else if(h >= 17 && h < 21){
-    kanji = '夕'; color = '#7a4a8a'; // avond — paars
-  } else {
-    kanji = '夜'; color = '#384888'; // nacht — donkerblauw
-  }
+  var kanji;
+  if(h >= 5 && h < 12)       kanji = '朝';
+  else if(h >= 12 && h < 17) kanji = '昼';
+  else if(h >= 17 && h < 21) kanji = '夕';
+  else                        kanji = '夜';
   var el = document.getElementById('ck-icon-circle');
-  if(el){ el.textContent = kanji; el.style.background = color; }
+  if(el){ el.textContent = kanji; el.style.background = 'var(--acc)'; }
 }
 
 updateGreetIcon();
