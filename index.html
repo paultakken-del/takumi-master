@@ -1264,9 +1264,14 @@ var RituelenData = ls('tm2_rituelen', {
   audit:{gevers:[],nemers:[]},
   fouten:[],
   dank:[],
-  binnenkomst:null,
-  lichaam:null
+  binnenkomst:null
 });
+// Guard: ensure audit exists on old saves
+if(!RituelenData.audit) RituelenData.audit = {gevers:[],nemers:[]};
+if(!RituelenData.audit.gevers) RituelenData.audit.gevers = [];
+if(!RituelenData.audit.nemers) RituelenData.audit.nemers = [];
+if(!RituelenData.fouten) RituelenData.fouten = [];
+if(!RituelenData.dank) RituelenData.dank = [];
 
 var BINNENKOMSTEN = [
   {ico:'新', lbl:'Fris &\nGereed', txt:'Je bent aanwezig en klaar. Goed moment voor focus-werk.', jp:true},
@@ -1332,8 +1337,14 @@ function addAudit(type){
   var inp = document.getElementById('ri-' + type + '-inp');
   var val = inp ? inp.value.trim() : '';
   if(!val) return;
-  if(type === 'gever') RituelenData.audit.gevers.unshift({txt:val, ts:new Date().toISOString()});
-  else RituelenData.audit.nemers.unshift({txt:val, ts:new Date().toISOString()});
+  if(!RituelenData.audit) RituelenData.audit = {gevers:[],nemers:[]};
+  if(type === 'gever'){
+    if(!RituelenData.audit.gevers) RituelenData.audit.gevers = [];
+    RituelenData.audit.gevers.unshift({txt:val, ts:new Date().toISOString()});
+  } else {
+    if(!RituelenData.audit.nemers) RituelenData.audit.nemers = [];
+    RituelenData.audit.nemers.unshift({txt:val, ts:new Date().toISOString()});
+  }
   lsSet('tm2_rituelen', RituelenData);
   inp.value = '';
   renderAudit();
