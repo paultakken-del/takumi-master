@@ -985,7 +985,6 @@ input[type=range]{width:100%;accent-color:var(--acc)}
             </div>
           </div>
         </div>
-        <div style="font-size:10px;color:var(--teal);text-align:center;margin-bottom:8px;min-height:14px" id="ri-save-1"></div>
         <button class="ri-volgende-btn" onclick="riToggle(1);riToggle(2)">Leren →</button>
       </div>
     </div>
@@ -1007,7 +1006,6 @@ input[type=range]{width:100%;accent-color:var(--acc)}
           <input id="ri-les-inp" type="text" class="ri-inp" placeholder="De les die ik trek..." onclick="event.stopPropagation()">
         </div>
         <button class="btn sm" style="width:100%;margin-bottom:12px" onclick="addFout()">+ Vastleggen</button>
-        <div style="font-size:10px;color:var(--teal);text-align:center;margin-bottom:8px;min-height:14px" id="ri-save-2"></div>
         <button class="ri-volgende-btn" onclick="riToggle(2);riToggle(3)">Dankbaarheid →</button>
       </div>
     </div>
@@ -1385,31 +1383,41 @@ function addAudit(type){
   }
   lsSet('tm2_rituelen', RituelenData);
   inp.value = '';
+  inp.focus(); // keep keyboard open on iOS for next entry
   renderAudit();
   riUpdatePreviews();
   toast(type === 'gever' ? '▲ Energiegever opgeslagen' : '▼ Energienemer opgeslagen', 'ok');
-  var si=document.getElementById('ri-save-1');if(si){si.textContent='✓ Opgeslagen';setTimeout(function(){si.textContent='';},3000);}
 }
 
 function renderAudit(){
   var gList = document.getElementById('ri-gevers-list');
   var nList = document.getElementById('ri-nemers-list');
-  if(gList) gList.innerHTML = (RituelenData.audit.gevers||[]).slice(0,5).map(function(g){
-    return '<div class="audit-item"><span style="color:var(--teal)">▲</span><span>' + g.txt + '</span></div>';
-  }).join('') || '<div style="font-size:11px;color:var(--f)">Nog niets toegevoegd</div>';
-  if(nList) nList.innerHTML = (RituelenData.audit.nemers||[]).slice(0,5).map(function(n){
-    return '<div class="audit-item"><span style="color:var(--acc)">▼</span><span>' + n.txt + '</span></div>';
-  }).join('') || '<div style="font-size:11px;color:var(--f)">Nog niets toegevoegd</div>';
+  if(gList) gList.innerHTML = (RituelenData.audit.gevers||[]).slice(0,10).map(function(g,i){
+    return '<div class="audit-item" style="display:flex;align-items:center;gap:6px;padding:4px 0"><span style="color:var(--teal);flex-shrink:0">▲</span><span style="flex:1;font-size:13px">' + g.txt + '</span><button onclick="delAudit('gever',' + i + ')" style="background:none;border:none;cursor:pointer;color:var(--m);font-size:14px;padding:2px 4px;-webkit-tap-highlight-color:transparent;min-width:28px;min-height:28px">×</button></div>';
+  }).join('') || '<div style="font-size:12px;color:var(--m);padding:4px 0">Nog niets toegevoegd</div>';
+  if(nList) nList.innerHTML = (RituelenData.audit.nemers||[]).slice(0,10).map(function(n,i){
+    return '<div class="audit-item" style="display:flex;align-items:center;gap:6px;padding:4px 0"><span style="color:var(--acc);flex-shrink:0">▼</span><span style="flex:1;font-size:13px">' + n.txt + '</span><button onclick="delAudit('nemer',' + i + ')" style="background:none;border:none;cursor:pointer;color:var(--m);font-size:14px;padding:2px 4px;-webkit-tap-highlight-color:transparent;min-width:28px;min-height:28px">×</button></div>';
+  }).join('') || '<div style="font-size:12px;color:var(--m);padding:4px 0">Nog niets toegevoegd</div>';
 }
 
+function delAudit(type, idx){
+  if(!RituelenData.audit) return;
+  if(type === 'gever') RituelenData.audit.gevers.splice(idx, 1);
+  else RituelenData.audit.nemers.splice(idx, 1);
+  lsSet('tm2_rituelen', RituelenData);
+  renderAudit();
+  riUpdatePreviews();
+}
 function addFout(){
   var fout = document.getElementById('ri-fout-inp').value.trim();
   var les = document.getElementById('ri-les-inp').value.trim();
   if(!fout) return;
   RituelenData.fouten.unshift({fout:fout, les:les||'Nog geen les', ts:new Date().toISOString()});
   lsSet('tm2_rituelen', RituelenData);
-  document.getElementById('ri-fout-inp').value = '';
-  document.getElementById('ri-les-inp').value = '';
+  var foutInp=document.getElementById('ri-fout-inp');
+  var lesInp=document.getElementById('ri-les-inp');
+  if(foutInp){foutInp.value='';foutInp.focus();}
+  if(lesInp) lesInp.value='';
   renderFouten();
   riUpdatePreviews();
   toast('Fout toegevoegd — moed!', 'ok');
@@ -1433,6 +1441,7 @@ function addDank(){
   RituelenData.dank.unshift({txt:val, ts:new Date().toISOString(), date:new Date().toLocaleDateString('nl-NL')});
   lsSet('tm2_rituelen', RituelenData);
   inp.value = '';
+  inp.focus();
   renderDank();
   riUpdatePreviews();
   toast('Dankbaarheid opgeslagen ✦', 'ok');
