@@ -3204,7 +3204,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var u=JSON.parse(localStorage.getItem('tm2_user')||'{}');
     var el=document.getElementById('sb-user-email');
     if(el&&u.name){
-      var avatar=u.picture?'<img src="'+u.picture+'" style="width:24px;height:24px;border-radius:50%;margin-right:6px;vertical-align:middle" onerror="this.style.display='none'">':'';
+      var avatar=u.picture?'<img src="'+u.picture+'" style="width:24px;height:24px;border-radius:50%;margin-right:6px;vertical-align:middle;object-fit:cover">':'';
       el.innerHTML=avatar+u.name;
     } else if(el&&u.email) el.textContent=u.email;
   }catch(e){}
