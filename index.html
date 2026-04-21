@@ -1141,7 +1141,14 @@ function initGoogleSession(){
   if(gsession){
     var payload=parseJWTPayload(gsession);
     if(payload&&payload.email){
-      var user={id:payload.sub,email:payload.email,name:payload.name||payload.email,picture:payload.picture||'',exp:payload.exp};
+      var user={
+        id:payload.sub,
+        email:payload.email,
+        name:payload.name||payload.email,
+        picture:payload.picture||'',
+        exp:payload.exp,
+        loginAt:Math.floor(Date.now()/1000) // timestamp of this login
+      };
       localStorage.setItem('tm2_user',JSON.stringify(user));
       window.history.replaceState({},'',window.location.pathname);
     }
@@ -1152,12 +1159,13 @@ initGoogleSession();
 var _rawUser=(function(){try{return JSON.parse(localStorage.getItem('tm2_user')||'null');}catch{return null;}}());
 var _uid=(_rawUser&&(_rawUser.id||_rawUser.email))||'default';
 
-// Session expiry check — Google tokens expire in 1h, we give 7 days grace
+// Session valid if logged in within 7 days
 function isSessionValid(){
   if(!_rawUser)return false;
-  if(!_rawUser.exp)return true; // no expiry = manual user
-  var sevenDaysMs=7*24*60*60*1000;
-  return(Date.now()/1000)<(_rawUser.exp+sevenDaysMs);
+  // Use loginAt (actual login time) for 7-day grace, fall back to exp
+  var loginTs=_rawUser.loginAt||(_rawUser.exp?_rawUser.exp-3600:0);
+  var sevenDays=7*24*60*60;
+  return (Math.floor(Date.now()/1000)-loginTs)<sevenDays;
 }
 
 function showAuthGate(){
@@ -3147,6 +3155,10 @@ importFromURL(); // check voor Apple Watch URL params
 // ── AUTH GATE CHECK ────────────────────────────────────────────────
 if(!isSessionValid()){
   showAuthGate();
+} else {
+  // Valid session: make sure app is fully visible
+  var _app=document.getElementById('app');
+  if(_app && _app.style.display==='none') _app.style.display='';
 }
 applyTheme(currentTheme);
 if(S.port)renderPort();
@@ -3193,10 +3205,19 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 
 function logout(){
-  // Wis alle user-specifieke data
-  var keysToRemove=Object.keys(localStorage).filter(function(k){return k.endsWith('__'+_uid)||k==='tm2_user'||k==='tm2_lf';});
-  keysToRemove.forEach(function(k){localStorage.removeItem(k);});
-  window.location.href='https://takumi-master.com';
+  // Fade out app, dan redirect
+  var app=document.getElementById('app');
+  var gate=document.getElementById('auth-gate');
+  if(app) app.style.transition='opacity .3s';
+  if(app) app.style.opacity='0';
+  setTimeout(function(){
+    // Wis alle user-specifieke data
+    var keysToRemove=Object.keys(localStorage).filter(function(k){
+      return k.endsWith('__'+_uid)||k==='tm2_user'||k==='tm2_lf';
+    });
+    keysToRemove.forEach(function(k){localStorage.removeItem(k);});
+    window.location.href='https://takumi-master.com';
+  }, 300);
 }
 // Toon gebruikersnaam
 document.addEventListener('DOMContentLoaded',function(){
