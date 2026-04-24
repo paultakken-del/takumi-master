@@ -254,19 +254,19 @@ section { padding: 100px 80px; }
 .pillar p { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
 
 /* ── WEBINAR SECTION ── */
-.webinar-section { background: var(--ink); color: var(--paper); }
+.webinar-section { background: #2a2520; color: var(--paper); }
 .webinar-section .section-label { color: rgba(196,83,42,.9); }
 .webinar-section .section-label::after { background: rgba(196,83,42,.2); }
-.webinar-section .section-title { color: var(--white); }
+.webinar-section .section-title { color: #f0ebe0; }
 .webinar-inner { max-width: 1100px; margin: 0 auto; }
 .webinar-grid {
   display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px;
   align-items: start; margin-top: 48px;
 }
-.webinar-intro { color: rgba(245,240,232,.65); font-size: 15px; line-height: 1.8; max-width: 420px; }
+.webinar-intro { color: rgba(245,240,232,.85); font-size: 15px; line-height: 1.8; max-width: 420px; }
 .webinar-card {
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(196,83,42,.3);
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(196,83,42,.4);
   border-radius: 12px; padding: 40px;
   position: relative; overflow: hidden;
 }
@@ -284,12 +284,12 @@ section { padding: 100px 80px; }
 }
 .webinar-title {
   font-family: var(--serif); font-size: 24px; font-weight: 400;
-  color: var(--white); line-height: 1.35; margin-bottom: 24px;
+  color: #fff; line-height: 1.35; margin-bottom: 24px;
 }
 .webinar-meta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
 .webinar-meta-item {
   display: flex; align-items: center; gap: 12px;
-  font-size: 14px; color: rgba(245,240,232,.7);
+  font-size: 14px; color: rgba(245,240,232,.9);
 }
 .webinar-meta-icon {
   width: 32px; height: 32px; border-radius: 8px;
@@ -303,11 +303,11 @@ section { padding: 100px 80px; }
 }
 .webinar-takeaways h4 {
   font-size: 12px; font-weight: 600; letter-spacing: .1em;
-  text-transform: uppercase; color: rgba(245,240,232,.4);
+  text-transform: uppercase; color: rgba(245,240,232,.6);
   margin-bottom: 12px;
 }
 .webinar-takeaways li {
-  list-style: none; font-size: 14px; color: rgba(245,240,232,.75);
+  list-style: none; font-size: 14px; color: rgba(245,240,232,.92);
   padding: 6px 0; padding-left: 20px; position: relative; line-height: 1.5;
 }
 .webinar-takeaways li::before {
@@ -323,7 +323,7 @@ section { padding: 100px 80px; }
 }
 .btn-webinar:hover { background: var(--acc2); transform: translateY(-1px); }
 .webinar-note {
-  font-size: 12px; color: rgba(245,240,232,.35);
+  font-size: 12px; color: rgba(245,240,232,.6);
   text-align: center; margin-top: 12px;
 }
 
@@ -350,7 +350,7 @@ section { padding: 100px 80px; }
 .app-cta-wrap { margin-top: 36px; display: flex; gap: 16px; flex-wrap: wrap; }
 
 .app-visual {
-  background: #1c1a17;
+  background: #252219;
   border-radius: 24px;
   padding: 32px 28px;
   box-shadow: 0 32px 80px rgba(28,26,23,.2);
@@ -366,7 +366,7 @@ section { padding: 100px 80px; }
   font-size: 20px; color: #fff;
 }
 .app-mockup-title { color: rgba(255,255,255,.9); font-size: 14px; font-weight: 600; }
-.app-mockup-sub { color: rgba(255,255,255,.4); font-size: 11px; }
+.app-mockup-sub { color: rgba(255,255,255,.6); font-size: 11px; }
 .app-mockup-wave {
   height: 60px; background: rgba(196,83,42,.08);
   border-radius: 8px; margin-bottom: 20px;
@@ -385,15 +385,15 @@ section { padding: 100px 80px; }
   display: flex; flex-direction: column; align-items: center; gap: 4px;
 }
 .app-mockup-pill span { font-family: 'Noto Serif JP', serif; font-size: 14px; color: var(--acc); }
-.app-mockup-pill small { font-size: 9px; color: rgba(255,255,255,.4); }
+.app-mockup-pill small { font-size: 9px; color: rgba(255,255,255,.65); }
 .app-mockup-warriors { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .warrior-chip {
   padding: 10px 12px; border-radius: 8px;
   background: rgba(255,255,255,.05);
   border: 1px solid rgba(255,255,255,.07);
 }
-.warrior-chip-name { font-size: 11px; color: rgba(255,255,255,.8); font-weight: 500; }
-.warrior-chip-elem { font-size: 10px; color: rgba(255,255,255,.35); }
+.warrior-chip-name { font-size: 11px; color: rgba(255,255,255,.95); font-weight: 500; }
+.warrior-chip-elem { font-size: 10px; color: rgba(255,255,255,.55); }
 
 /* ── BIO SECTION ── */
 .bio-section { background: var(--white); }
@@ -436,14 +436,14 @@ section { padding: 100px 80px; }
 
 /* ── FOOTER ── */
 footer {
-  background: var(--ink); color: rgba(245,240,232,.5);
+  background: #2a2520; color: rgba(245,240,232,.65);
   padding: 60px 80px; text-align: center;
 }
 .footer-kanji { font-family: 'Noto Serif JP', serif; font-size: 48px; color: rgba(196,83,42,.4); margin-bottom: 16px; }
-.footer-brand { font-family: var(--serif); font-size: 20px; color: rgba(245,240,232,.8); margin-bottom: 8px; }
-.footer-tagline { font-size: 13px; font-style: italic; margin-bottom: 32px; }
+.footer-brand { font-family: var(--serif); font-size: 20px; color: rgba(245,240,232,.95); margin-bottom: 8px; }
+.footer-tagline { font-size: 13px; font-style: italic; margin-bottom: 32px; color: rgba(245,240,232,.75); }
 .footer-links { display: flex; justify-content: center; gap: 32px; margin-bottom: 32px; }
-.footer-links a { color: rgba(245,240,232,.4); text-decoration: none; font-size: 13px; transition: color .2s; }
+.footer-links a { color: rgba(245,240,232,.65); text-decoration: none; font-size: 13px; transition: color .2s; }
 .footer-links a:hover { color: var(--acc); }
 .footer-copy { font-size: 12px; }
 
