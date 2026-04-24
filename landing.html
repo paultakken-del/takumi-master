@@ -26,6 +26,25 @@ body {
   color: var(--ink);
   overflow-x: hidden;
 }
+.nav-dark { background: transparent !important; }
+.nav-dark .nav-n { color: var(--paper) !important; }
+.nav-dark .nav-cta { color: var(--paper) !important; border-color: rgba(247,243,236,.3) !important; }
+.nav-dark .nav-cta:hover { color: var(--acc) !important; }
+.s-dark {
+  background: var(--ink);
+  color: var(--paper);
+}
+.s-dark .paradox p { color: rgba(247,243,236,.88); }
+.s-dark .paradox p em { color: var(--acc); }
+.s-dark blockquote { color: rgba(247,243,236,.72); }
+.s-dark .quote-attr { color: rgba(247,243,236,.3); }
+.s-dark .quote-attr span { color: rgba(196,83,42,.75); }
+.s-dark .hero-line { color: var(--paper); }
+.s-dark .hero-line-2 { color: var(--acc); }
+.s-dark .hero-sub { color: rgba(247,243,236,.4); }
+.s-dark .hero-scroll { color: rgba(247,243,236,.25); }
+.s-dark .hero-btn { border-color: rgba(247,243,236,.2); color: var(--paper); }
+.s-dark .hero-btn:hover { border-color: var(--acc); color: var(--acc); }
 
 /* ── NAV ── */
 nav {
@@ -308,6 +327,10 @@ nav {
   color: rgba(247,243,236,.5); line-height: 1.9;
   max-width: 560px; margin: 0 auto 56px;
 }
+.webinar-blok.s-dark .webinar-card {
+  background: rgba(247,243,236,.04);
+  border-color: rgba(196,83,42,.3);
+}
 .webinar-card {
   border: 1px solid rgba(196,83,42,.25);
   border-radius: 12px; overflow: hidden;
@@ -319,6 +342,13 @@ nav {
   font-family: var(--serif); font-size: 22px; font-weight: 300;
   color: var(--ink); margin-bottom: 6px;
 }
+.s-dark .webinar-datum { color: var(--paper); }
+.s-dark .webinar-tijd { color: rgba(247,243,236,.4); }
+.s-dark .webinar-item-txt { color: rgba(247,243,236,.65); }
+.s-dark .webinar-item-txt strong { color: rgba(247,243,236,.9); }
+.s-dark .webinar-note { color: rgba(247,243,236,.25); }
+.s-dark .webinar-intro { color: rgba(247,243,236,.55); }
+.s-dark .webinar-header { color: var(--paper); }
 .webinar-tijd {
   font-size: 13px; color: rgba(28,26,23,.45);
   margin-bottom: 28px; letter-spacing: .04em;
@@ -402,13 +432,13 @@ footer {
 .footer-ku { font-size: 48px; color: rgba(196,83,42,.2); margin-bottom: 16px; }
 .footer-brand {
   font-family: var(--serif); font-size: 18px;
-  color: rgba(28,26,23,.5); margin-bottom: 6px;
+  color: rgba(247,243,236,.6); margin-bottom: 6px;
 }
-.footer-line { font-size: 12px; color: rgba(28,26,23,.35); margin-bottom: 32px; font-style: italic; }
+.footer-line { font-size: 12px; color: rgba(247,243,236,.3); margin-bottom: 32px; font-style: italic; }
 .footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 32px; }
-.footer-links a { font-size: 12px; color: rgba(28,26,23,.35); text-decoration: none; transition: color .2s; }
+.footer-links a { font-size: 12px; color: rgba(247,243,236,.3); text-decoration: none; transition: color .2s; }
 .footer-links a:hover { color: rgba(196,83,42,.7); }
-.footer-copy { font-size: 11px; color: rgba(28,26,23,.2); }
+.footer-copy { font-size: 11px; color: rgba(247,243,236,.15); }
 
 /* ANIMATE */
 [data-r] {
@@ -436,7 +466,7 @@ footer {
 </head>
 <body>
 
-<nav>
+<nav class="nav-dark">
   <a class="nav-brand" href="#">
     <div class="nav-k">匠</div>
     <span class="nav-n">Natuurlijk Agile</span>
@@ -445,7 +475,7 @@ footer {
 </nav>
 
 <!-- HERO -->
-<section class="hero">
+<section class="hero s-dark">
   <div class="hero-ku">空</div>
   <div class="hero-content">
     <p class="hero-sub">Paul Takken · Natuurlijk Agile</p>
@@ -458,7 +488,7 @@ footer {
 </section>
 
 <!-- PARADOX -->
-<section class="paradox" id="paradox">
+<section class="paradox s-dark" id="paradox">
   <div class="paradox-inner">
     <p data-r>Organisaties vullen elke stilte met structuur.</p>
     <div class="paradox-dot"></div>
@@ -474,7 +504,7 @@ footer {
 </section>
 
 <!-- QUOTE -->
-<section class="quote-blok">
+<section class="quote-blok s-dark">
   <div data-r>
     <blockquote>
       "We argue the need for wisdom — a higher form of tacit knowledge — to cope with a fast-changing world."
@@ -545,7 +575,7 @@ footer {
 </div>
 
 <!-- WEBINAR -->
-<div class="webinar-blok" id="webinar">
+<div class="webinar-blok s-dark" id="webinar">
   <div class="webinar-label" data-r>Live sessie</div>
   <h2 class="webinar-header" data-r>Kom het <em>live</em> horen</h2>
   <p class="webinar-intro" data-r>
@@ -608,7 +638,7 @@ footer {
   </a>
 </div>
 
-<footer>
+<footer class="s-dark">
   <div class="footer-ku">空</div>
   <div class="footer-brand">Natuurlijk Agile × Takumi</div>
   <p class="footer-line">In het niets ontstaan nieuwe dingen.</p>
