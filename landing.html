@@ -102,6 +102,8 @@ nav {
 .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .nav-k { width: 28px; height: 28px; border-radius: 6px; background: var(--acc); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
 .nav-name { font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--ink); }
+.nav-sub { font-family: var(--serif); font-size: 13px; font-style: italic; color: var(--muted); margin-left: 6px; display: none; }
+@media (min-width: 680px) { .nav-sub { display: inline; } }
 .nav-btn { background: var(--acc); color: #fff; padding: 9px 20px; border-radius: 6px; font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s; white-space: nowrap; }
 .nav-btn:hover { background: #a8461f; }
 
@@ -161,6 +163,7 @@ h1 em { font-style: italic; color: var(--acc); }
   background: var(--p2);
   overflow: hidden;
   position: relative;
+  min-height: 480px;
 }
 .hero-foto {
   width: 100%; height: 100%;
@@ -389,8 +392,8 @@ footer { padding: 40px 64px; display: flex; align-items: center; justify-content
   .hero { grid-template-columns: 1fr; min-height: auto; }
   .hero-left { padding: 60px 24px; border-right: none; }
   .hero-left::before { display: none; }
-  .hero-right { height: auto; }
-  .hero-foto { max-height: 320px; }
+  .hero-right { min-height: 340px; position: relative; }
+  .hero-foto { position: absolute; inset: 0; height: 100%; max-height: none; }
   .quote-strip { padding: 36px 24px; grid-template-columns: 1fr; }
   .quote-strip cite { text-align: left; }
   .herk { padding: 60px 24px; }
@@ -413,6 +416,7 @@ footer { padding: 40px 64px; display: flex; align-items: center; justify-content
   <a class="nav-logo" href="#">
     <div class="nav-k">匠</div>
     <span class="nav-name">Natuurlijk Agile</span>
+    <span class="nav-sub" data-i18n="nav-sub">Mastering Change — Naturally</span>
   </a>
   <div style="display:flex;align-items:center;gap:12px"><button id="lang-toggle" onclick="toggleLang()" style="background:none;border:1px solid rgba(28,24,21,.15);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--muted);cursor:pointer;transition:all .2s;font-family:var(--sans)" onmouseover="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'" onmouseout="this.style.borderColor='rgba(28,24,21,.15)';this.style.color='var(--muted)'">EN</button><a class="nav-btn" href="#webinar" data-i18n="nav-cta" data-nl="Webinar aanmelden" data-en="Join webinar">Webinar aanmelden</a></div>
 </nav>
@@ -642,6 +646,7 @@ var NL = {
   'hero-sec':    'Lees het boek',
   'hero-boek-link':'Meer info →',
   'nav-cta':     'Webinar aanmelden',
+  'nav-sub':     'Mastering Change — Naturally',
   'getuige-q':   '“Hij duikt als het ware in het hart van de machine en draait daar de knoppen om.”',
   'herk-kop':    'Zeven patronen.<br>Waarschijnlijk herken je<br>er <em>meerdere.</em>',
   'herk-concl':  'Dit is niet een probleem van mensen of teams. Het is een probleem van <strong>fundament</strong> — en het wordt urgenter nu AI de druk op organisaties verder vergroot.',
@@ -688,6 +693,7 @@ var EN = {
   'hero-sec':    'Read the book',
   'hero-boek-link':'More info →',
   'nav-cta':     'Join webinar',
+  'nav-sub':     'Mastering Change — Naturally',
   'getuige-q':   '“He dives into the very heart of the machine and turns the right knobs.”',
   'herk-kop':    'Seven patterns.<br>You probably recognise<br><em>several of them.</em>',
   'herk-concl':  'This is not a problem of people or teams. It is a problem of <strong>foundation</strong> — made more urgent as AI increases pressure on organisations.',
