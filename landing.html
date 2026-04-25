@@ -323,8 +323,14 @@ h1 em { font-style: italic; color: var(--acc); }
 .web-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 10px; opacity: .7; }
 
 /* TAKUMI */
-.takumi { padding: 64px; border-bottom: 1px solid var(--border); }
+.takumi { padding: 80px 64px; border-bottom: 1px solid var(--border); }
 .tak-inner { max-width: 860px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: center; }
+.tak-inner-2 { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: 1fr 360px; gap: 64px; align-items: center; }
+.tak-text {}
+.tak-visual-wrap { position: relative; display: flex; flex-direction: column; align-items: center; }
+.tak-scene { width: 100%; max-width: 360px; height: auto; }
+.tak-caption { margin-top: 12px; font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-align: center; }
+.tak-caption span { color: var(--acc); }
 .tak-label { font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--acc); margin-bottom: 14px; }
 .tak-kop { font-family: var(--serif); font-size: clamp(22px, 2.8vw, 34px); font-weight: 300; color: var(--ink); line-height: 1.2; margin-bottom: 14px; }
 .tak-kop em { font-style: italic; color: var(--acc); }
@@ -405,6 +411,8 @@ footer { padding: 40px 64px; display: flex; align-items: center; justify-content
   .webinar-inner { grid-template-columns: 1fr; gap: 40px; }
   .takumi { padding: 48px 24px; }
   .tak-inner { grid-template-columns: 1fr; gap: 24px; }
+  .tak-inner-2 { grid-template-columns: 1fr; gap: 40px; }
+  .tak-scene { max-width: 300px; }
   footer { padding: 32px 24px; }
 }
 </style>
@@ -572,16 +580,181 @@ footer { padding: 40px 64px; display: flex; align-items: center; justify-content
 
 <!-- TAKUMI -->
 <section class="takumi" id="takumi">
-  <div class="tak-inner">
-    <div>
-      <p class="tak-label" data-i18n="tak-label" data-r>Takumi — 匠</p>
-      <h2 class="tak-kop" data-i18n="tak-kop" data-r>Vakmanschap oefenen —<br><em>in symbiose met AI</em></h2>
-      <p class="tak-p" data-i18n="tak-p" data-r data-d="1">
+  <div class="tak-inner-2">
+    <div class="tak-text" data-r>
+      <p class="tak-label" data-i18n="tak-label">Takumi — 匠</p>
+      <h2 class="tak-kop" data-i18n="tak-kop">Vakmanschap oefenen —<br><em>in symbiose met AI</em></h2>
+      <p class="tak-p" data-i18n="tak-p">
         匠 betekent vakmeester. Takumi is de persoonlijke AI-adviseur die de filosofie van Natuurlijk Agile vertaalt naar jouw dagelijks ritme. Niet AI als vervanger — maar als bondgenoot voor wie zijn natuurlijk vakmanschap wil oefenen. Elke dag.
       </p>
+      <div style="margin-top:28px">
+        <a class="btn-prim" href="https://app.takumi-master.com" target="_blank" data-i18n="tak-btn">Begin met Takumi ↗</a>
+      </div>
     </div>
-    <div class="tak-btn" data-r data-d="1">
-      <a class="btn-prim" href="https://app.takumi-master.com" target="_blank" data-i18n="tak-btn">Begin met Takumi ↗</a>
+    <div class="tak-visual-wrap" data-r data-d="1">
+      <svg class="tak-scene" viewBox="0 0 360 460" xmlns="http://www.w3.org/2000/svg" aria-label="Manager met Takumi app">
+        <!-- Background glow -->
+        <defs>
+          <radialGradient id="glow" cx="50%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#f0ebe0"/>
+            <stop offset="100%" stop-color="#e8e0d2"/>
+          </radialGradient>
+          <radialGradient id="skin" cx="40%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="#d4956a"/>
+            <stop offset="100%" stop-color="#b8743f"/>
+          </radialGradient>
+          <radialGradient id="face-glow" cx="50%" cy="40%" r="50%">
+            <stop offset="0%" stop-color="#e8a87c"/>
+            <stop offset="100%" stop-color="#c47840"/>
+          </radialGradient>
+          <linearGradient id="jacket" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2c2c3a"/>
+            <stop offset="100%" stop-color="#1a1a28"/>
+          </linearGradient>
+          <linearGradient id="phone-body" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#2a2a2a"/>
+            <stop offset="100%" stop-color="#1a1a1a"/>
+          </linearGradient>
+          <linearGradient id="screen-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1a1815"/>
+            <stop offset="100%" stop-color="#2a261f"/>
+          </linearGradient>
+          <filter id="shadow" x="-20%" y="-10%" width="140%" height="130%">
+            <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="rgba(28,24,21,0.2)"/>
+          </filter>
+          <clipPath id="phone-clip">
+            <rect x="192" y="158" width="126" height="224" rx="14"/>
+          </clipPath>
+        </defs>
+
+        <!-- Scene bg -->
+        <ellipse cx="180" cy="420" rx="160" ry="28" fill="rgba(28,24,21,.06)"/>
+
+        <!-- Body / jacket -->
+        <path d="M60 460 C60 360 90 310 130 290 C150 282 165 278 180 278 C195 278 210 282 230 290 C270 310 300 360 300 460Z" fill="url(#jacket)"/>
+
+        <!-- Shirt / blouse glimpse -->
+        <path d="M155 285 C165 295 175 300 180 302 C185 300 195 295 205 285 L210 295 C200 308 190 315 180 318 C170 315 160 308 150 295Z" fill="#e8e0d0"/>
+
+        <!-- Neck -->
+        <rect x="168" y="230" width="24" height="55" rx="8" fill="url(#skin)"/>
+
+        <!-- Head -->
+        <ellipse cx="180" cy="200" rx="52" ry="60" fill="url(#face-glow)"/>
+
+        <!-- Hair — shoulder-length, professional -->
+        <path d="M128 185 C124 140 138 100 180 92 C222 100 236 140 232 185 C238 170 240 150 235 125 C225 82 200 65 180 65 C160 65 135 82 125 125 C120 150 122 170 128 185Z" fill="#2a2015"/>
+        <!-- Hair sides flowing down -->
+        <path d="M128 185 C118 200 115 230 118 260 C128 258 138 255 148 250 C142 235 136 215 128 185Z" fill="#2a2015"/>
+        <path d="M232 185 C242 200 245 230 242 260 C232 258 222 255 212 250 C218 235 224 215 232 185Z" fill="#2a2015"/>
+        <!-- Hair top highlight -->
+        <path d="M148 95 C160 88 175 85 180 85 C170 90 158 98 148 95Z" fill="#3d3020" opacity="0.5"/>
+
+        <!-- Face features -->
+        <!-- Eyebrows -->
+        <path d="M153 175 Q163 170 170 172" stroke="#2a2015" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M190 172 Q197 170 207 175" stroke="#2a2015" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- Eyes -->
+        <ellipse cx="162" cy="185" rx="7" ry="5.5" fill="#2a1a0a"/>
+        <ellipse cx="198" cy="185" rx="7" ry="5.5" fill="#2a1a0a"/>
+        <!-- Eye shine -->
+        <circle cx="164" cy="183" r="2" fill="white" opacity="0.8"/>
+        <circle cx="200" cy="183" r="2" fill="white" opacity="0.8"/>
+        <!-- Nose -->
+        <path d="M178 195 Q180 205 182 195" stroke="#b86840" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+        <!-- Mouth — subtle smile -->
+        <path d="M168 215 Q180 222 192 215" stroke="#a05030" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- Cheek warmth -->
+        <ellipse cx="152" cy="205" rx="12" ry="7" fill="#e07050" opacity="0.15"/>
+        <ellipse cx="208" cy="205" rx="12" ry="7" fill="#e07050" opacity="0.15"/>
+
+        <!-- Left arm holding phone from below -->
+        <path d="M115 360 C105 320 108 290 130 285 L148 290 C135 295 128 318 132 355 C145 345 165 330 185 325 L188 340 C165 348 142 362 130 375Z" fill="url(#jacket)"/>
+        <!-- Hand left -->
+        <ellipse cx="190" cy="333" rx="16" ry="10" fill="url(#skin)" transform="rotate(-20, 190, 333)"/>
+        <!-- Fingers suggestion -->
+        <path d="M178 330 C182 320 192 318 198 326" stroke="#b87050" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+        <!-- Phone body (held at angle) -->
+        <g filter="url(#shadow)" transform="rotate(-8, 255, 270)">
+          <rect x="192" y="158" width="126" height="224" rx="14" fill="url(#phone-body)"/>
+          <!-- Phone highlight edge -->
+          <rect x="192" y="158" width="3" height="224" rx="1.5" fill="rgba(255,255,255,0.12)"/>
+          <!-- Screen -->
+          <rect x="198" y="168" width="114" height="204" rx="8" fill="url(#screen-bg)"/>
+
+          <!-- ── Takumi app UI ── -->
+          <!-- App header -->
+          <rect x="198" y="168" width="114" height="32" rx="8" fill="#c4532a" opacity="0.9"/>
+          <rect x="198" y="184" width="114" height="16" fill="#c4532a" opacity="0.9"/>
+          <!-- 匠 kanji on header -->
+          <text x="210" y="190" font-family="serif" font-size="16" fill="white" opacity="0.95">匠</text>
+          <!-- App name -->
+          <text x="230" y="188" font-family="sans-serif" font-size="9" fill="white" opacity="0.85" font-weight="600">Takumi</text>
+          <text x="230" y="198" font-family="sans-serif" font-size="7" fill="rgba(255,255,255,0.6)">Goedemorgen</text>
+
+          <!-- Wave / pulse line -->
+          <rect x="204" y="206" width="102" height="28" rx="5" fill="rgba(196,83,42,0.12)"/>
+          <path d="M208 220 Q218 210 228 220 Q238 230 248 220 Q258 210 268 220 Q278 230 288 220 Q296 213 302 220" stroke="#c4532a" stroke-width="1.5" fill="none" opacity="0.7"/>
+          <circle cx="258" cy="220" r="3" fill="#c4532a"/>
+
+          <!-- Godai pills row -->
+          <rect x="204" y="240" width="19" height="22" rx="4" fill="rgba(196,83,42,0.15)" stroke="rgba(196,83,42,0.4)" stroke-width="0.8"/>
+          <text x="208" y="254" font-family="serif" font-size="11" fill="#c4532a">地</text>
+          <rect x="226" y="240" width="19" height="22" rx="4" fill="rgba(196,83,42,0.15)" stroke="rgba(196,83,42,0.4)" stroke-width="0.8"/>
+          <text x="230" y="254" font-family="serif" font-size="11" fill="#c4532a">水</text>
+          <rect x="248" y="240" width="19" height="22" rx="4" fill="rgba(196,83,42,0.15)" stroke="rgba(196,83,42,0.4)" stroke-width="0.8"/>
+          <text x="252" y="254" font-family="serif" font-size="11" fill="#c4532a">風</text>
+          <rect x="270" y="240" width="19" height="22" rx="4" fill="rgba(196,83,42,0.15)" stroke="rgba(196,83,42,0.4)" stroke-width="0.8"/>
+          <text x="274" y="254" font-family="serif" font-size="11" fill="#c4532a">火</text>
+          <rect x="292" y="240" width="14" height="22" rx="4" fill="rgba(196,83,42,0.3)" stroke="rgba(196,83,42,0.6)" stroke-width="0.8"/>
+          <text x="294" y="254" font-family="serif" font-size="11" fill="#c4532a">空</text>
+
+          <!-- Chat bubble 1 (AI response) -->
+          <rect x="204" y="268" width="78" height="26" rx="5" fill="rgba(246,242,235,0.1)"/>
+          <rect x="205" y="269" width="22" height="6" rx="2" fill="rgba(246,242,235,0.25)"/>
+          <rect x="205" y="277" width="60" height="4" rx="2" fill="rgba(246,242,235,0.18)"/>
+          <rect x="205" y="283" width="44" height="4" rx="2" fill="rgba(246,242,235,0.12)"/>
+
+          <!-- Chat bubble 2 (user) -->
+          <rect x="248" y="300" width="58" height="18" rx="5" fill="rgba(196,83,42,0.25)"/>
+          <rect x="252" y="305" width="40" height="4" rx="2" fill="rgba(196,83,42,0.5)"/>
+          <rect x="252" y="311" width="28" height="3" rx="1.5" fill="rgba(196,83,42,0.35)"/>
+
+          <!-- Chat bubble 3 (AI) -->
+          <rect x="204" y="324" width="68" height="22" rx="5" fill="rgba(246,242,235,0.08)"/>
+          <rect x="208" y="329" width="50" height="4" rx="2" fill="rgba(246,242,235,0.22)"/>
+          <rect x="208" y="335" width="36" height="3" rx="1.5" fill="rgba(246,242,235,0.14)"/>
+
+          <!-- Bottom nav bar -->
+          <rect x="198" y="356" width="114" height="16" rx="0" fill="rgba(26,24,21,0.6)"/>
+          <rect x="198" y="356" width="114" height="4" fill="rgba(246,242,235,0.05)"/>
+          <!-- Nav dots -->
+          <circle cx="225" cy="364" r="3" fill="rgba(196,83,42,0.6)"/>
+          <circle cx="255" cy="364" r="3" fill="rgba(246,242,235,0.3)"/>
+          <circle cx="285" cy="364" r="3" fill="rgba(246,242,235,0.3)"/>
+
+          <!-- Home indicator -->
+          <rect x="232" y="368" width="50" height="2.5" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+
+          <!-- Notch / camera area -->
+          <rect x="231" y="162" width="52" height="8" rx="4" fill="#111"/>
+          <circle cx="257" cy="166" r="2.5" fill="#1a1a1a"/>
+        </g>
+
+        <!-- Right arm / hand -->
+        <path d="M245 350 C260 330 278 308 285 290 C292 275 290 268 280 268 C268 268 258 280 248 295 L250 310 C255 298 262 288 268 285 C272 283 274 285 272 292 C266 308 252 330 240 348Z" fill="url(#jacket)"/>
+        <!-- Right hand fingers on phone side -->
+        <path d="M246 305 C240 295 240 285 248 282" stroke="#b87050" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+
+        <!-- Screen glow on face -->
+        <ellipse cx="175" cy="210" rx="30" ry="20" fill="#c4532a" opacity="0.04"/>
+
+        <!-- Subtle background detail -->
+        <circle cx="50" cy="100" r="40" fill="rgba(196,83,42,0.04)"/>
+        <circle cx="320" cy="380" r="55" fill="rgba(196,83,42,0.03)"/>
+      </svg>
+      <p class="tak-caption">Takumi · <span>Dagelijks meesterschap</span></p>
     </div>
   </div>
 </section>
