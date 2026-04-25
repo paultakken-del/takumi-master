@@ -28,6 +28,16 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+
+/* Grain */
+.opening::after, .webinar::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: .35; mix-blend-mode: overlay;
+}
+.opening { position: relative; }
+.webinar { position: relative; }
 /* ── NAV ── */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
@@ -60,14 +70,11 @@ nav.scrolled {
   position: fixed; right: -4%; top: 50%;
   transform: translateY(-50%);
   font-size: clamp(300px, 40vw, 560px);
-  color: rgba(196,83,42,.05);
+  color: rgba(196,83,42,.06);
   line-height: 1; pointer-events: none;
   user-select: none;
-  animation: breathe 12s ease-in-out infinite;
-}
-@keyframes breathe {
-  0%, 100% { opacity: .05; transform: translateY(-50%) scale(1); }
-  50%       { opacity: .09; transform: translateY(-50%) scale(1.02); }
+  transition: opacity .4s;
+  will-change: transform;
 }
 
 .opening-pre {
@@ -153,16 +160,19 @@ nav.scrolled {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 16px; border-radius: 8px;
   border: 1px solid rgba(28,24,21,.1);
-  text-decoration: none; background: #fdfaf4; transition: border-color .2s;
+  text-decoration: none; background: #fdfaf4;
+  transition: border-color .25s, transform .25s, box-shadow .25s;
 }
-.store:hover { border-color: var(--acc); }
+.store:hover { border-color: var(--acc); transform: translateX(4px); box-shadow: -4px 0 0 var(--acc); }
 .sn { font-size: 13px; font-weight: 500; color: var(--ink); }
 .sp { font-size: 13px; font-weight: 600; color: var(--acc); }
 .boek-img {
   width: 100%; border-radius: 4px; display: block;
   box-shadow: -6px 10px 48px rgba(28,24,21,.18);
   position: sticky; top: 100px;
+  transition: transform .4s ease, box-shadow .4s ease;
 }
+.boek-img:hover { transform: translateY(-6px) rotate(-1deg); box-shadow: -10px 20px 60px rgba(28,24,21,.28); }
 
 /* ── WEBINAR ── */
 .webinar {
@@ -180,7 +190,8 @@ nav.scrolled {
   border-radius: 12px; overflow: hidden;
   text-align: left;
 }
-.webinar-bar { height: 3px; background: linear-gradient(90deg, var(--acc), #e08050); }
+.webinar-bar { height: 3px; background: linear-gradient(90deg, var(--acc), #e08050); animation: pulse-bar 3s ease-in-out infinite; }
+@keyframes pulse-bar { 0%,100%{opacity:1} 50%{opacity:.5} }
 .webinar-body-card { padding: 36px; }
 .webinar-name { font-family: var(--serif); font-size: 20px; font-weight: 400; color: rgba(246,242,235,.9); line-height: 1.4; margin-bottom: 28px; }
 .webinar-metas { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
@@ -232,10 +243,13 @@ footer {
 .ft-copy { font-size: 11px; color: rgba(246,242,235,.12); }
 
 /* ANIM */
-[data-r] { opacity: 0; transform: translateY(14px); transition: opacity .75s ease, transform .75s ease; }
-[data-r].in { opacity: 1; transform: none; }
-[data-r][data-d="1"] { transition-delay: .15s; }
-[data-r][data-d="2"] { transition-delay: .3s; }
+[data-r]       { opacity: 0; transform: translateY(22px);   transition: opacity .8s cubic-bezier(.25,.46,.45,.94), transform .8s cubic-bezier(.25,.46,.45,.94); }
+[data-r="l"]   { opacity: 0; transform: translateX(-28px);  transition: opacity .8s cubic-bezier(.25,.46,.45,.94), transform .8s cubic-bezier(.25,.46,.45,.94); }
+[data-r="r"]   { opacity: 0; transform: translateX(28px);   transition: opacity .8s cubic-bezier(.25,.46,.45,.94), transform .8s cubic-bezier(.25,.46,.45,.94); }
+[data-r="sc"]  { opacity: 0; transform: scale(.96);         transition: opacity .9s ease, transform .9s ease; }
+[data-r].in, [data-r="l"].in, [data-r="r"].in, [data-r="sc"].in { opacity: 1; transform: none; }
+[data-r][data-d="1"], [data-r="l"][data-d="1"], [data-r="r"][data-d="1"], [data-r="sc"][data-d="1"] { transition-delay: .15s; }
+[data-r][data-d="2"], [data-r="r"][data-d="2"], [data-r="sc"][data-d="2"] { transition-delay: .3s; }
 
 @media (max-width: 860px) {
   nav { padding: 16px 24px; }
@@ -263,10 +277,10 @@ footer {
 <!-- OPENING -->
 <section class="opening">
   <p class="opening-pre" data-r>Slow down to speed up</p>
-  <h1 class="opening-vraag" data-r>
-    Wanneer heb je voor het<br>
-    laatst gevoeld dat jouw<br>
-    organisatie <em>écht leefde?</em>
+  <h1 class="opening-vraag">
+    <span data-r style="display:block">Wanneer heb je voor het</span>
+    <span data-r data-d="1" style="display:block">laatst gevoeld dat jouw</span>
+    <span data-r data-d="2" style="display:block">organisatie <em>écht leefde?</em></span>
   </h1>
   <div class="opening-body">
     <p data-r data-d="1">
@@ -289,7 +303,7 @@ footer {
 </section>
 
 <!-- GETUIGE -->
-<div class="getuige" data-r>
+<div class="getuige" data-r="l">
   <p class="getuige-quote">
     "Hij duikt als het ware in het hart van de machine en draait daar de knoppen om."
   </p>
@@ -301,7 +315,7 @@ footer {
   <div class="boek-inner">
     <div>
       <p class="boek-pre" data-r>Het boek</p>
-      <h2 class="boek-titel" data-r>Natuurlijk Agile</h2>
+      <h2 class="boek-titel" data-r="sc">Natuurlijk Agile</h2>
       <p class="boek-sub" data-r>De verborgen wortels van wendbaarheid</p>
       <div class="boek-body">
         <p data-r>
@@ -342,7 +356,7 @@ footer {
     <p class="webinar-body" data-r>
       Geen verkooppraatje. Paul neemt je mee in zijn denken — concreet, herkenbaar, en zonder omwegen. Je hoeft het boek niet gelezen te hebben.
     </p>
-    <div class="webinar-card" data-r data-d="1">
+    <div class="webinar-card" data-r="r" data-d="1">
       <div class="webinar-bar"></div>
       <div class="webinar-body-card">
         <div class="webinar-name">Natuurlijk Agile — De verborgen wortels van wendbaarheid</div>
@@ -397,13 +411,23 @@ footer {
 </footer>
 
 <script>
+// Scroll observer
 var io = new IntersectionObserver(function(e){
   e.forEach(function(x){ if(x.isIntersecting) x.target.classList.add('in'); });
-}, { threshold:.08, rootMargin:'0px 0px -24px 0px' });
-document.querySelectorAll('[data-r]').forEach(function(el){ io.observe(el); });
-window.addEventListener('scroll', function(){
-  document.getElementById('nav').classList.toggle('scrolled', scrollY > 60);
-}, { passive:true });
+}, { threshold:.06, rootMargin:'0px 0px -20px 0px' });
+document.querySelectorAll('[data-r],[data-r="l"],[data-r="r"],[data-r="sc"]').forEach(function(el){ io.observe(el); });
+
+// Parallax 空
+var ku = document.querySelector('.opening-ku');
+function onScroll(){
+  var y = window.scrollY;
+  document.getElementById('nav').classList.toggle('scrolled', y > 60);
+  if(ku){
+    ku.style.transform = 'translateY(calc(-50% + ' + (y * .18) + 'px))';
+    ku.style.opacity = Math.max(0, .06 - y * .00008);
+  }
+}
+window.addEventListener('scroll', onScroll, { passive:true });
 </script>
 </body>
 </html>
