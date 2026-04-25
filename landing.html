@@ -143,20 +143,40 @@ h1 em { font-style: italic; color: var(--acc); }
 .herk-kop { font-family: var(--serif); font-size: clamp(26px, 3.2vw, 42px); font-weight: 300; color: var(--ink); line-height: 1.2; margin-bottom: 48px; max-width: 640px; }
 .herk-kop em { font-style: italic; color: var(--acc); }
 .herk-rij {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 1px; background: var(--border);
-  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 .herk-item {
-  padding: 28px; background: var(--paper);
-  transition: background .2s;
+  position: relative; overflow: hidden;
+  padding: 28px 24px 24px;
+  background: var(--paper);
+  border: 1px solid var(--border); border-radius: 10px;
+  border-top: 3px solid var(--acc);
+  transition: border-color .2s, box-shadow .2s;
 }
-.herk-item:hover { background: var(--p2); }
-.herk-n { font-family: var(--serif); font-size: 36px; font-weight: 300; color: rgba(196,83,42,.25); line-height: 1; margin-bottom: 12px; }
-.herk-item h3 { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
-.herk-item p  { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.herk-item:hover {
+  border-color: var(--acc);
+  box-shadow: 0 4px 24px rgba(28,24,21,.08);
+}
+.herk-item-kanji {
+  position: absolute; right: -8px; bottom: -16px;
+  font-size: 88px; line-height: 1;
+  color: rgba(196,83,42,.07);
+  font-family: serif;
+  pointer-events: none; user-select: none;
+  transition: color .2s;
+}
+.herk-item:hover .herk-item-kanji { color: rgba(196,83,42,.12); }
+.herk-n {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--acc);
+  margin-bottom: 12px; display: block;
+}
+.herk-item h3 { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 10px; line-height: 1.3; }
+.herk-item p  { font-size: 13px; color: var(--muted); line-height: 1.7; position: relative; z-index: 1; }
 .herk-concl {
-  margin-top: 40px; max-width: 560px;
+  margin-top: 48px; max-width: 560px;
   font-family: var(--serif); font-size: clamp(18px, 2.2vw, 26px);
   font-weight: 300; font-style: italic; color: var(--muted); line-height: 1.6;
   padding-left: 24px; border-left: 2px solid var(--acc);
@@ -356,34 +376,40 @@ footer { padding: 40px 64px; display: flex; align-items: center; justify-content
   </h2>
   <div class="herk-rij" data-r data-d="1">
     <div class="herk-item">
-      <div class="herk-n">01</div>
+      <span class="herk-n">Valkuil 01</span>
       <h3>De efficiëntieval</h3>
       <p>Agile als bezuinigingstool. Velocity als heilige metric. De waarde die er echt toe doet, wordt niet gemeten.</p>
+      <div class="herk-item-kanji">効</div>
     </div>
     <div class="herk-item">
-      <div class="herk-n">02</div>
+      <span class="herk-n">Valkuil 02</span>
       <h3>Onvoldoende wortels</h3>
       <p>Agile ingevoerd zonder filosofisch fundament. Een boom zonder wortels staat, totdat de eerste storm komt.</p>
+      <div class="herk-item-kanji">根</div>
     </div>
     <div class="herk-item">
-      <div class="herk-n">03</div>
+      <span class="herk-n">Valkuil 03</span>
       <h3>Agile hyperventilatie</h3>
       <p>Sprint na sprint, zonder ademruimte. Het ritme dat wendbaarheid kracht geeft, is verdwenen.</p>
+      <div class="herk-item-kanji">息</div>
     </div>
     <div class="herk-item">
-      <div class="herk-n">04</div>
+      <span class="herk-n">Valkuil 04</span>
       <h3>Silo's in een nieuw jasje</h3>
       <p>Business en IT in aparte werelden. Andere taal, andere doelen — nu met een Agile-sticker erop.</p>
+      <div class="herk-item-kanji">壁</div>
     </div>
     <div class="herk-item">
-      <div class="herk-n">05</div>
-      <h3>Leervermogen geblokkeerd</h3>
-      <p>Retrospectives die niets veranderen. Fouten die zich herhalen. De organisatie die niet leert.</p>
+      <span class="herk-n">Valkuil 05</span>
+      <h3>Corporate Godzilla</h3>
+      <p>Retrospectives die niets veranderen. Fouten die zich herhalen. De organisatie die niet kan leren.</p>
+      <div class="herk-item-kanji">竜</div>
     </div>
     <div class="herk-item">
-      <div class="herk-n">06–07</div>
-      <h3>Isolatie & flowverstoring</h3>
+      <span class="herk-n">Valkuil 06 · 07</span>
+      <h3>Splendid Isolation & Flowverstoring</h3>
       <p>Teams die eilanden worden. Waarde die blijft steken. De dashboards groen — de energie weg.</p>
+      <div class="herk-item-kanji">孤</div>
     </div>
   </div>
   <p class="herk-concl" data-r data-d="2">
