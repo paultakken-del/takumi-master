@@ -1,2 +1,6 @@
 name = "takumi-master"
 pages_build_output_dir = "."
+
+[[kv_namespaces]]
+binding = "TAKUMI_USERS"
+id = "76e19bf89506410090bfa41bdafae481"
