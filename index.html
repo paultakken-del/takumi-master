@@ -627,6 +627,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div class="ni" data-v="wc"><span class="ico">○</span>Wereldcontext</div>
     <div class="sb-sec">Data</div>
     <div class="ni" data-v="da"><span class="ico">▤</span>Data Hub</div>
+    <a id="admin-link" href="/admin/users" target="_blank" style="display:none;align-items:center;gap:10px;padding:8px 16px;font-size:13px;color:rgba(255,255,255,.55);text-decoration:none;border-radius:8px" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='none'"><span style="font-size:14px">👥</span>Gebruikers</a>
   </div>
   <div class="sb-foot" style="display:flex;align-items:center;justify-content:space-between">
       <span>persoonlijk adviesplatform</span>
@@ -1140,6 +1141,7 @@ function initGoogleSession(){
   var params=new URLSearchParams(window.location.search);
   var gsession=params.get('gsession');
   if(gsession){ document.cookie='gsession='+gsession+';path=/;max-age=604800;SameSite=Lax';
+    try{ var _p=JSON.parse(atob(gsession.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); if(_p.email==='paul.takken@gmail.com'){ var _al=document.getElementById('admin-link'); if(_al) _al.style.display='flex'; } }catch(e){}
     var payload=parseJWTPayload(gsession);
     if(payload&&payload.email){
       var user={
