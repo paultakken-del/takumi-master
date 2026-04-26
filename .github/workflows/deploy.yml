@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Find project name and set secrets
+      - name: Find Cloudflare project name
         continue-on-error: true
         run: python3 .github/scripts/set_cf_secrets.py
         env:
@@ -25,4 +25,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           wranglerVersion: "3.78.12"
-          command: pages deploy . --project-name=Takumi-master --branch=main --commit-dirty=true
+          command: pages deploy . --project-name=takumi-master --branch=main --commit-dirty=true
