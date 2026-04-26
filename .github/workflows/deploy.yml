@@ -12,15 +12,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set Google secrets in Cloudflare
+        continue-on-error: true
         run: |
           ACCOUNT_ID=$(curl -s "https://api.cloudflare.com/client/v4/accounts" \
             -H "Authorization: Bearer $CF_TOKEN" | \
             python3 -c "import sys,json; print(json.load(sys.stdin)['result'][0]['id'])")
-
           PROJECT=$(curl -s "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects" \
             -H "Authorization: Bearer $CF_TOKEN" | \
-            python3 -c "import sys,json; [print(p['name']) for p in json.load(sys.stdin)['result'] if 'takumi' in p['name'].lower()]" | head -1)
-
+            python3 -c "import sys,json; [print(p['name']) for p in json.load(sys.stdin).get('result',[]) if 'takumi' in p['name'].lower()]" | head -1)
+          echo "Setting secrets on: $PROJECT"
           curl -s -X PATCH \
             "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects/$PROJECT" \
             -H "Authorization: Bearer $CF_TOKEN" \
@@ -32,9 +32,8 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
-      - name: Deploy
-        run: |
-          npm install -g wrangler@3 --silent
-          npx wrangler pages deploy . --project-name=Takumi-master --branch=main --commit-dirty=true
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: pages deploy . --project-name=Takumi-master --branch=main
