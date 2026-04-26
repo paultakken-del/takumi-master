@@ -11,21 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set Cloudflare Pages secrets
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: |
-          npm install -g wrangler
-          # Haal exacte projectnaam op
-          PROJECT=$(npx wrangler pages project list 2>/dev/null | grep -i takumi | awk '{print $1}' | head -1)
-          echo "Project gevonden: $PROJECT"
-          echo "$GOOGLE_CLIENT_ID"     | npx wrangler pages secret put GOOGLE_CLIENT_ID     --project-name "$PROJECT"
-          echo "$GOOGLE_CLIENT_SECRET" | npx wrangler pages secret put GOOGLE_CLIENT_SECRET  --project-name "$PROJECT"
-          echo "$JWT_SECRET"           | npx wrangler pages secret put JWT_SECRET            --project-name "$PROJECT"
-
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
