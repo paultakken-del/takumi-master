@@ -11,45 +11,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy and set secrets
+      - name: Find project name and set secrets
+        continue-on-error: true
+        run: python3 .github/scripts/set_cf_secrets.py
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: python3 << 'PYEOF'
-import os, json, urllib.request, subprocess
-
-token = os.environ['CF_TOKEN']
-headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
-
-def cf(path, method='GET', data=None):
-    url = f'https://api.cloudflare.com/client/v4{path}'
-    body = json.dumps(data).encode() if data else None
-    req = urllib.request.Request(url, headers=headers, data=body, method=method)
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read())
-
-# Get account + project
-account_id = cf('/accounts')['result'][0]['id']
-projects = cf(f'/accounts/{account_id}/pages/projects')['result']
-project = next(p['name'] for p in projects if 'takumi' in p['name'].lower())
-print(f'Project: {project}')
-
-# Set secrets
-result = cf(f'/accounts/{account_id}/pages/projects/{project}', 'PATCH', {
-    'deployment_configs': {'production': {'env_vars': {
-        'GOOGLE_CLIENT_ID':     {'value': os.environ['GOOGLE_CLIENT_ID']},
-        'GOOGLE_CLIENT_SECRET': {'value': os.environ['GOOGLE_CLIENT_SECRET']},
-        'JWT_SECRET':           {'value': os.environ['JWT_SECRET']},
-    }}}
-})
-print('Secrets:', 'OK' if result.get('success') else result.get('errors'))
-PYEOF
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           wranglerVersion: "3.78.12"
-          command: pages deploy . --project-name=Takumi-master --branch=main
+          command: pages deploy . --project-name=Takumi-master --branch=main --commit-dirty=true
