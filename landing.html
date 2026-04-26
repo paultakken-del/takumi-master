@@ -262,6 +262,12 @@ h1 em { font-style: italic; color: var(--acc); }
 .pb2-functie { font-size: 12px; color: var(--muted); margin-top: 2px; }
 @media (max-width: 680px) { .pb2-inner { grid-template-columns: 1fr; gap: 32px; } .boek-img-v2 { max-width: 180px; } }
 
+.auteur-boek { border-bottom: 1px solid var(--border); }
+.ab-inner { max-width: 960px; margin: 0 auto; padding: 64px; display: grid; grid-template-columns: 280px 1fr; gap: 64px; align-items: start; }
+.ab-boek { display: flex; flex-direction: column; gap: 20px; }
+.ab-cover { width: 100%; border-radius: 8px; box-shadow: 0 8px 40px rgba(28,24,21,.12); }
+.ab-auteur { }
+.ab-auteur-card { display: flex; gap: 18px; align-items: flex-start; padding: 20px; background: var(--p2); border-radius: 12px; border: 1px solid var(--border); }
 .paul-boek {
   display: grid; grid-template-columns: 1fr 1fr;
   border-bottom: 1px solid var(--border);
@@ -520,12 +526,12 @@ footer { padding: 40px 64px; display: flex; align-items: center; justify-content
 </section>
 
 <!-- PAUL + BOEK -->
-<section class="paul-boek-v2" id="paul">
-  <div class="pb2-inner">
+<section class="auteur-boek" id="boek">
+  <div class="ab-inner">
 
-    <!-- Links: boekcover + winkels -->
-    <div class="pb2-boek" data-r>
-      <img class="boek-img-v2" src="https://www.thema.nl/images/products/natuurlijk-agile-cover-1694181691.jpeg?w=600&q=90&fm=webp" alt="Natuurlijk Agile">
+    <!-- LINKS: Boek -->
+    <div class="ab-boek" data-r>
+      <img class="ab-cover" src="https://www.thema.nl/images/products/natuurlijk-agile-cover-1694181691.jpeg?w=600&q=90&fm=webp" alt="Natuurlijk Agile">
       <div class="stores" data-r data-d="1">
         <a class="store" href="https://www.amazon.nl/Natuurlijk-agile-geborgen-wortels-wendbaarheid-ebook/dp/B0BG64DPWF" target="_blank" rel="noopener">
           <span class="sn">Amazon.nl (Kindle)</span><span class="sp">€ 21,– ↗</span>
@@ -542,26 +548,29 @@ footer { padding: 40px 64px; display: flex; align-items: center; justify-content
       </div>
     </div>
 
-    <!-- Rechts: auteur -->
-    <div class="pb2-auteur" data-r data-d="1">
-      <div class="pb2-header">
-        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAUEBAYFBQUGBgYHCQ4JCQgICRINDQoOFRIWFhUSFBQXGiEcFxgfGRQUHScdHyIjJSUlFhwpLCgkKyEkJST/2wBDAQYGBgkICREJCREkGBQYJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCT/wAARCABQAFADASIAAhEBAxEB/8QAGwAAAgMBAQEAAAAAAAAAAAAABAUCAwYBAAf/xAAyEAACAQMDAgQEBgMBAAAAAAABAgMABBEFEiExBhNBUWEicYGRocHwFCMyQlLR4f/EABkBAAMBAQEAAAAAAAAAAAAAAAECAwAEBf/EACIRAAICAgMAAwEBAAAAAAAAAAABAhEDIRIxQVETIv/aAAwDAQACEQMRAD8A+hHxSLPR7nUZWWBCYl4Lnp+KFxXNvPGHhdXU9CD1rzxZW8Y8K21dE7uktbXzLuvLaFczTJGPdqWan2i06zBAlMrj/Uef2FIr7tJczMfs8KxD/Y1B3km5mLEkn3NXyW2VoaOi1rtBPKCLSMRL/q3X8UJAXuJOKSuePc0HFGSeP71Yta1eLTLRpJWxj/FfMn0+tFGNBlLs1fUL3TrQNuVpJpBjco3Y+vavLfXiXUmIopChBJdVJB9jjp/NIrz7Ra7i8cMKWyH3J/pQd7OLbVmt7Y8IqbH/AId/4/FMqkuMEgZbPIrSaHZF1aZtohjHC9d30z5e9I7+fzJ8IedueaYaldC2sykfS2h9gOn4qqkk7JuqElXy7GhNslGkVF21Z6o7I7xuMEc1+OwFR2TGZ8etXa4WCxs3AH36K/rFYqJ1iQs7YAHJPgKqZGOibBvYSGAkFGRRniM5J6elVHXrKC7ULdKJRCFBz1bgE4/U0BHKGI5zkUbp2mTaj5w4HhGg6nJJrSCXsXJ+hnC9iuYoWi2mNQchGHA8z18q5mXUNLn+HqkYhB/pSMoH71Y67ommzaVJHcRhiAPJiQwP5FecbrUtIlWG8kke0bP2q4yY+xbp/wArPkxtVJHVHJJ9HW0nWFm8UEzJJuI4IJxz4EfqKk1PTLmaKO/0yb9rapuWS3x8ypPP5IHkahZHguI8xsGjbJ3J06n+4P0qR9TvtMtYrOdTLbOrCOQMVktj5yB4sOhqXi92i1lx9ov23c4RmZ7N2MU0hPIH6W94oqvtJLYTSwxyMY1kBBI6HPnUiYLLFz5fwetTlS2Y40dkYWaD3+LoJ8qbXG2REY8BueFz/gfpU1tBNaafJcujN2hZomUAYzz4mnwEilPcnvH0FE7SNiOQDxNcXXLB9Q0ySFZ2ic8q6NgiuhS3/2/SoNbhW01u0ltlHnK2SoGNwwD/XH5p9M6xiS6NWrCZpLhSuPiLHj2FVmoSSySOJmJIJBz/P4qO3YoigkAdeaBv7gNKzA8Uc40mwOiWLqKJRuJPyMtTPYXGFlQHJkZM/LhA3P7VUW7bNKQDhW/H0FanT4BcNbxqOS/Hp9KkZFuykdEOoaXNYWUOI/KWCNj61iiQyPyOuav7i9jiTDHcfLHYUn+LJcuFBJz5VZYiyAHbPMl5n3oR7ORSSP6VLNJhsjyriotwGOlIBLHPJEXmm1FMdLkY3hj3DqKkiDDpTrWrby9SOHkQgg+R7/jT1dNt2BDQoR6V2RQTCV2PoKS9QkHDXLEY/s7d//AFPaR6lpsSlrJSD/AG3/AKTV0sB6cGpBNEQQYlP5/WqKs7OiGKGKPiQ0RaRh28+TA/iooLW6hA8iFQP50UBuzJmQFgTnGaobcpNIhHBDHp4iqOdRkUdKz77Tp9MtEuXt2fT2I8QHDL7Z9K0guyMqOh0LS0JinG1s4yAf+fy/IqaXT45VDwqY2/yx9qW6RHbyC5nsZEW5w0kkbHa4J6/nFbvQI0h0iFpvMJBY+uap5FTU0Lw8k8bnkrxlxPr1Rl7d/bIjMQE3fdNYWymON2UbVLYqKWJJEK78EjGCcioNOt4bWIxRBmQ7QGZuRjJ9v3rOoXeEADyW7T44bv+hUUlxLIZEKhWzjdnj8/wApF2Ylmhwrn7VsA9KjSa5jVcFkYepqMtN7GK3R6HZ6hFJEodVB/tH+taGK5kjIaFmQj0NeZ6VqY2CR2ViRjg1cXGsJb7Y9xlmI6L4D3PtSulKJHSnsRa32wvYY0jDKC3m/c5+w8PxVXNqQYMfIUvST7SGlWF2s7tCv29MJzjOen71VNcknkVnGOKEpRXYqOCSRtJp4BXA/mrkamGQDoKRW91HdDOQGHUHqKJfZ5oT60JK3RfA0pF7a9cCKKTJUBulDJfmCVtzZAPWlqah5Y+KyMvpUMV2Y9PLK8cmiNSolFSSINjbM0kMwJY0H2U/MkZGLM2OexoiECaMELhvIUQbaKbLe2eKeSGQcZHWqW2sUcb4wJM5B7GoWAZgTT2yjWGS4hHGJM/TNV1wjRXLhhlScVkuuBXF2gA3Y3HqfSqnXr37LbyAEbwuFBHGTXQrQFrOE//Z" alt="Paul Takken" class="pb2-foto">
-        <div class="pb2-naam-blok">
-          <div class="pb2-naam">Paul Takken</div>
-          <div class="pb2-functie" data-i18n="hero-naam-s">Author · Agile Philosopher · AI in Practice</div>
+    <!-- RECHTS: Auteur + boekinfo -->
+    <div class="ab-auteur" data-r data-d="1">
+      <p class="col-label" data-i18n="boek-label">Het boek</p>
+      <h2 class="boek-titel" style="margin-bottom:6px">Natuurlijk Agile</h2>
+      <p class="boek-sub" data-i18n="boek-sub" style="margin-bottom:16px">De verborgen wortels van wendbaarheid</p>
+      <p class="boek-p" data-i18n="boek-p" style="margin-bottom:28px">Agile heeft diepere wortels dan we denken — in de natuur, in Japanse filosofie, in levende systemen. Het fundament dat elke organisatie nodig heeft, ook — en juist — in het tijdperk van AI.</p>
+
+      <div class="ab-auteur-card">
+        <img src="data:image/jpeg;base64,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" alt="Paul Takken" class="paul-rond-foto">
+        <div>
+          <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:2px">Paul Takken</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:10px" data-i18n="hero-naam-s">Author · Agile Philosopher · AI in Practice</div>
+          <p class="paul-q" data-i18n="paul-q" style="margin-bottom:10px">"Ik begeleid organisaties in verandering. Al twintig jaar."</p>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:14px" data-i18n="paul-p1">Wat ik elke keer weer zie: de aanpak klopt, de mensen willen het, maar er ontbreekt iets fundamentelers. Dat iets is waar Natuurlijk Agile over gaat.</p>
+          <a href="https://www.linkedin.com/in/paultakken/" target="_blank" rel="noopener"
+             style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;border:1px solid rgba(28,24,21,.1);text-decoration:none;background:#f8f4ee;transition:all .2s;font-size:12px"
+             onmouseover="this.style.borderColor='var(--acc)';this.style.background='rgba(196,83,42,.06)'"
+             onmouseout="this.style.borderColor='rgba(28,24,21,.1)';this.style.background='#f8f4ee'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--acc)"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            <span style="font-weight:600;color:var(--acc)">linkedin.com/in/paultakken</span>
+          </a>
         </div>
       </div>
-      <p class="col-label" data-i18n="paul-label" style="margin-top:20px">Over mij</p>
-      <p class="paul-q" data-i18n="paul-q">
-        "Ik begeleid organisaties in verandering. Al twintig jaar."
-      </p>
-      <p class="paul-p" data-i18n="paul-p1">
-        Wat ik elke keer weer zie: de aanpak klopt, de mensen willen het, maar er ontbreekt iets fundamentelers. Dat iets is waar Natuurlijk Agile over gaat.
-      </p>
-      <a href="https://www.linkedin.com/in/paultakken/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;margin-top:20px;padding:10px 18px;border-radius:8px;border:1px solid rgba(28,24,21,.1);text-decoration:none;background:#f8f4ee;transition:all .2s" onmouseover="this.style.borderColor='var(--acc)';this.style.background='rgba(196,83,42,.06)'" onmouseout="this.style.borderColor='rgba(28,24,21,.1)';this.style.background='#f8f4ee'">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--acc)"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        <span style="font-size:13px;font-weight:600;color:var(--acc)">linkedin.com/in/paultakken</span>
-      </a>
     </div>
 
   </div>
