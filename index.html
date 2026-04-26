@@ -2991,7 +2991,13 @@ function toast(msg,type){
 
 
 // ── DARK/LIGHT MODE ───────────────────────────────────────────
-var currentTheme = ls('tm2_theme', 'dark');
+// Detecteer of gebruiker ooit handmatig een thema heeft gekozen
+var _themeOverride = localStorage.getItem('tm2_theme_override');
+// Systeem voorkeur
+var _sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+// Gebruik override als die er is, anders volg het systeem
+var currentTheme = _themeOverride || (_sysDark ? 'dark' : 'light');
+
 function applyTheme(theme){
   document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
   var btn = document.getElementById('theme-btn');
@@ -3000,9 +3006,19 @@ function applyTheme(theme){
   lsSet('tm2_theme', theme);
 }
 function toggleTheme(){
-  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
-  var btn = document.getElementById('theme-btn');
-  if(btn) btn.textContent = currentTheme === 'dark' ? '☀' : '🌙';
+  var next = currentTheme === 'dark' ? 'light' : 'dark';
+  // Sla handmatige keuze op als override
+  localStorage.setItem('tm2_theme_override', next);
+  applyTheme(next);
+}
+
+// Luister naar systeemwijzigingen — alleen als geen handmatige override
+if(window.matchMedia){
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e){
+    if(!localStorage.getItem('tm2_theme_override')){
+      applyTheme(e.matches ? 'dark' : 'light');
+    }
+  });
 }
 
 // ── APPLE WATCH URL IMPORT ─────────────────────────────────────────
