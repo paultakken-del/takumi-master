@@ -4,10 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      event_type:
-        description: 'Deploy trigger'
-        required: false
 
 jobs:
   deploy:
@@ -23,9 +19,12 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           npm install -g wrangler
-          echo "$GOOGLE_CLIENT_ID"     | wrangler pages secret put GOOGLE_CLIENT_ID     --project-name Takumi-master
-          echo "$GOOGLE_CLIENT_SECRET" | wrangler pages secret put GOOGLE_CLIENT_SECRET  --project-name Takumi-master
-          echo "$JWT_SECRET"           | wrangler pages secret put JWT_SECRET            --project-name Takumi-master
+          # Haal exacte projectnaam op
+          PROJECT=$(npx wrangler pages project list 2>/dev/null | grep -i takumi | awk '{print $1}' | head -1)
+          echo "Project gevonden: $PROJECT"
+          echo "$GOOGLE_CLIENT_ID"     | npx wrangler pages secret put GOOGLE_CLIENT_ID     --project-name "$PROJECT"
+          echo "$GOOGLE_CLIENT_SECRET" | npx wrangler pages secret put GOOGLE_CLIENT_SECRET  --project-name "$PROJECT"
+          echo "$JWT_SECRET"           | npx wrangler pages secret put JWT_SECRET            --project-name "$PROJECT"
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
