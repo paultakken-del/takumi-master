@@ -636,6 +636,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
     <div class="sb-footer">
       <div class="sb-user" id="sb-user-email"></div>
+      <button onclick="window.startTakumiTour && window.startTakumiTour()" style="background:none;border:none;font-size:12px;color:rgba(255,255,255,.3);cursor:pointer;font-family:var(--F);padding:4px 0;text-align:left;transition:color .2s" onmouseover="this.style.color='rgba(196,83,42,.8)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">◎ Rondleiding</button>
       <button class="sb-logout" onclick="logout()">↩ Afmelden</button>
     </div>
 </nav>
@@ -3483,6 +3484,243 @@ document.addEventListener('DOMContentLoaded', function(){
   if(typeof renderDank === 'function') renderDank();
   if(typeof renderFouten === 'function') renderFouten();
 });
+</script>
+<script>
+// ── TAKUMI WALKTHROUGH TOUR ──────────────────────────────────────────
+(function(){
+
+var TOUR_KEY = 'tm_tour_done_v1';
+
+var STEPS = [
+  {
+    title: '匠 Welkom bij Takumi',
+    text: 'Je bent er. In deze korte rondleiding laat ik je zien hoe Takumi werkt — vijf GodAI-elementen als jouw dagelijkse krijgersgidsen.',
+    target: null, // centered welcome
+    pos: 'center'
+  },
+  {
+    title: '⬡ De Cockpit',
+    text: 'Dit is je thuisbasis. Hier zie je jouw dagelijkse energie, een synthese van je dag, doelen en een wijsheid van de dag.',
+    target: 'ck-icon-circle',
+    pos: 'bottom'
+  },
+  {
+    title: '脈 Ochtend Start',
+    text: 'Begin elke dag hier. Stel je intentie in, voel je energieniveau en laat Takumi jouw dag afstemmen op de flow van de elementen.',
+    target: null,
+    navItem: 'dy',
+    pos: 'right'
+  },
+  {
+    title: '◈ Raad van Meesters',
+    text: 'Vijf AI-adviseurs, elk geworteld in een Godai-element: 地 水 風 火 空. Stel ze elke vraag over strategie, aanpassing, creativiteit, actie of loslaten.',
+    target: null,
+    navItem: 'bo',
+    pos: 'right'
+  },
+  {
+    title: '◇ Doelen',
+    text: 'Verbind jouw doelen aan de elementen. Zo worden ze niet alleen opgeslagen — maar dagelijks belichaamd.',
+    target: null,
+    navItem: 'gl',
+    pos: 'right'
+  },
+  {
+    title: '習 Avond Ritueel',
+    text: 'Sluit bewust af. Reflecteer op energie, leer van de dag en cultiveer dankbaarheid. Zo bouw je dag voor dag aan vakmeesterschap.',
+    target: null,
+    navItem: 'ri',
+    pos: 'right'
+  },
+  {
+    title: '空 Begin',
+    text: 'In het niets ontstaan nieuwe dingen. Jouw reis naar natuurlijk vakmeesterschap begint nu.',
+    target: null,
+    pos: 'center',
+    last: true
+  }
+];
+
+var current = 0;
+var overlay, spotlight, tooltip;
+
+function createTour() {
+  // Overlay
+  overlay = document.createElement('div');
+  overlay.id = 'tour-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9000;pointer-events:none;transition:all .4s';
+
+  // Spotlight hole via clip-path (SVG mask approach via box-shadow)
+  spotlight = document.createElement('div');
+  spotlight.id = 'tour-spotlight';
+  spotlight.style.cssText = 'position:fixed;z-index:9001;border-radius:12px;transition:all .4s cubic-bezier(.4,0,.2,1);pointer-events:none;box-shadow:0 0 0 9999px rgba(20,18,14,.82)';
+
+  // Tooltip
+  tooltip = document.createElement('div');
+  tooltip.id = 'tour-tooltip';
+  tooltip.style.cssText = `
+    position:fixed;z-index:9002;
+    background:#faf7f2;color:#1a1815;
+    border-radius:14px;padding:24px 28px;
+    max-width:320px;width:calc(100vw - 48px);
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+    font-family:system-ui,sans-serif;
+    transition:all .35s cubic-bezier(.4,0,.2,1);
+    border:1px solid rgba(28,24,21,.08);
+  `;
+
+  document.body.appendChild(overlay);
+  document.body.appendChild(spotlight);
+  document.body.appendChild(tooltip);
+}
+
+function highlightElement(el) {
+  if (!el) {
+    // Center — no spotlight
+    spotlight.style.cssText = spotlight.style.cssText.replace(/top:[^;]+;left:[^;]+;width:[^;]+;height:[^;]+;/, '');
+    spotlight.style.top = '-9999px';
+    spotlight.style.left = '-9999px';
+    spotlight.style.width = '0';
+    spotlight.style.height = '0';
+    spotlight.style.boxShadow = 'none';
+    overlay.style.background = 'rgba(20,18,14,.82)';
+    overlay.style.pointerEvents = 'all';
+    return;
+  }
+  var r = el.getBoundingClientRect();
+  var pad = 10;
+  spotlight.style.top    = (r.top - pad) + 'px';
+  spotlight.style.left   = (r.left - pad) + 'px';
+  spotlight.style.width  = (r.width + pad*2) + 'px';
+  spotlight.style.height = (r.height + pad*2) + 'px';
+  spotlight.style.boxShadow = '0 0 0 9999px rgba(20,18,14,.82)';
+  overlay.style.background = 'transparent';
+  overlay.style.pointerEvents = 'none';
+}
+
+function positionTooltip(el, pos) {
+  var vw = window.innerWidth, vh = window.innerHeight;
+  var tw = Math.min(320, vw - 48);
+
+  if (pos === 'center' || !el) {
+    tooltip.style.left = ((vw - tw) / 2) + 'px';
+    tooltip.style.top  = ((vh - 280) / 2) + 'px';
+    return;
+  }
+
+  var r = el.getBoundingClientRect();
+
+  if (pos === 'bottom') {
+    var left = Math.max(16, Math.min(r.left, vw - tw - 16));
+    tooltip.style.left = left + 'px';
+    tooltip.style.top  = (r.bottom + 16) + 'px';
+  } else if (pos === 'right') {
+    tooltip.style.left = Math.min(r.right + 16, vw - tw - 16) + 'px';
+    tooltip.style.top  = Math.max(16, r.top) + 'px';
+  } else {
+    tooltip.style.left = ((vw - tw) / 2) + 'px';
+    tooltip.style.top  = (r.bottom + 16) + 'px';
+  }
+}
+
+function renderStep(idx) {
+  var step = STEPS[idx];
+  var total = STEPS.length;
+
+  // Activate nav item if needed
+  if (step.navItem) {
+    var ni = document.querySelector('[data-v="' + step.navItem + '"]');
+    if (ni) ni.click();
+    setTimeout(function(){ doRender(idx); }, 300);
+  } else {
+    doRender(idx);
+  }
+}
+
+function doRender(idx) {
+  var step = STEPS[idx];
+  var total = STEPS.length;
+
+  // Find target element
+  var el = null;
+  if (step.target) el = document.getElementById(step.target);
+  else if (step.navItem) el = document.querySelector('[data-v="' + step.navItem + '"]');
+
+  highlightElement(el);
+  positionTooltip(el, step.pos);
+
+  // Dots
+  var dots = '';
+  for (var i = 0; i < total; i++) {
+    dots += '<span style="width:6px;height:6px;border-radius:50%;background:' + (i === idx ? '#c4532a' : 'rgba(28,24,21,.2)') + ';display:inline-block;margin:0 3px"></span>';
+  }
+
+  tooltip.innerHTML = `
+    <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#c4532a;margin-bottom:10px">${idx + 1} / ${total}</div>
+    <div style="font-size:17px;font-weight:600;color:#1a1815;margin-bottom:10px;line-height:1.3">${step.title}</div>
+    <div style="font-size:14px;color:#6e6558;line-height:1.7;margin-bottom:20px">${step.text}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>${dots}</div>
+      <div style="display:flex;gap:10px">
+        ${idx > 0 ? '<button onclick="window.__tourPrev()" style="background:none;border:1px solid rgba(28,24,21,.15);border-radius:8px;padding:9px 18px;font-size:13px;cursor:pointer;color:#6e6558;font-family:system-ui">← Terug</button>' : ''}
+        <button onclick="window.__tourNext()" style="background:#c4532a;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;color:#fff;font-family:system-ui">
+          ${step.last ? 'Begin ↗' : 'Volgende →'}
+        </button>
+      </div>
+    </div>
+    ${idx === 0 ? '<div style="text-align:center;margin-top:12px"><button onclick="window.__tourSkip()" style="background:none;border:none;font-size:12px;color:rgba(28,24,21,.35);cursor:pointer;font-family:system-ui">Overslaan</button></div>' : ''}
+  `;
+}
+
+window.__tourNext = function() {
+  if (current >= STEPS.length - 1) {
+    endTour();
+  } else {
+    current++;
+    renderStep(current);
+  }
+};
+
+window.__tourPrev = function() {
+  if (current > 0) { current--; renderStep(current); }
+};
+
+window.__tourSkip = endTour;
+
+function endTour() {
+  localStorage.setItem(TOUR_KEY, '1');
+  if (overlay)   overlay.remove();
+  if (spotlight) spotlight.remove();
+  if (tooltip)   tooltip.remove();
+  // Go back to cockpit
+  var ck = document.querySelector('[data-v="ck"]');
+  if (ck) ck.click();
+}
+
+function startTour() {
+  createTour();
+  current = 0;
+  renderStep(0);
+}
+
+// Start only for first-time users, after app is loaded
+function maybeStartTour() {
+  if (localStorage.getItem(TOUR_KEY)) return;
+  // Wait for app to render
+  setTimeout(startTour, 1200);
+}
+
+// Expose for manual trigger (e.g. help button)
+window.startTakumiTour = startTour;
+
+// Hook into login success
+var _origGsession = window.onGsessionLoaded;
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(maybeStartTour, 800);
+});
+
+})();
+
 </script>
 </body>
 </html>
