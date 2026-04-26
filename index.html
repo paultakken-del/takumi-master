@@ -1139,7 +1139,7 @@ function parseJWTPayload(token){
 function initGoogleSession(){
   var params=new URLSearchParams(window.location.search);
   var gsession=params.get('gsession');
-  if(gsession){
+  if(gsession){ document.cookie='gsession='+gsession+';path=/;max-age=604800;SameSite=Lax';
     var payload=parseJWTPayload(gsession);
     if(payload&&payload.email){
       var user={
