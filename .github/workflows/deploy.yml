@@ -11,46 +11,45 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy + Set secrets
+      - name: Deploy and set secrets
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: |
-          # Account + project ophalen
-          ACCOUNT_ID=$(curl -s "https://api.cloudflare.com/client/v4/accounts" \
-            -H "Authorization: Bearer $CF_TOKEN" | \
-            python3 -c "import sys,json; print(json.load(sys.stdin)['result'][0]['id'])")
-          echo "Account: $ACCOUNT_ID"
+        run: python3 << 'PYEOF'
+import os, json, urllib.request, subprocess
 
-          PROJECT=$(curl -s "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects" \
-            -H "Authorization: Bearer $CF_TOKEN" | \
-            python3 -c "
-import sys,json
-data=json.load(sys.stdin)
-for p in data.get('result',[]):
-    print(p['name'])
-" | head -1)
-          echo "Project: $PROJECT"
+token = os.environ['CF_TOKEN']
+headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
 
-          # Secrets instellen
-          curl -s -X PATCH \
-            "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects/$PROJECT" \
-            -H "Authorization: Bearer $CF_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d "{\"deployment_configs\":{\"production\":{\"env_vars\":{\"GOOGLE_CLIENT_ID\":{\"value\":\"$GOOGLE_CLIENT_ID\"},\"GOOGLE_CLIENT_SECRET\":{\"value\":\"$GOOGLE_CLIENT_SECRET\"},\"JWT_SECRET\":{\"value\":\"$JWT_SECRET\"}}}}}" | python3 -c "import sys,json; r=json.load(sys.stdin); print('Secrets:', 'OK' if r.get('success') else r.get('errors'))"
+def cf(path, method='GET', data=None):
+    url = f'https://api.cloudflare.com/client/v4{path}'
+    body = json.dumps(data).encode() if data else None
+    req = urllib.request.Request(url, headers=headers, data=body, method=method)
+    with urllib.request.urlopen(req) as r:
+        return json.loads(r.read())
 
-          # Deploy via wrangler-action fallback: gebruik Pages API direct upload
-          pip install --break-system-packages cloudflare 2>/dev/null || true
+# Get account + project
+account_id = cf('/accounts')['result'][0]['id']
+projects = cf(f'/accounts/{account_id}/pages/projects')['result']
+project = next(p['name'] for p in projects if 'takumi' in p['name'].lower())
+print(f'Project: {project}')
 
-          # Zip alle bestanden
-          zip -r deploy.zip . -x "*.git*" -x "*.DS_Store" -x "deploy.zip" -x "test/*"
+# Set secrets
+result = cf(f'/accounts/{account_id}/pages/projects/{project}', 'PATCH', {
+    'deployment_configs': {'production': {'env_vars': {
+        'GOOGLE_CLIENT_ID':     {'value': os.environ['GOOGLE_CLIENT_ID']},
+        'GOOGLE_CLIENT_SECRET': {'value': os.environ['GOOGLE_CLIENT_SECRET']},
+        'JWT_SECRET':           {'value': os.environ['JWT_SECRET']},
+    }}}
+})
+print('Secrets:', 'OK' if result.get('success') else result.get('errors'))
+PYEOF
 
-          # Upload via Cloudflare Pages API
-          DEPLOY=$(curl -s -X POST \
-            "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects/$PROJECT/deployments" \
-            -H "Authorization: Bearer $CF_TOKEN" \
-            -F "branch=main" \
-            -F "files=@deploy.zip")
-          echo "Deploy: $(echo $DEPLOY | python3 -c 'import sys,json; r=json.load(sys.stdin); print("OK:", r.get("result",{}).get("url","")) if r.get("success") else print("ERR:", r.get("errors"))')"
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          wranglerVersion: "3.78.12"
+          command: pages deploy . --project-name=Takumi-master --branch=main
