@@ -11,18 +11,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Find Cloudflare project name
-        continue-on-error: true
-        run: python3 .github/scripts/set_cf_secrets.py
-        env:
-          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           wranglerVersion: "3.78.12"
           command: pages deploy . --project-name=takumi-master --branch=main --commit-dirty=true
+
+      - name: Set secrets via wrangler
+        run: |
+          echo "$GOOGLE_CLIENT_ID"     | npx wrangler@3.78.12 pages secret put GOOGLE_CLIENT_ID     --project-name=takumi-master
+          echo "$GOOGLE_CLIENT_SECRET" | npx wrangler@3.78.12 pages secret put GOOGLE_CLIENT_SECRET  --project-name=takumi-master
+          echo "$JWT_SECRET"           | npx wrangler@3.78.12 pages secret put JWT_SECRET            --project-name=takumi-master
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
