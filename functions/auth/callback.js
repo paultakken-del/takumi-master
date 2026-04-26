@@ -21,6 +21,21 @@ export async function onRequest({ request, env }) {
   const payload = JSON.parse(atob(tokens.id_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
   const now = Math.floor(Date.now() / 1000);
 
+  // Check of gebruiker gebanned is
+  if (env.TAKUMI_USERS) {
+    const existing = await env.TAKUMI_USERS.get(payload.sub);
+    if (existing) {
+      const user = JSON.parse(existing);
+      if (user.banned) {
+        return new Response(`<!DOCTYPE html><html><body style="font-family:system-ui;text-align:center;padding:60px;background:#fff5f5">
+<h2 style="color:#c83232">Toegang geblokkeerd</h2>
+<p style="margin:12px 0;color:#888">Jouw account heeft geen toegang tot Takumi.</p>
+<p style="color:#aaa;font-size:13px">${payload.email}</p>
+</body></html>`, { status: 403, headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
+      }
+    }
+  }
+
   // Sla gebruiker op in KV
   if (env.TAKUMI_USERS) {
     const userRecord = JSON.stringify({
