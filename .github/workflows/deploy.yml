@@ -11,6 +11,42 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set secrets via Cloudflare API
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: |
+          # Haal account ID op
+          ACCOUNT_ID=$(curl -s "https://api.cloudflare.com/client/v4/accounts" \
+            -H "Authorization: Bearer $CF_TOKEN" | \
+            python3 -c "import sys,json; print(json.load(sys.stdin)['result'][0]['id'])")
+          echo "Account: $ACCOUNT_ID"
+
+          # Haal exacte projectnaam op
+          PROJECT=$(curl -s "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects" \
+            -H "Authorization: Bearer $CF_TOKEN" | \
+            python3 -c "import sys,json; projects=json.load(sys.stdin)['result']; [print(p['name']) for p in projects if 'takumi' in p['name'].lower()]" | head -1)
+          echo "Project: $PROJECT"
+
+          # Stel environment variabelen in via API
+          curl -s -X PATCH \
+            "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects/$PROJECT" \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"deployment_configs\": {
+                \"production\": {
+                  \"env_vars\": {
+                    \"GOOGLE_CLIENT_ID\":     {\"value\": \"$GOOGLE_CLIENT_ID\"},
+                    \"GOOGLE_CLIENT_SECRET\": {\"value\": \"$GOOGLE_CLIENT_SECRET\"},
+                    \"JWT_SECRET\":           {\"value\": \"$JWT_SECRET\"}
+                  }
+                }
+              }
+            }" | python3 -c "import sys,json; r=json.load(sys.stdin); print('OK' if r.get('success') else r)"
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
