@@ -356,6 +356,14 @@ h1 em { font-style: italic; color: var(--acc); }
 .tak-btn { flex-shrink: 0; }
 
 /* FOOTER */
+.tak-breaker { background: var(--ink); padding: 56px 32px; border-top: 1px solid rgba(255,255,255,.06); }
+.tak-breaker-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; gap: 32px; flex-wrap: wrap; justify-content: space-between; }
+.tak-breaker-kanji { font-family: var(--serif); font-size: 52px; color: var(--acc); line-height: 1; flex-shrink: 0; }
+.tak-breaker-text { flex: 1; min-width: 200px; }
+.tak-breaker-kop { font-size: clamp(20px, 2.5vw, 28px); font-weight: 600; color: #fff; margin-bottom: 6px; }
+.tak-breaker-sub { font-size: 15px; color: rgba(255,255,255,.5); font-style: italic; }
+.tak-breaker .btn-prim { background: var(--acc); color: #fff; }
+
 footer { padding: 40px 64px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; border-top: 1px solid var(--border); }
 .ft-left { display: flex; align-items: center; gap: 10px; }
 .ft-ku { font-size: 28px; color: rgba(196,83,42,.3); }
@@ -431,6 +439,8 @@ footer { padding: 40px 64px; display: flex; align-items: center; justify-content
   .tak-inner { grid-template-columns: 1fr; gap: 24px; }
   .tak-inner-2 { grid-template-columns: 1fr; gap: 40px; }
   .tak-photo { max-height: 440px; object-fit: cover; object-position: center; }
+  .tak-breaker { padding: 36px 24px; }
+  .tak-breaker-inner { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
   footer { padding: 32px 24px; }
 }
 </style>
