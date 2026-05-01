@@ -795,7 +795,10 @@ input[type=range]{width:100%;accent-color:var(--acc)}
             <div style="font-size:13px;font-weight:600;line-height:1.3" id="ch-n">Master Council</div>
             <div style="font-size:11px;color:var(--m);line-height:1.2" id="ch-d">Vijf Godai meesters</div>
           </div>
-          <div style="margin-left:auto;flex-shrink:0"><button class="btn sm gh" onclick="clearChat()">↺</button></div>
+          <div style="margin-left:auto;flex-shrink:0;display:flex;gap:4px">
+            <button class="btn sm gh" onclick="showMemoirs()" title="Geheugen van deze meester">脳</button>
+            <button class="btn sm gh" onclick="clearChat()" title="Reset gesprek">↺</button>
+          </div>
         </div>
         <div class="cm" id="cm"><div class="es"><div class="es-ico" id="es-i" style="font-family:var(--FJ)">匠</div><div style="font-size:12px;text-align:center;max-width:200px;color:var(--m)">Stel een vraag aan het advisory board</div></div></div>
         <div class="cia">
@@ -2504,6 +2507,66 @@ function resetMemoirs(masterId){
   S.memoirs[masterId] = [];
   lsSet('tm2_memoirs', S.memoirs);
   toast('Geheugen gewist voor deze meester','ok');
+}
+
+// ── MEMOIR VIEWER ──────────────────────────────────────────────────
+function showMemoirs(){
+  var id = S.cur;
+  if(!id) return;
+  var agent = AGENTS[id];
+  if(!agent) return;
+  var arr = (S.memoirs[id] || []).slice().reverse(); // nieuwste boven
+
+  var html = '<div id="memoir-bd" onclick="closeMemoirs(event)" style="position:fixed;inset:0;z-index:999;background:rgba(20,18,14,.7);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s">'+
+    '<div onclick="event.stopPropagation()" style="background:var(--bg);border-radius:12px;max-width:480px;width:100%;max-height:80vh;display:flex;flex-direction:column;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.4)">'+
+      '<div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">'+
+        '<span style="font-family:var(--FJ);font-size:22px;color:'+agent.col+'">'+agent.ico+'</span>'+
+        '<div style="flex:1">'+
+          '<div style="font-size:14px;font-weight:600;color:var(--ink)">Geheugen — '+agent.name+'</div>'+
+          '<div style="font-size:11px;color:var(--m)">'+arr.length+' memoirs · max 20</div>'+
+        '</div>'+
+        '<button onclick="closeMemoirs()" style="background:none;border:none;color:var(--m);font-size:18px;cursor:pointer;padding:4px 8px">✕</button>'+
+      '</div>'+
+      '<div style="flex:1;overflow-y:auto;padding:14px 20px">';
+
+  if(!arr.length){
+    html += '<div style="text-align:center;padding:40px 20px;color:var(--m);font-size:13px;line-height:1.6">Nog geen memoirs.<br>Stel een vraag — na 30 minuten verschijnt hier de eerste herinnering.</div>';
+  } else {
+    arr.forEach(function(m){
+      var d = new Date(m.t);
+      var dStr = d.toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'});
+      var tStr = d.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+      html += '<div style="padding:12px 14px;margin-bottom:8px;background:var(--p2);border-radius:8px;border-left:3px solid '+agent.col+'">'+
+        '<div style="font-size:10px;color:var(--m);margin-bottom:4px;letter-spacing:.04em">'+dStr+' · '+tStr+'</div>'+
+        '<div style="font-size:13px;color:var(--ink);line-height:1.5">'+m.summary+'</div>'+
+        '</div>';
+    });
+  }
+
+  html += '</div>'+
+      '<div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px">'+
+        '<div style="font-size:11px;color:var(--m);flex:1">Memoirs blijven lokaal opgeslagen.</div>'+
+        (arr.length ? '<button onclick="confirmResetMemoirs()" style="background:none;border:1px solid var(--border);color:var(--m);font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer">Wis geheugen</button>' : '')+
+      '</div>'+
+    '</div>'+
+  '</div>';
+
+  var existing = document.getElementById('memoir-bd');
+  if(existing) existing.remove();
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function closeMemoirs(e){
+  if(e && e.target.id !== 'memoir-bd') return;
+  var bd = document.getElementById('memoir-bd');
+  if(bd) bd.remove();
+}
+
+function confirmResetMemoirs(){
+  if(confirm('Weet je zeker dat je het geheugen van deze meester wilt wissen? Dit kan niet ongedaan worden gemaakt.')){
+    resetMemoirs(S.cur);
+    closeMemoirs();
+  }
 }
 
 function clearChat(){
