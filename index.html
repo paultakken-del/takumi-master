@@ -1199,6 +1199,7 @@ const S={
   cur:'board',
   chat:ls('tm2_chat',{}),
   learn:ls('tm2_learn',{}),
+  memoirs:ls('tm2_memoirs',{}),
   goals:ls('tm2_goals',null),
   holdings:ls('tm2_hold',{BTC:{qty:.62,avgBuy:28000,name:'Bitcoin'},ETH:{qty:4.2,avgBuy:1800,name:'Ethereum'}}),
   degiro:ls('tm2_dg',{}),
@@ -1284,6 +1285,16 @@ function allCtx(){
   return lines.filter(Boolean).join('\n');
 }
 function learnCtx(id){const a=S.learn[id];if(!a||(!a.pos?.length&&!a.rej?.length))return'';const p=(a.pos||[]).slice(0,2).map(x=>'✓ "'+x.txt?.slice(0,50)+'"').join('; ');const r=(a.rej||[]).slice(0,2).map(x=>'✗ "'+x.txt?.slice(0,50)+'" ('+x.why?.slice(0,25)+')').join('; ');return[p,r].filter(Boolean).join(' | ');}
+function memoirCtx(id){
+  var m = S.memoirs[id];
+  if(!m || !m.length) return '';
+  var recent = m.slice(-5).map(function(x){
+    var d = new Date(x.t);
+    var dStr = d.toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
+    return '['+dStr+'] '+x.summary;
+  }).join('\n');
+  return '\nWat je over Paul weet uit eerdere gesprekken:\n'+recent+'\nGebruik dit om continuïteit te tonen, maar dring het niet op. Verwijs alleen als relevant.';
+}
 
 // ── AGENTS ─────────────────────────────────────────────────────────
 
@@ -1347,17 +1358,17 @@ const AGENTS={
     if(nieuw)return`Je bent 匠 — de meester die een nieuwe leerling verwelkomt in de dojo van Takumi Master.\n\nDeze gebruiker opent Takumi voor het eerst. Verwelkom hem warm maar beknopt. Leg in max 3 zinnen uit:\n1. Wat Takumi is (persoonlijk meesterschap platform, drie dagelijkse stappen)\n2. Wat de vijf Godai-meesters doen (elk spreekt vanuit zijn element)\n3. Stel één concrete vraag: wat is het belangrijkste dat hij dit jaar wil bereiken?\n\nSpreek als één stem — de Meester. Niet als vijf stemmen. Kort, uitnodigend, niet overweldigend. Nederlands.`;
     return`Je bent de 師匠会 — het Master Council van Takumi Master. Je spreekt als vijf Godai-stemmen die elk vanuit hun element influisteren. Gebruik tools voor actuele data.\n\nTOOLS:\n- get_portfolio() → vermogen, posities, P&L\n- get_hrv() → rMSSD, herstel, slaap, energie\n- get_goals() → doelen, voortgang, open acties\n- get_learning('board') → wat werkte eerder\n\nCONTEXT: ${allCtx()}\n\nANTWOORD ALTIJD in dit formaat — elke stem max 2 zinnen, scherp en direct:\n\n地 Chi — Fundament\n[Structuur, strategie, vermogen. Wat is de solide basis hier?]\n\n水 Sui — Flow\n[Energie, herstel, beweging. Hoe stroomt dit het beste?]\n\n風 Fū — Geest\n[Communicatie, relaties, creativiteit. Wat zegt de intuïtie?]\n\n火 Ka — Energie\n[Actie, focus, beslissing. Wat moet NU gebeuren?]\n\n空 Kū — Ruimte\n[Synthese, stilte, het grotere geheel. Wat is de werkelijke vraag?]\n\n匠 Advies\n[Eén concrete actie. Max 15 woorden.]\n\nREGELS:\n- Elke stem spreekt vanuit zijn element, niet generiek\n- Warriors mogen kort influisteren bijv: 略 Ryaku: tip of 気 Ki: tip\n- Als HRV < 45: Kū geeft stilte-advies\n- Geen opsommingstekens, geen herhaling\n- Nederlands, direct, meesterlijk kort`;
   }},
-  strategic:{id:'strategic',name:'略 Ryaku — Strateeg',ico:'略',dom:'Work',col:'#384888',sys(){return`Strategic Advisor. Besluitvorming, prioriteiten, strategie.\n"Every decision has a cost. Strategy is choosing what not to do."\n${allCtx()}\n${learnCtx('strategic')}\n1 insight + 1 actie. Max 30w. Nederlands.`;}},
-  health:{id:'health',name:'気 Ki — Gezondheid',ico:'気',dom:'Health',col:'var(--teal)',sys(){return`Health & Energy Coach. HRV, herstel, energie.\n"Energy precedes performance."\nHRV: rMSSD ${S.hrv.rmssd} (gem.53), herstel ${S.hrv.recovery}/10, HR ${S.hrv.hr}bpm, slaap ${S.hrv.sleep}u\n${learnCtx('health')}\n1 insight op ECHTE data + 1 actie. Max 30w. Nederlands.`;}},
-  finance:{id:'finance',name:'財 Zai — Financieel',ico:'財',dom:'Finance',col:'var(--gold)',sys(){return`Financial Risk & Wealth Advisor. Portfolio, risico, vermogen.\n"Risk first, return second. Avoid irreversible loss."\n${portCtx()}\nWorld: Crypto mixed, Finance negatief (ECB)\n${learnCtx('finance')}\n1 financieel insight + 1 actie. Max 30w. Nederlands.`;}},
-  reflection:{id:'reflection',name:'観 Kan — Reflectie',ico:'観',dom:'Reflection',col:'#7a4a8a',sys(){return`Reflective Sensemaker. Patronen, zelfinzicht.\n"Observe before intervening."\n${allCtx()}\n${learnCtx('reflection')}\n1 observatie die aan het denken zet. Max 30w. Nederlands.`;}},
-  productivity:{id:'productivity',name:'働 Hataraki — Productiviteit',ico:'働',dom:'Work',col:'#384888',sys(){return`Productiviteits & Focus Coach.\n"Deep work beats busy work."\n${allCtx()}\n${learnCtx('productivity')}\n1 focus-protocol + 1 actie. Max 30w. Nederlands.`;}},
-  decision:{id:'decision',name:'決 Ketsu — Beslissing',ico:'決',dom:'Meta',col:'var(--m)',sys(){return`Decision Accelerator. Besluiteloosheid doorbreken.\n"Good enough now beats perfect later."\n${allCtx()}\n${learnCtx('decision')}\n1 beslissing afdwingen + 1 directe actie. Max 30w. Nederlands.`;}},
-  writing:{id:'writing',name:'筆 Fude — Schrijven',ico:'筆',dom:'Career',col:'var(--acc)',sys(){return`Writing Coach & Author. Schrijven, creativiteit, communicatie.\n"Every word must earn its place."\n${allCtx()}\n${learnCtx('writing')}\n1 schrijf-inzicht + 1 actie. Max 30w. Nederlands.`;}},
+  strategic:{id:'strategic',name:'略 Ryaku — Strateeg',ico:'略',dom:'Work',col:'#384888',sys(){return`Strategic Advisor. Besluitvorming, prioriteiten, strategie.\n"Every decision has a cost. Strategy is choosing what not to do."\n${allCtx()}\n${learnCtx('strategic')}${memoirCtx('strategic')}\n1 insight + 1 actie. Max 30w. Nederlands.`;}},
+  health:{id:'health',name:'気 Ki — Gezondheid',ico:'気',dom:'Health',col:'var(--teal)',sys(){return`Health & Energy Coach. HRV, herstel, energie.\n"Energy precedes performance."\nHRV: rMSSD ${S.hrv.rmssd} (gem.53), herstel ${S.hrv.recovery}/10, HR ${S.hrv.hr}bpm, slaap ${S.hrv.sleep}u\n${learnCtx('health')}${memoirCtx('health')}\n1 insight op ECHTE data + 1 actie. Max 30w. Nederlands.`;}},
+  finance:{id:'finance',name:'財 Zai — Financieel',ico:'財',dom:'Finance',col:'var(--gold)',sys(){return`Financial Risk & Wealth Advisor. Portfolio, risico, vermogen.\n"Risk first, return second. Avoid irreversible loss."\n${portCtx()}\nWorld: Crypto mixed, Finance negatief (ECB)\n${learnCtx('finance')}${memoirCtx('finance')}\n1 financieel insight + 1 actie. Max 30w. Nederlands.`;}},
+  reflection:{id:'reflection',name:'観 Kan — Reflectie',ico:'観',dom:'Reflection',col:'#7a4a8a',sys(){return`Reflective Sensemaker. Patronen, zelfinzicht.\n"Observe before intervening."\n${allCtx()}\n${learnCtx('reflection')}${memoirCtx('reflection')}\n1 observatie die aan het denken zet. Max 30w. Nederlands.`;}},
+  productivity:{id:'productivity',name:'働 Hataraki — Productiviteit',ico:'働',dom:'Work',col:'#384888',sys(){return`Productiviteits & Focus Coach.\n"Deep work beats busy work."\n${allCtx()}\n${learnCtx('productivity')}${memoirCtx('productivity')}\n1 focus-protocol + 1 actie. Max 30w. Nederlands.`;}},
+  decision:{id:'decision',name:'決 Ketsu — Beslissing',ico:'決',dom:'Meta',col:'var(--m)',sys(){return`Decision Accelerator. Besluiteloosheid doorbreken.\n"Good enough now beats perfect later."\n${allCtx()}\n${learnCtx('decision')}${memoirCtx('decision')}\n1 beslissing afdwingen + 1 directe actie. Max 30w. Nederlands.`;}},
+  writing:{id:'writing',name:'筆 Fude — Schrijven',ico:'筆',dom:'Career',col:'var(--acc)',sys(){return`Writing Coach & Author. Schrijven, creativiteit, communicatie.\n"Every word must earn its place."\n${allCtx()}\n${learnCtx('writing')}${memoirCtx('writing')}\n1 schrijf-inzicht + 1 actie. Max 30w. Nederlands.`;}},
   relationship:{id:'relationship',name:'縁 En — Relaties',ico:'縁',dom:'Personal',col:'var(--teal)',sys(){return`Relationship & Communication Coach.\n"Empathy enables connection."\n1 relationeel inzicht + 1 actie. Max 30w. Nederlands.`;}},
   learning:{id:'learning',name:'学 Gaku — Leren',ico:'学',dom:'Personal',col:'var(--gold)',sys(){return`Learning & Growth Coach.\n"Skills compound over time."\n1 leerinzicht + 1 oefening. Max 30w. Nederlands.`;}},
   routine:{id:'routine',name:'律 Ritsu — Routine',ico:'律',dom:'Personal',col:'var(--teal)',sys(){return`Routine & Habit Builder.\n"Small habits compound."\n1 gewoonte-inzicht + 1 micro-actie. Max 30w. Nederlands.`;}},
-  digital:{id:'digital',name:'間 Ma — Digitaal',ico:'間',dom:'Personal',col:'var(--m)',sys(){return`Digital Declutter Coach.\n"Attention is your scarcest resource."\n${allCtx()}\n${learnCtx('digital')}\n1 aandachtsinzicht + 1 actie. Max 30w. Nederlands.`;}},
+  digital:{id:'digital',name:'間 Ma — Digitaal',ico:'間',dom:'Personal',col:'var(--m)',sys(){return`Digital Declutter Coach.\n"Attention is your scarcest resource."\n${allCtx()}\n${learnCtx('digital')}${memoirCtx('digital')}\n1 aandachtsinzicht + 1 actie. Max 30w. Nederlands.`;}},
   engagement:{id:'engagement',name:'道 Dō — Engagement',ico:'道',dom:'Meta',col:'var(--acc)',sys(){return`Engagement Coach. Platform navigatie.\n"The best tool is the one you actually use."\n1 platform-tip die direct waarde toevoegt. Max 30w. Nederlands.`;}}
 };
 const ORD=['board','strategic','health','finance','reflection','productivity','decision','writing','relationship','learning','routine','digital','engagement'];
@@ -2441,6 +2452,8 @@ async function send(){
     const isSp=/€|%|rMSSD|BTC|ETH|\d+/.test(full)||full.length>150;
     S.chat[S.cur][mi].score=Math.min(10,7+(hasAct?1:0)+(isSp?1:0)+(full.length>100?.5:0));
     lsSet('tm2_chat',S.chat);renderChat();upLearn();
+    // Genereer memoir samenvatting (async, niet blocking)
+    saveMemoir(S.cur, text, full);
   }catch(err){
     if(S.chat[S.cur][li]?.type==='load')S.chat[S.cur].splice(li,1);
     S.chat[S.cur].push({role:'assistant',content:`⚠ ${err.message}\n\n→ Controleer ANTHROPIC_API_KEY in Cloudflare Settings\n→ Controleer credits: console.anthropic.com`});
@@ -2448,6 +2461,50 @@ async function send(){
   }finally{busy=false;document.getElementById('sb2').disabled=false;}
 }
 
+
+// ── MEMOIRS — geheugen per meester ──────────────────────────────────
+async function saveMemoir(masterId, userText, masterReply){
+  if(!masterId || !userText || !masterReply) return;
+  // Check rate-limit: niet vaker dan 1 memoir per master per 30 min
+  if(!S.memoirs[masterId]) S.memoirs[masterId] = [];
+  var arr = S.memoirs[masterId];
+  var last = arr[arr.length-1];
+  if(last && (Date.now() - last.t) < 30*60*1000) return;
+
+  try {
+    var prompt = 'Vat dit gesprek samen in één zin (max 20 woorden) vanuit het perspectief van wat de meester onthoudt over Paul. Geen aanhalingstekens. Begin niet met "Paul". Schrijf concrete, specifieke observaties.\n\nVraag: '+userText.slice(0,500)+'\n\nAntwoord: '+masterReply.slice(0,800);
+    var res = await fetch('/api/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens:80,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    if(!res.ok) return;
+    var j = await res.json();
+    var summary = j.content?.[0]?.text?.trim();
+    if(!summary || summary.length < 10) return;
+    // Verwijder aanhalingstekens, beperk tot 1 zin
+    summary = summary.replace(/^["'""]|["'""]$/g,'').split(/[.!?]/)[0].trim();
+    if(summary.length > 200) summary = summary.slice(0,197)+'...';
+
+    arr.push({t: Date.now(), summary: summary});
+    // Houd max 20 memoirs per meester
+    if(arr.length > 20) arr.splice(0, arr.length-20);
+    S.memoirs[masterId] = arr;
+    lsSet('tm2_memoirs', S.memoirs);
+  } catch(e) { /* silent fail — memoir is niet kritiek */ }
+}
+
+// Reset memoirs voor één meester (gebruiker-controle)
+function resetMemoirs(masterId){
+  if(!masterId) return;
+  S.memoirs[masterId] = [];
+  lsSet('tm2_memoirs', S.memoirs);
+  toast('Geheugen gewist voor deze meester','ok');
+}
 
 function clearChat(){
   S.chat[S.cur]=[];lsSet('tm2_chat',S.chat);
