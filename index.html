@@ -655,6 +655,18 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <div class="ck-date" id="ck-d"></div>
     </div>
 
+    <!-- OCHTEND NUDGE — verschijnt alleen 's ochtends voor dagstart -->
+    <div id="ck-ochtend-nudge" style="display:none;margin:var(--sp-md) 0 0;padding:14px 18px;background:linear-gradient(135deg,rgba(196,83,42,.08),rgba(196,83,42,.03));border:1px solid rgba(196,83,42,.18);border-radius:var(--rs);cursor:pointer;transition:all .2s;display:none;align-items:center;justify-content:space-between;gap:12px" onclick="(function(){var dy=document.querySelector('[data-v=\'dy\']');if(dy)dy.click();})()" onmouseover="this.style.background='linear-gradient(135deg,rgba(196,83,42,.14),rgba(196,83,42,.06))'" onmouseout="this.style.background='linear-gradient(135deg,rgba(196,83,42,.08),rgba(196,83,42,.03))'">
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+        <span style="font-family:var(--FJ);font-size:22px;color:var(--acc);flex-shrink:0">匠</span>
+        <div style="min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px">Begin je dag</div>
+          <div style="font-size:11.5px;color:var(--m);line-height:1.4">Stem je intentie en energie af voordat je verder gaat</div>
+        </div>
+      </div>
+      <span style="font-size:14px;color:var(--acc);flex-shrink:0">→</span>
+    </div>
+
     <!-- SYNTHESE BRIEF — wat het systeem concludeert -->
     <div id="ck-synthese" style="margin:var(--sp-md) 0 0;padding:14px 16px;background:var(--pw);border-radius:var(--rs);border-left:3px solid var(--acc);font-size:13px;line-height:1.6;color:var(--ink)"></div>
 
@@ -1892,6 +1904,17 @@ function initCkOpening(){
   var h = new Date().getHours();
   var dagdeel = getDagdeel(h);
   var cfg = CK_DAGDELEN[dagdeel];
+
+  // OCHTEND NUDGE — toon alleen 's ochtends als dag nog niet gestart vandaag
+  try {
+    var nudge = document.getElementById('ck-ochtend-nudge');
+    if(nudge){
+      var todayKey = 'tm2_dagstart_' + new Date().toISOString().slice(0,10);
+      var alreadyStarted = ls(todayKey, '') === '1';
+      var isMorning = (dagdeel === 'ochtend');
+      nudge.style.display = (isMorning && !alreadyStarted) ? 'flex' : 'none';
+    }
+  } catch(e){}
 
   // Update question
   var qEl = document.getElementById('ck-opening-q');
@@ -3205,6 +3228,20 @@ function closeSidebar(){
 document.addEventListener('DOMContentLoaded',function(){
   document.querySelectorAll('#sb .ni').forEach(function(ni){
     ni.addEventListener('click',function(){
+      var v = ni.getAttribute('data-v');
+      // Mark dagstart als gebruiker naar Ochtend Start gaat
+      if(v === 'dy'){
+        try {
+          var todayKey = 'tm2_dagstart_' + new Date().toISOString().slice(0,10);
+          lsSet(todayKey, '1');
+          var nudge = document.getElementById('ck-ochtend-nudge');
+          if(nudge) nudge.style.display = 'none';
+        } catch(e){}
+      }
+      // Refresh nudge bij terugkeer naar cockpit
+      if(v === 'ck'){
+        try { initCkOpening(); } catch(e){}
+      }
       if(window.innerWidth<=720) closeSidebar();
     });
   });
