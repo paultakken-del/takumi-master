@@ -1327,6 +1327,25 @@ function portCtx(){
 }
 function allCtx(){
   var lines=[];
+  // Tijdsbesef — dagdeel + dag van de week
+  (function(){
+    var now = new Date();
+    var h = now.getHours();
+    var m = now.getMinutes();
+    var dagen = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+    var dag = dagen[now.getDay()];
+    var weekend = (now.getDay()===0||now.getDay()===6);
+    var dagdeel, hint;
+    if(h>=5 && h<9)         { dagdeel='vroege ochtend'; hint='dag begint, intentie zetten'; }
+    else if(h>=9 && h<12)   { dagdeel='ochtend';        hint='actief deel van werkdag'; }
+    else if(h>=12 && h<14)  { dagdeel='middag';         hint='midden van de dag, lunch-pauze'; }
+    else if(h>=14 && h<17)  { dagdeel='middag';         hint='kern van de werkdag, focus'; }
+    else if(h>=17 && h<20)  { dagdeel='vroege avond';   hint='dag rondt af, overgang naar rust'; }
+    else if(h>=20 && h<22)  { dagdeel='avond';          hint='terugblik, voorbereiding morgen'; }
+    else                    { dagdeel='nacht';          hint='rust-tijd, niet de tijd voor grote beslissingen'; }
+    var tStr = h+':'+(m<10?'0':'')+m;
+    lines.push('Nu: '+tStr+' '+dag+(weekend?' (weekend)':'')+' · '+dagdeel+' — '+hint);
+  })();
   var phaseLabels={dal:'Herstel (dal)',stijgend:'Opbouw (stijgend)',vlak:'Normaal',top:'Actief (top)',dalend:'Afronden (dalend)'};
   if(window._wavePhase) lines.push('Wave: '+( phaseLabels[window._wavePhase]||window._wavePhase));
   lines.push('Portfolio: '+portCtx());
@@ -1422,8 +1441,8 @@ const AGENTS={
     return`Je bent de 師匠会 — het Master Council van Takumi Master. Je spreekt als vijf Godai-stemmen die elk vanuit hun element influisteren. Gebruik tools voor actuele data.\n\nTOOLS:\n- get_portfolio() → vermogen, posities, P&L\n- get_hrv() → rMSSD, herstel, slaap, energie\n- get_goals() → doelen, voortgang, open acties\n- get_learning('board') → wat werkte eerder\n\nCONTEXT: ${allCtx()}\n\nANTWOORD ALTIJD in dit formaat — elke stem max 2 zinnen, scherp en direct:\n\n地 Chi — Fundament\n[Structuur, strategie, vermogen. Wat is de solide basis hier?]\n\n水 Sui — Flow\n[Energie, herstel, beweging. Hoe stroomt dit het beste?]\n\n風 Fū — Geest\n[Communicatie, relaties, creativiteit. Wat zegt de intuïtie?]\n\n火 Ka — Energie\n[Actie, focus, beslissing. Wat moet NU gebeuren?]\n\n空 Kū — Ruimte\n[Synthese, stilte, het grotere geheel. Wat is de werkelijke vraag?]\n\n匠 Advies\n[Eén concrete actie. Max 15 woorden.]\n\nREGELS:\n- Elke stem spreekt vanuit zijn element, niet generiek\n- Warriors mogen kort influisteren bijv: 略 Ryaku: tip of 気 Ki: tip\n- Als HRV < 45: Kū geeft stilte-advies\n- Geen opsommingstekens, geen herhaling\n- Nederlands, direct, meesterlijk kort`;
   }},
   strategic:{id:'strategic',name:'略 Ryaku — Strateeg',ico:'略',dom:'Work',col:'#384888',sys(){return`Strategic Advisor. Besluitvorming, prioriteiten, strategie.\n"Every decision has a cost. Strategy is choosing what not to do."\n${allCtx()}\n${learnCtx('strategic')}${memoirCtx('strategic')}\n1 insight + 1 actie. Max 30w. Nederlands.`;}},
-  health:{id:'health',name:'気 Ki — Gezondheid',ico:'気',dom:'Health',col:'var(--teal)',sys(){return`Health & Energy Coach. HRV, herstel, energie.\n"Energy precedes performance."\nHRV: rMSSD ${S.hrv.rmssd} (gem.53), herstel ${S.hrv.recovery}/10, HR ${S.hrv.hr}bpm, slaap ${S.hrv.sleep}u\n${learnCtx('health')}${memoirCtx('health')}\n1 insight op ECHTE data + 1 actie. Max 30w. Nederlands.`;}},
-  finance:{id:'finance',name:'財 Zai — Financieel',ico:'財',dom:'Finance',col:'var(--gold)',sys(){return`Financial Risk & Wealth Advisor. Portfolio, risico, vermogen.\n"Risk first, return second. Avoid irreversible loss."\n${portCtx()}\nWorld: Crypto mixed, Finance negatief (ECB)\n${learnCtx('finance')}${memoirCtx('finance')}\n1 financieel insight + 1 actie. Max 30w. Nederlands.`;}},
+  health:{id:'health',name:'気 Ki — Gezondheid',ico:'気',dom:'Health',col:'var(--teal)',sys(){return`Health & Energy Coach. HRV, herstel, energie.\n"Energy precedes performance."\n${allCtx()}\nHRV: rMSSD ${S.hrv.rmssd} (gem.53), herstel ${S.hrv.recovery}/10, HR ${S.hrv.hr}bpm, slaap ${S.hrv.sleep}u\n${learnCtx('health')}${memoirCtx('health')}\n1 insight op ECHTE data + 1 actie passend bij dagdeel. Max 30w. Nederlands.`;}},
+  finance:{id:'finance',name:'財 Zai — Financieel',ico:'財',dom:'Finance',col:'var(--gold)',sys(){return`Financial Risk & Wealth Advisor. Portfolio, risico, vermogen.\n"Risk first, return second. Avoid irreversible loss."\n${allCtx()}\n${portCtx()}\nWorld: Crypto mixed, Finance negatief (ECB)\n${learnCtx('finance')}${memoirCtx('finance')}\n1 financieel insight + 1 actie passend bij dagdeel. Max 30w. Nederlands.`;}},
   reflection:{id:'reflection',name:'観 Kan — Reflectie',ico:'観',dom:'Reflection',col:'#7a4a8a',sys(){return`Reflective Sensemaker. Patronen, zelfinzicht.\n"Observe before intervening."\n${allCtx()}\n${learnCtx('reflection')}${memoirCtx('reflection')}\n1 observatie die aan het denken zet. Max 30w. Nederlands.`;}},
   productivity:{id:'productivity',name:'働 Hataraki — Productiviteit',ico:'働',dom:'Work',col:'#384888',sys(){return`Productiviteits & Focus Coach.\n"Deep work beats busy work."\n${allCtx()}\n${learnCtx('productivity')}${memoirCtx('productivity')}\n1 focus-protocol + 1 actie. Max 30w. Nederlands.`;}},
   decision:{id:'decision',name:'決 Ketsu — Beslissing',ico:'決',dom:'Meta',col:'var(--m)',sys(){return`Decision Accelerator. Besluiteloosheid doorbreken.\n"Good enough now beats perfect later."\n${allCtx()}\n${learnCtx('decision')}${memoirCtx('decision')}\n1 beslissing afdwingen + 1 directe actie. Max 30w. Nederlands.`;}},
