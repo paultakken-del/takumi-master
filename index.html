@@ -176,7 +176,7 @@ button,input,textarea,select{font-family:var(--F);font-size:13px;font-weight:400
 .bl{display:grid;grid-template-columns:1fr;grid-template-rows:1fr;flex:1;overflow:hidden;min-height:0;height:100%}
 .bleft{display:flex;flex-direction:column;overflow-y:auto;border-right:1px solid var(--b);min-height:0;flex:1;height:100%;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 .agw{padding:14px;border-bottom:1px solid var(--b);flex-shrink:0}
-.ag{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.ac{min-height:80px}
+.ag{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.ac{min-height:48px;padding:8px 10px}
 .ac{background:var(--pw);border-radius:var(--rs);padding:10px 12px;cursor:pointer;transition:all .12s;border:1px solid transparent;-webkit-tap-highlight-color:transparent}
 .ac:hover{background:var(--pc);border-color:var(--bm)}.ac:active{transform:scale(.97)}
 .ac.on,.ac.bm{background:var(--ink3);color:#fff}
@@ -790,14 +790,17 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <div class="ca">
         <div class="ch" id="ch" style="border-bottom:3px solid var(--acc)">
           <button onclick="showGoGrid()" style="background:none;border:none;cursor:pointer;padding:4px 8px 4px 0;color:var(--m);font-size:18px;line-height:1;flex-shrink:0;-webkit-tap-highlight-color:transparent" title="Elementen">‹</button>
-          <div id="ch-avatar" style="width:36px;height:36px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:#fff;flex-shrink:0">匠</div>
+          <div id="ch-avatar-wrap" style="position:relative;flex-shrink:0">
+            <div id="ch-avatar" style="width:36px;height:36px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:#fff">匠</div>
+            <div id="ch-mem-badge" style="display:none;position:absolute;top:-2px;right:-2px;background:var(--acc);color:#fff;font-size:9.5px;font-weight:600;min-width:16px;height:16px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg);line-height:1"></div>
+          </div>
           <div style="min-width:0">
             <div style="font-size:13px;font-weight:600;line-height:1.3" id="ch-n">Master Council</div>
             <div style="font-size:11px;color:var(--m);line-height:1.2" id="ch-d">Vijf Godai meesters</div>
           </div>
           <div style="margin-left:auto;flex-shrink:0;display:flex;gap:4px">
-            <button class="btn sm gh" onclick="showMemoirs()" title="Geheugen van deze meester">脳</button>
-            <button class="btn sm gh" onclick="clearChat()" title="Reset gesprek">↺</button>
+            <button class="btn sm gh" id="btn-memoirs" onclick="showMemoirs()" title="Bekijk geheugen van deze meester" aria-label="Geheugen">脳<span id="btn-mem-count" style="font-size:9px;margin-left:3px;color:var(--acc);font-weight:600"></span></button>
+            <button class="btn sm gh" onclick="clearChat()" title="Wis huidig gesprek" aria-label="Reset">↺</button>
           </div>
         </div>
         <div class="cm" id="cm"><div class="es"><div class="es-ico" id="es-i" style="font-family:var(--FJ)">匠</div><div style="font-size:12px;text-align:center;max-width:200px;color:var(--m)">Stel een vraag aan het advisory board</div></div></div>
@@ -2326,15 +2329,21 @@ function renderGrid(){
   document.getElementById('ag').innerHTML=ORD.map(id=>{
     const a=AGENTS[id],isB=id==='board',isA=S.cur===id;
     const shortName=a.name.split('—')[1]?.trim()||a.name;
+    const memCount = (S.memoirs[id] || []).length;
+    const memDot = memCount ? `<div style="position:absolute;top:4px;right:6px;background:var(--acc);color:#fff;font-size:9px;font-weight:600;min-width:14px;height:14px;border-radius:7px;display:flex;align-items:center;justify-content:center;padding:0 3px;line-height:1;border:1.5px solid var(--bg)" title="${memCount} memoirs">${memCount > 9 ? '9+' : memCount}</div>` : '';
     if(isB)return`<div class="ac bm${isA?' on':''}" onclick="selAg('${id}')" style="position:relative">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:44px;height:44px;border-radius:50%;background:rgba(196,83,42,.1);border:2px solid var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:22px;color:var(--acc);flex-shrink:0">${a.ico}</div>
-        <div><div class="an" style="font-size:13px;font-weight:600">${a.name}</div><div class="ad" style="font-size:10px;margin-top:1px">Vijf Godai meesters</div></div>
+      ${memDot}
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(196,83,42,.1);border:1.5px solid var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:16px;color:var(--acc);flex-shrink:0">${a.ico}</div>
+        <div style="min-width:0"><div class="an" style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Volledig Board</div><div class="ad" style="font-size:9.5px;margin-top:1px;color:var(--m)">Vijf meesters</div></div>
       </div>
     </div>`;
     return`<div class="ac${isA?' on':''}" onclick="selAg('${id}')" style="position:relative">
-      <div style="width:38px;height:38px;border-radius:50%;background:${isA?a.col:'transparent'};border:1.5px solid ${a.col};display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:${isA?'#fff':a.col};margin:0 auto 6px;transition:all .15s">${a.ico}</div>
-      <div class="an" style="font-size:10px;text-align:center;font-weight:${isA?600:400}">${shortName}</div>
+      ${memDot}
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:30px;height:30px;border-radius:50%;background:${isA?a.col:'transparent'};border:1.5px solid ${a.col};display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:15px;color:${isA?'#fff':a.col};flex-shrink:0;transition:all .15s">${a.ico}</div>
+        <div class="an" style="font-size:11.5px;font-weight:${isA?600:400};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">${shortName}</div>
+      </div>
     </div>`;
   }).join('');
 }
@@ -2345,6 +2354,19 @@ function selAg(id){
   const shortName=a.id==='board'?'Master Council':(a.name.split('—')[1]?.trim()||a.name);
   const avatar=document.getElementById('ch-avatar');
   if(avatar){avatar.textContent=a.ico;avatar.style.background=a.col;}
+  // Memoir badge update
+  var memCount = (S.memoirs[id] || []).length;
+  var badge = document.getElementById('ch-mem-badge');
+  if(badge){
+    if(memCount){
+      badge.textContent = memCount > 99 ? '99+' : memCount;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+  var btnCount = document.getElementById('btn-mem-count');
+  if(btnCount) btnCount.textContent = memCount ? memCount : '';
   document.getElementById('ch-n').textContent=shortName;
   document.getElementById('ch-d').textContent=a.id==='board'?'Vijf Godai meesters · volledige synthese':a.dom;
   const ch=document.getElementById('ch');
@@ -2365,11 +2387,31 @@ function renderChat(){
   const a=AGENTS[S.cur];
   const shortName=a.id==='board'?'Master Council':(a.name.split('—')[1]?.trim()||a.name);
   if(!msgs.length){
-    c.innerHTML=`<div class="es">
-      <div style="width:56px;height:56px;border-radius:50%;background:${a.col};display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:28px;color:#fff;margin-bottom:4px">${a.ico}</div>
-      <div style="font-size:13px;font-weight:600;color:var(--ink)">${shortName}</div>
-      <div style="font-size:11px;text-align:center;max-width:180px;color:var(--m);margin-top:2px">${a.dom}</div>
-    </div>`;
+    var openings = {
+      strategic:  {q:'Wat speelt er, Paul?', starters:['Hoe prioriteer ik vandaag?','Wat is de juiste volgende stap?','Welk besluit stel ik uit?']},
+      health:     {q:'Hoe voel je je vandaag?', starters:['Wat zegt mijn HRV?','Hoe herstel ik beter?','Energie voor vanmiddag?']},
+      finance:    {q:'Wat speelt er financieel?', starters:['Hoe staat mijn portfolio?','Welk risico negeer ik?','Wanneer herbalanceren?']},
+      reflection: {q:'Wat valt je op?', starters:['Welk patroon zie ik niet?','Wat heb ik vermeden?','Waar voel ik weerstand?']},
+      productivity:{q:'Waar wil je focus?', starters:['Hoe begin ik met deep work?','Wat haal ik weg?','Beste 90 minuten van vandaag?']},
+      decision:   {q:'Welk besluit stel je uit?', starters:['Wat zou ik kiezen als ik moest?','Wat is goed genoeg?','Wat verlies ik door wachten?']},
+      writing:    {q:'Waar werk je aan?', starters:['Hoe begin ik deze tekst?','Welke zin moet weg?','Wat probeer ik echt te zeggen?']},
+      digital:    {q:'Wat trekt je aandacht weg?', starters:['Welke notificaties uit?','Hoe ontvolg ik beter?','Wat is mijn aandacht waard?']},
+      board:      {q:'Wat speelt er, Paul?', starters:['Geef me een dag-overzicht','Wat zien jullie samen?','Wat is mijn blinde vlek?']}
+    };
+    var op = openings[a.id] || openings.board;
+    var memCount = (S.memoirs[a.id] || []).length;
+    var memHint = memCount ? '<div style="font-size:10.5px;color:var(--m);margin-top:14px;letter-spacing:.04em">'+memCount+' eerdere herinneringen ·  脳 om te bekijken</div>' : '';
+    var chips = op.starters.map(function(s){
+      return '<button onclick="useStarter(this)" data-q="'+esc(s)+'" style="background:var(--p2);border:1px solid var(--border);color:var(--ink);font-size:12.5px;padding:9px 14px;border-radius:18px;cursor:pointer;font-family:var(--F);text-align:left;line-height:1.4;transition:all .2s" onmouseover="this.style.borderColor=\''+a.col+'\';this.style.background=\'var(--bg)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.background=\'var(--p2)\'">'+esc(s)+'</button>';
+    }).join('');
+    c.innerHTML='<div class="es" style="padding:24px 20px">'+
+      '<div style="position:relative;width:64px;height:64px;border-radius:50%;background:'+a.col+';display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:32px;color:#fff;margin-bottom:18px">'+a.ico+
+        (memCount ? '<div style="position:absolute;top:-2px;right:-2px;background:var(--acc);color:#fff;font-size:10px;font-weight:600;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--bg)">'+memCount+'</div>' : '')+
+      '</div>'+
+      '<div style="font-family:var(--serif);font-size:18px;color:var(--ink);margin-bottom:16px;font-style:italic;text-align:center">'+esc(op.q)+'</div>'+
+      '<div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:300px">'+chips+'</div>'+
+      memHint+
+    '</div>';
     return;
   }
   const avatar=`<div style="width:28px;height:28px;border-radius:50%;background:${a.col};display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:13px;color:#fff;flex-shrink:0;margin-top:2px">${a.ico}</div>`;
@@ -2384,6 +2426,14 @@ function renderChat(){
     return`<div class="msg a"><div style="display:flex;gap:8px;align-items:flex-start">${avatar}<div style="flex:1;min-width:0"><div class="bub${m.stream?' stream':''}" style="border-left:3px solid ${a.col}">${esc(m.content)}</div><div class="mm">${sc}${tb}${fb}</div></div></div></div>`;
   }).join('');
   requestAnimationFrame(function(){c.scrollTop=c.scrollHeight;});
+}
+
+function useStarter(btn){
+  var q = btn.getAttribute('data-q');
+  if(!q) return;
+  var ci = document.getElementById('ci');
+  if(ci){ ci.value = q; ci.focus(); }
+  send();
 }
 
 async function send(){
