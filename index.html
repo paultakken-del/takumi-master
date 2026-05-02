@@ -726,6 +726,12 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <div id="ck-goals-strip"></div>
     </div>
 
+    <!-- ── ACTIES VANDAAG ── van meesters ── -->
+    <div class="dash-section" id="ck-actions-section" style="display:none">
+      <div class="dash-label">Acties vandaag</div>
+      <div id="ck-actions-list"></div>
+    </div>
+
     <!-- ── ENERGIE ── micro-ritueel ── -->
     <div class="dash-section">
       <div class="dash-label">Energie</div>
@@ -1270,6 +1276,7 @@ const S={
   learn:ls('tm2_learn',{}),
   memoirs:ls('tm2_memoirs',{}),
   observations:ls('tm2_obs',[]),
+  actions:ls('tm2_actions',[]), // Vandaag-acties van meesters: {id,t,master,sourceMsgId,text,kind,done,doneT}
   goals:ls('tm2_goals',null),
   holdings:ls('tm2_hold',{BTC:{qty:.62,avgBuy:28000,name:'Bitcoin'},ETH:{qty:4.2,avgBuy:1800,name:'Ethereum'}}),
   degiro:ls('tm2_dg',{}),
@@ -1353,6 +1360,18 @@ function allCtx(){
     var tStr = h+':'+(m<10?'0':'')+m;
     lines.push('Nu: '+tStr+' '+dag+(weekend?' (weekend)':'')+' · '+dagdeel+' — '+hint);
   })();
+  // Acties uit eerdere adviezen van deze meester
+  if(S.cur && S.actions && S.actions.length){
+    var myActs = S.actions.filter(function(a){ return a.master === S.cur; });
+    if(myActs.length){
+      var open = myActs.filter(function(a){ return !a.done; }).slice(0,3);
+      var doneRecent = myActs.filter(function(a){ return a.done && a.doneT && (Date.now()-a.doneT < 3*24*60*60*1000); }).slice(0,2);
+      var actLine = '';
+      if(open.length) actLine += 'Open uit jouw eerdere adviezen: '+open.map(function(a){return '"'+a.text.slice(0,40)+'"';}).join('; ');
+      if(doneRecent.length) actLine += (actLine?' · ':'')+'Recent voltooid: '+doneRecent.map(function(a){return '"'+a.text.slice(0,40)+'"';}).join('; ');
+      if(actLine) lines.push(actLine);
+    }
+  }
   var phaseLabels={dal:'Herstel (dal)',stijgend:'Opbouw (stijgend)',vlak:'Normaal',top:'Actief (top)',dalend:'Afronden (dalend)'};
   if(window._wavePhase) lines.push('Wave: '+( phaseLabels[window._wavePhase]||window._wavePhase));
   lines.push('Portfolio: '+portCtx());
@@ -2714,9 +2733,28 @@ function renderChat(){
     const u=m.role==='user';
     const sc=m.score?`<span class="ms">${m.score>=9.9?'Stilte-advies':'Score: '+m.score.toFixed(1)+'/10'}</span>`:'';
     const tb=m.toolsUsed?.length?`<span class="ms" style="color:var(--teal)">🔧 ${m.toolsUsed.join(', ')}</span>`:'';
-    const fb=u?'':`<div style="display:flex;gap:4px"><button class="fb-btn" onclick="doFB(${i},'like')">👍</button><button class="fb-btn" onclick="doFB(${i},'rej')">👎</button></div>`;
+    // Acties die uit dit bericht zijn voortgekomen
+    var msgActions = u ? [] : actionsForMsg(S.cur, i);
+    var actionStatus = '';
+    if(msgActions.length){
+      actionStatus = '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px">' + msgActions.map(function(act){
+        if(act.kind === 'today'){
+          return '<span class="action-pill" onclick="toggleAction(\''+act.id+'\')" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;background:'+(act.done?'rgba(58,135,88,.12)':'var(--p2)')+';border:1px solid '+(act.done?'rgba(58,135,88,.3)':'var(--b)')+';font-size:11px;color:'+(act.done?'var(--green,#3a8758)':'var(--ink)')+';cursor:pointer;font-weight:500">'+(act.done?'✓':'○')+' Vandaag</span>';
+        }
+        if(act.kind === 'goal'){
+          var g = (typeof GOALS !== 'undefined' && GOALS) ? GOALS.find(function(x){return x.id===act.goalId;}) : null;
+          var pct = g ? g.pct : 0;
+          return '<span class="action-pill" onclick="go(\'gl\')" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;background:rgba(196,83,42,.08);border:1px solid rgba(196,83,42,.25);font-size:11px;color:var(--acc);cursor:pointer;font-weight:500">◇ Doel · '+pct+'%</span>';
+        }
+        if(act.kind === 'reminder'){
+          return '<span class="action-pill" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;background:var(--p2);border:1px solid var(--b);font-size:11px;color:var(--m);font-weight:500">⏰ Reminder</span>';
+        }
+        return '';
+      }).join('') + '</div>';
+    }
+    const fb=u?'':`<div style="display:flex;gap:4px;align-items:center"><button class="fb-btn" onclick="doFB(${i},'like')">👍</button><button class="fb-btn" onclick="doFB(${i},'rej')">👎</button><button class="fb-btn" onclick="openActionPicker('${S.cur}',${i},this)" title="Maak actie van" style="font-size:14px;font-weight:300;color:var(--acc);opacity:.6">+</button></div>`;
     if(u)return`<div class="msg u"><div class="bub">${esc(m.content)}</div></div>`;
-    return`<div class="msg a"><div style="display:flex;gap:8px;align-items:flex-start">${avatar}<div style="flex:1;min-width:0"><div class="bub${m.stream?' stream':''}" style="border-left:3px solid ${a.col}">${esc(m.content)}</div><div class="mm">${sc}${tb}${fb}</div></div></div></div>`;
+    return`<div class="msg a"><div style="display:flex;gap:8px;align-items:flex-start">${avatar}<div style="flex:1;min-width:0"><div class="bub${m.stream?' stream':''}" style="border-left:3px solid ${a.col}">${esc(m.content)}</div>${actionStatus}<div class="mm">${sc}${tb}${fb}</div></div></div></div>`;
   }).join('');
   requestAnimationFrame(function(){c.scrollTop=c.scrollHeight;});
 }
@@ -3052,6 +3090,211 @@ function dismissObsForMaster(mid){
 // Run detectie bij app-load (na 5s zodat data geladen is)
 document.addEventListener('DOMContentLoaded', function(){
   setTimeout(detectObservations, 5000);
+});
+
+// ── ACTIES VAN MEESTERS ────────────────────────────────────────────
+// Meester-advies omzetten in: doel (light), vandaag-actie, of iOS Reminder
+// Elke actie houdt source-link naar bericht + meester voor terugkoppeling
+
+function isToday(t){
+  var d = new Date(t);
+  var n = new Date();
+  return d.getDate()===n.getDate() && d.getMonth()===n.getMonth() && d.getFullYear()===n.getFullYear();
+}
+
+// Verwijder verlopen vandaag-acties (oudere dan vandaag) automatisch bij load
+function cleanupActions(){
+  var before = (S.actions||[]).length;
+  S.actions = (S.actions||[]).filter(function(a){
+    // Houd vandaag-acties van vandaag, of voltooide acties van laatste 7 dagen voor referentie
+    if(a.done && a.doneT && (Date.now() - a.doneT) > 7*24*60*60*1000) return false;
+    if(!a.done && !isToday(a.t)) return false;
+    return true;
+  });
+  if(S.actions.length !== before) lsSet('tm2_actions', S.actions);
+}
+
+// Bekijk welke acties bij een bericht horen (voor status-pill)
+function actionsForMsg(masterId, msgIdx){
+  var msgKey = masterId + '_' + msgIdx;
+  return (S.actions||[]).filter(function(a){ return a.sourceMsgId === msgKey; });
+}
+
+// Open mini-popup om actie-type te kiezen
+function openActionPicker(masterId, msgIdx, btn){
+  closeActionPicker();
+  var msgs = S.chat[masterId] || [];
+  var msg = msgs[msgIdx];
+  if(!msg) return;
+  var text = (msg.content||'').slice(0,200).trim();
+  if(!text) return;
+
+  // Default suggestie: eerste zin van het bericht, max 80 chars
+  var firstSentence = text.split(/[.!?\n]/)[0].trim();
+  if(firstSentence.length > 80) firstSentence = firstSentence.slice(0,77)+'...';
+
+  var pop = document.createElement('div');
+  pop.id = 'action-picker';
+  pop.style.cssText = 'position:fixed;inset:0;z-index:1000;background:rgba(20,18,14,.65);display:flex;align-items:flex-end;justify-content:center;padding:0;animation:fadeIn .15s';
+  pop.onclick = function(e){ if(e.target===pop) closeActionPicker(); };
+  pop.innerHTML =
+    '<div onclick="event.stopPropagation()" style="background:var(--bg);border-radius:14px 14px 0 0;width:100%;max-width:440px;padding:20px 20px 28px;box-shadow:0 -10px 40px rgba(0,0,0,.3);animation:slideUp .2s">' +
+      '<div style="text-align:center;margin-bottom:18px"><div style="width:32px;height:3px;background:var(--b);border-radius:2px;margin:0 auto 14px"></div>' +
+        '<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--m)">Maak actie van</div>' +
+      '</div>' +
+      '<div style="background:var(--p2);border-left:3px solid '+(AGENTS[masterId]?.col||'var(--acc)')+';padding:12px 14px;border-radius:0 8px 8px 0;margin-bottom:18px;font-size:13px;color:var(--ink);line-height:1.5;font-style:italic">'+esc(firstSentence)+'</div>' +
+      '<input type="text" id="action-text" value="'+esc(firstSentence).replace(/"/g,'&quot;')+'" maxlength="120" style="width:100%;padding:11px 14px;border:1px solid var(--b);border-radius:8px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--ink);margin-bottom:14px" placeholder="Wat is de actie?">' +
+      '<div style="display:flex;flex-direction:column;gap:8px">' +
+        '<button onclick="saveAsAction(\''+masterId+'\','+msgIdx+',\'today\')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--p2);border:1px solid var(--b);border-radius:10px;cursor:pointer;font-size:14px;color:var(--ink);text-align:left;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor=\'var(--acc)\'" onmouseout="this.style.borderColor=\'var(--b)\'">' +
+          '<span style="font-size:18px">○</span><div style="flex:1"><div style="font-weight:500">Vandaag</div><div style="font-size:11px;color:var(--m)">Verschijnt op cockpit, vinkt af aan einde dag</div></div>' +
+        '</button>' +
+        '<button onclick="saveAsAction(\''+masterId+'\','+msgIdx+',\'goal\')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--p2);border:1px solid var(--b);border-radius:10px;cursor:pointer;font-size:14px;color:var(--ink);text-align:left;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor=\'var(--acc)\'" onmouseout="this.style.borderColor=\'var(--b)\'">' +
+          '<span style="font-size:18px">◇</span><div style="flex:1"><div style="font-weight:500">Doel</div><div style="font-size:11px;color:var(--m)">Lange termijn met voortgangs-percentage</div></div>' +
+        '</button>' +
+        '<button onclick="saveAsAction(\''+masterId+'\','+msgIdx+',\'reminder\')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--p2);border:1px solid var(--b);border-radius:10px;cursor:pointer;font-size:14px;color:var(--ink);text-align:left;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor=\'var(--acc)\'" onmouseout="this.style.borderColor=\'var(--b)\'">' +
+          '<span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-weight:500">Reminder</div><div style="font-size:11px;color:var(--m)">Open in Apple Reminders met datum & tijd</div></div>' +
+        '</button>' +
+      '</div>' +
+      '<button onclick="closeActionPicker()" style="margin-top:14px;width:100%;padding:10px;background:none;border:none;color:var(--m);font-size:13px;cursor:pointer;font-family:inherit">Annuleren</button>' +
+    '</div>';
+  document.body.appendChild(pop);
+  setTimeout(function(){ var inp=document.getElementById('action-text'); if(inp){inp.focus(); inp.select();} }, 100);
+}
+
+function closeActionPicker(){
+  var p = document.getElementById('action-picker');
+  if(p) p.remove();
+}
+
+function saveAsAction(masterId, msgIdx, kind){
+  var input = document.getElementById('action-text');
+  var text = (input?.value || '').trim();
+  if(!text){ toast('Beschrijving leeg','err'); return; }
+  var msgKey = masterId + '_' + msgIdx;
+
+  if(kind === 'today'){
+    if(!S.actions) S.actions = [];
+    S.actions.push({
+      id: 'a_'+Date.now(),
+      t: Date.now(),
+      master: masterId,
+      sourceMsgId: msgKey,
+      text: text,
+      kind: 'today',
+      done: false
+    });
+    lsSet('tm2_actions', S.actions);
+    toast('✓ Toegevoegd aan vandaag','ok');
+    closeActionPicker();
+    renderChat(); // refresh status pill
+    if(typeof updateCockpit === 'function') try{ updateCockpit(); }catch(e){} try{ renderCkActions(); }catch(e){}
+  }
+  else if(kind === 'goal'){
+    if(typeof GOALS === 'undefined') return;
+    var agent = AGENTS[masterId];
+    var ico = agent?.ico || '🎯';
+    var col = agent?.col || '#28897a';
+    if(col.startsWith('var(')) col = '#28897a';
+    var newGoal = {
+      id: 'g_'+Date.now(),
+      ico: ico,
+      title: text,
+      desc: 'Vanuit advies van '+(agent?.name||'meester'),
+      pct: 0,
+      color: col,
+      status: 'Actief',
+      sourceMsgId: msgKey,
+      sourceMaster: masterId,
+      milestones: [{pct:25,name:'25% bereikt',s:'open'},{pct:50,name:'50% bereikt',s:'open'},{pct:75,name:'75% bereikt',s:'open'},{pct:100,name:'Doel bereikt!',s:'open'}],
+      actions: [{txt:'Eerste stap definiëren',effort:'S',done:false}]
+    };
+    GOALS.push(newGoal);
+    if(typeof saveGoals === 'function') saveGoals();
+    // Houdt ook bij in S.actions voor status-pill
+    if(!S.actions) S.actions = [];
+    S.actions.push({
+      id: 'a_'+Date.now(),
+      t: Date.now(),
+      master: masterId,
+      sourceMsgId: msgKey,
+      text: text,
+      kind: 'goal',
+      goalId: newGoal.id,
+      done: false
+    });
+    lsSet('tm2_actions', S.actions);
+    toast('✓ Doel "'+text.slice(0,30)+'" aangemaakt','ok');
+    closeActionPicker();
+    renderChat();
+  }
+  else if(kind === 'reminder'){
+    // iOS/Mac Reminders openen via x-apple-reminderkit URL scheme
+    // Fallback: Apple Reminders kan een gewone URL niet openen vanaf web reliably
+    // Beste werkende methode: data:text/calendar VEVENT? Nee — reminders zijn TODOs
+    // Werkbaar op iOS: gewoon de tekst naar clipboard, link naar Reminders app, en log
+    if(!S.actions) S.actions = [];
+    S.actions.push({
+      id: 'a_'+Date.now(),
+      t: Date.now(),
+      master: masterId,
+      sourceMsgId: msgKey,
+      text: text,
+      kind: 'reminder',
+      done: false
+    });
+    lsSet('tm2_actions', S.actions);
+    // Probeer Apple Reminders URL scheme; werkt het niet, vallen we terug op clipboard
+    try {
+      navigator.clipboard.writeText(text);
+      toast('✓ Gekopieerd — open Apple Reminders en plak','ok');
+    } catch(e) {
+      toast('✓ Reminder opgeslagen','ok');
+    }
+    // Open Reminders app via x-apple URL (werkt op iOS bij PWA)
+    setTimeout(function(){
+      try { window.location.href = 'x-apple-reminderkit://REMCDReminder/'+encodeURIComponent(text); } catch(e){}
+    }, 200);
+    closeActionPicker();
+    renderChat();
+  }
+}
+
+// Toggle vandaag-actie
+function toggleAction(actionId){
+  var a = (S.actions||[]).find(function(x){ return x.id === actionId; });
+  if(!a) return;
+  a.done = !a.done;
+  if(a.done) a.doneT = Date.now();
+  else delete a.doneT;
+  lsSet('tm2_actions', S.actions);
+  renderChat();
+  if(typeof updateCockpit === 'function') try{ updateCockpit(); }catch(e){} try{ renderCkActions(); }catch(e){}
+}
+
+// Render vandaag-acties op cockpit (compact)
+function renderCkActions(){
+  var sec = document.getElementById('ck-actions-section');
+  var list = document.getElementById('ck-actions-list');
+  if(!sec || !list) return;
+  var acts = (S.actions||[]).filter(function(a){
+    return a.kind === 'today' && isToday(a.t);
+  });
+  if(!acts.length){ sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  list.innerHTML = acts.map(function(a){
+    var agent = AGENTS[a.master];
+    var col = agent?.col || 'var(--acc)';
+    return '<div onclick="toggleAction(\''+a.id+'\')" style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:'+(a.done?'rgba(58,135,88,.06)':'var(--p2)')+';border:1px solid '+(a.done?'rgba(58,135,88,.2)':'var(--b)')+';border-left:3px solid '+col+';border-radius:8px;cursor:pointer;margin-bottom:6px;transition:all .15s">'+
+      '<div style="font-size:16px;color:'+(a.done?'var(--green,#3a8758)':'var(--m)')+';flex-shrink:0">'+(a.done?'✓':'○')+'</div>'+
+      '<div style="flex:1;font-size:13px;color:var(--ink);line-height:1.4;'+(a.done?'text-decoration:line-through;opacity:.5':'')+'">'+esc(a.text)+'</div>'+
+      '<div style="font-family:var(--FJ);font-size:14px;color:'+col+';flex-shrink:0;opacity:.7" title="'+(agent?.name||'')+'">'+(agent?.ico||'匠')+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+// Run cleanup at startup
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(function(){ cleanupActions(); renderCkActions(); }, 1000);
 });
 
 // ── MEMOIR VIEWER ──────────────────────────────────────────────────
