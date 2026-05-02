@@ -714,6 +714,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <span style="font-size:14px;color:var(--acc);flex-shrink:0">→</span>
     </div>
 
+    <!-- ── PRIMAIR DOEL ── spil van de app ── -->
+    <div id="ck-primary-goal" style="display:none"></div>
+
     <!-- ── VANDAAG ── synthese als hoofdfocus ── -->
     <div class="dash-section dash-primary">
       <div class="dash-label">Vandaag</div>
@@ -1277,6 +1280,7 @@ const S={
   memoirs:ls('tm2_memoirs',{}),
   observations:ls('tm2_obs',[]),
   actions:ls('tm2_actions',[]), // Vandaag-acties van meesters: {id,t,master,sourceMsgId,text,kind,done,doneT}
+  primaryGoalId:ls('tm2_primary_goal',null), // ID van het primaire doel — spil van de app
   goals:ls('tm2_goals',null),
   holdings:ls('tm2_hold',{BTC:{qty:.62,avgBuy:28000,name:'Bitcoin'},ETH:{qty:4.2,avgBuy:1800,name:'Ethereum'}}),
   degiro:ls('tm2_dg',{}),
@@ -3292,7 +3296,7 @@ function saveAsAction(masterId, msgIdx, kind){
     toast('✓ Toegevoegd aan vandaag','ok');
     closeActionPicker();
     renderChat(); // refresh status pill
-    if(typeof updateCockpit === 'function') try{ updateCockpit(); }catch(e){} try{ renderCkActions(); }catch(e){}
+    if(typeof updateCockpit === 'function') try{ updateCockpit(); }catch(e){} try{ renderCkActions(); }catch(e){} try{ renderPrimaryGoal(); }catch(e){}
   }
   else if(kind === 'goal'){
     if(typeof GOALS === 'undefined') return;
@@ -3352,7 +3356,7 @@ function saveAsAction(masterId, msgIdx, kind){
       var dStr = plannedDate.toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'});
       toast('✓ Gepland voor '+dStr,'ok');
       renderChat();
-      try{ renderCkActions(); }catch(e){}
+      try{ renderCkActions(); }catch(e){} try{ renderPrimaryGoal(); }catch(e){}
     });
     return;
   }
@@ -3367,7 +3371,7 @@ function toggleAction(actionId){
   else delete a.doneT;
   lsSet('tm2_actions', S.actions);
   renderChat();
-  if(typeof updateCockpit === 'function') try{ updateCockpit(); }catch(e){} try{ renderCkActions(); }catch(e){}
+  if(typeof updateCockpit === 'function') try{ updateCockpit(); }catch(e){} try{ renderCkActions(); }catch(e){} try{ renderPrimaryGoal(); }catch(e){}
 }
 
 // Render vandaag-acties op cockpit (compact)
@@ -3413,9 +3417,122 @@ function renderCkActions(){
   }).join('');
 }
 
+// ── DAG-LEIDER & PRIMAIR DOEL ──────────────────────────────────────
+function getDayLeader(){
+  var day = new Date().getDay();
+  var map = {
+    1: {eid:'chi', warriorId:'strategic'},
+    2: {eid:'sui', warriorId:'health'},
+    3: {eid:'fu',  warriorId:'writing'},
+    4: {eid:'ka',  warriorId:'productivity'},
+    5: {eid:'board', warriorId:'board'},
+    6: {eid:'ku',  warriorId:'reflection'},
+    0: {eid:'ku',  warriorId:'reflection'}
+  };
+  var info = map[day];
+  if(info.eid === 'board') {
+    return {eid:'board', element:null, warrior:AGENTS.board, label:'Master Council', sub:'Vrijdag — synthese'};
+  }
+  if(info.eid === 'ku') {
+    var dayName = day === 6 ? 'Zaterdag' : 'Zondag';
+    return {eid:'ku', element:ELEMENTS.ku, warrior:AGENTS.reflection, label:'空 Kū — Leegte', sub:dayName + ' — rust en reflectie'};
+  }
+  return {eid:info.eid, element:ELEMENTS[info.eid], warrior:AGENTS[info.warriorId], label:ELEMENTS[info.eid].kanji+' '+ELEMENTS[info.eid].name+' — '+ELEMENTS[info.eid].sub.split(' · ')[1], sub:''};
+}
+
+function renderPrimaryGoal(){
+  var sec = document.getElementById('ck-primary-goal');
+  if(!sec) return;
+  var primary = null;
+  if(typeof GOALS !== 'undefined' && GOALS && GOALS.length){
+    if(S.primaryGoalId) primary = GOALS.find(function(g){ return g.id === S.primaryGoalId && g.status === 'Actief'; });
+    if(!primary) primary = GOALS.find(function(g){ return g.status === 'Actief'; });
+  }
+  var leader = getDayLeader();
+  if(!primary){
+    sec.style.display = 'block';
+    sec.innerHTML =
+      '<div style="padding:36px 20px;text-align:center;border-bottom:1px solid var(--b);margin-bottom:8px">'+
+        '<div style="font-family:var(--FJ);font-size:38px;color:var(--acc);margin-bottom:18px;opacity:.6">空</div>'+
+        '<div style="font-family:var(--serif);font-size:18px;color:var(--ink);line-height:1.5;margin-bottom:8px;font-style:italic">Begin met een doel.</div>'+
+        '<div style="font-size:13px;color:var(--m);line-height:1.6;margin-bottom:20px;max-width:280px;margin-left:auto;margin-right:auto">Alles wat hierna komt — de meesters, de ritmes, de adviezen — vloeit voort uit jouw richting.</div>'+
+        '<button onclick="go(\'gl\')" style="background:var(--acc);color:#fff;border:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">Stel een doel in →</button>'+
+      '</div>';
+    return;
+  }
+  sec.style.display = 'block';
+  var leaderColor = leader.warrior?.col || 'var(--acc)';
+  var leaderIco = leader.warrior?.ico || '匠';
+  var weekNumber = primary.weekNumber || Math.max(1, Math.floor((Date.now() - (primary.createdAt||Date.now()))/(7*24*60*60*1000)) + 1);
+  var warriorShort = leader.warrior?.name?.split(' ')[1] || 'meester';
+  sec.innerHTML =
+    '<div style="padding:28px 4px 24px;border-bottom:1px solid var(--b)">'+
+      '<div style="font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);font-weight:500;margin-bottom:12px">Jouw richting</div>'+
+      '<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:18px;cursor:pointer" onclick="openGoal(\''+primary.id+'\')">'+
+        '<div style="font-size:26px;line-height:1;flex-shrink:0">'+(primary.ico||'🎯')+'</div>'+
+        '<div style="flex:1;min-width:0">'+
+          '<div style="font-size:18px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:6px">'+esc(primary.title)+'</div>'+
+          '<div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--m)"><span>Week '+weekNumber+'</span><span>·</span><span style="font-weight:500;color:'+(primary.color||'var(--acc)')+'">'+primary.pct+'% voortgang</span></div>'+
+          '<div style="margin-top:10px;height:4px;background:var(--p2);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+primary.pct+'%;background:'+(primary.color||'var(--acc)')+';transition:width .4s"></div></div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="padding:14px 16px;background:var(--p2);border-radius:10px;border-left:3px solid '+leaderColor+'">'+
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+
+          '<span style="font-family:var(--FJ);font-size:20px;color:'+leaderColor+';line-height:1">'+leaderIco+'</span>'+
+          '<div style="flex:1">'+
+            '<div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--m);margin-bottom:1px">Vandaag spreekt</div>'+
+            '<div style="font-size:13.5px;font-weight:600;color:var(--ink)">'+esc(leader.label)+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div id="ck-leader-msg" style="font-size:13px;color:var(--ink);line-height:1.6;font-style:italic;font-family:var(--serif);min-height:20px">Een ogenblik...</div>'+
+        '<div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap">'+
+          '<button onclick="askLeaderToday()" style="font-size:11.5px;padding:6px 12px;background:'+leaderColor+';color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit">Vraag '+esc(warriorShort)+' →</button>'+
+          (S.primaryGoalId !== primary.id ? '<button onclick="setPrimaryGoal(\''+primary.id+'\')" style="font-size:11.5px;padding:6px 12px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:14px;cursor:pointer;font-family:inherit">Markeer als spil</button>' : '')+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  loadLeaderMessage(primary, leader);
+}
+
+async function loadLeaderMessage(goal, leader){
+  var msgEl = document.getElementById('ck-leader-msg');
+  if(!msgEl) return;
+  var cacheKey = 'tm2_leader_msg_' + new Date().toISOString().slice(0,10) + '_' + (goal.id||'') + '_' + (leader.warrior?.id||leader.eid);
+  var cached = ls(cacheKey, null);
+  if(cached){ msgEl.textContent = cached; return; }
+  try {
+    var prompt = 'Je bent '+(leader.warrior?.name||'een Godai-meester')+'. Vandaag is '+(new Date().toLocaleDateString('nl-NL',{weekday:'long'}))+', het element dat leidt is '+(leader.element?.name||'Kū')+'. De gebruiker werkt aan dit doel: "'+goal.title+'" (voortgang '+goal.pct+'%). Schrijf één korte observatie in jouw stem, max 22 woorden, Nederlands, geen aanhalingstekens. Spreek vanuit jouw element naar dit specifieke doel — niet generiek wijs, maar concreet en persoonlijk voor vandaag.';
+    var res = await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:120,messages:[{role:'user',content:prompt}]})});
+    if(!res.ok){ msgEl.textContent = 'De meester is even stil.'; return; }
+    var j = await res.json();
+    var txt = j.content?.[0]?.text?.trim();
+    if(!txt){ msgEl.textContent = 'De meester is even stil.'; return; }
+    txt = txt.replace(/^["'""]|["'""]$/g,'').trim();
+    if(txt.length > 200) txt = txt.slice(0,197)+'...';
+    msgEl.textContent = txt;
+    lsSet(cacheKey, txt);
+  } catch(e){
+    msgEl.textContent = 'De meester is even stil.';
+  }
+}
+
+function setPrimaryGoal(gid){
+  S.primaryGoalId = gid;
+  lsSet('tm2_primary_goal', gid);
+  toast('✓ Spil gezet','ok');
+  renderPrimaryGoal();
+}
+
+function askLeaderToday(){
+  var leader = getDayLeader();
+  if(!leader.warrior) return;
+  go('bo');
+  setTimeout(function(){ selAg(leader.warrior.id); }, 100);
+}
+
 // Run cleanup at startup
 document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(function(){ cleanupActions(); renderCkActions(); }, 1000);
+  setTimeout(function(){ cleanupActions(); renderCkActions(); renderPrimaryGoal(); }, 1000);
 });
 
 // ── MEMOIR VIEWER ──────────────────────────────────────────────────
