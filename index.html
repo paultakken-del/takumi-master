@@ -485,9 +485,34 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .go-warrior{font-size:10px;padding:3px 9px;border-radius:20px;background:var(--pw);color:var(--m);border:1px solid var(--b);cursor:pointer;transition:all .1s;-webkit-tap-highlight-color:transparent;position:relative;z-index:2}
 .go-warrior:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
 #v-bo .agw{display:block;padding:8px 12px 6px;border-bottom:1px solid var(--b);overflow:visible;flex-shrink:0;-webkit-overflow-scrolling:touch;max-height:none}
-#v-bo .ag{display:flex;flex-direction:row;gap:6px;width:max-content;grid-template-columns:none!important;padding-bottom:4px}
-#v-bo .agw > .ag-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-#v-bo .agw > .ag-scroll::-webkit-scrollbar{display:none}
+#v-bo .ag{display:flex;flex-direction:column;gap:6px;width:100%;grid-template-columns:none!important}
+#v-bo .agw .ag-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#v-bo .agw .ag-scroll::-webkit-scrollbar{display:none}
+
+/* Top: 6 element-pillen, evenredig verdeeld */
+#v-bo #ag{display:flex;flex-direction:column;gap:8px}
+#v-bo #ag > *:not(.wa-row){flex-shrink:0}
+.el-pill{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 4px;background:var(--pc);border:1px solid var(--b);border-radius:10px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.el-pill:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(18,17,14,.06)}
+.el-pill.on{background:var(--bg);border-color:var(--ec,var(--acc));box-shadow:0 0 0 1px var(--ec,var(--acc)) inset}
+.el-pill.el-master.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+.el-kanji{font-family:var(--FJ);font-size:18px;line-height:1}
+.el-name{font-size:10px;font-weight:500;color:var(--ink);letter-spacing:.02em}
+.el-pill.on .el-name{font-weight:600}
+.el-mem{position:absolute;top:-3px;right:-3px;background:var(--acc);color:#fff;font-size:9px;font-weight:600;min-width:14px;height:14px;border-radius:7px;display:flex;align-items:center;justify-content:center;padding:0 3px;line-height:1;border:1.5px solid var(--bg)}
+
+/* Element-row als grid 6 kolommen */
+#v-bo #ag::before{content:"";display:none}
+#v-bo .ag-row-elements{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;width:100%}
+
+/* Tweede laag: warrior-chips */
+.wa-row{display:flex;gap:6px;flex-wrap:wrap;padding-top:4px;border-top:1px dashed var(--b)}
+.wa-pill{position:relative;display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:transparent;border:1px solid var(--b);border-radius:14px;cursor:pointer;font-size:11px;color:var(--ink);transition:all .15s;-webkit-tap-highlight-color:transparent}
+.wa-pill:hover{background:var(--pc)}
+.wa-pill.on{background:var(--wc,var(--acc));border-color:var(--wc,var(--acc));color:#fff}
+.wa-pill.on .wa-kanji{color:#fff!important}
+.wa-kanji{font-family:var(--FJ);font-size:13px;line-height:1}
+.wa-name{font-weight:500}
 #v-bo .ac{min-height:auto!important;min-width:auto!important;flex-shrink:0;padding:6px 12px 6px 8px!important;border-radius:18px!important}
 #v-bo .ac .ad{display:none}
 #v-bo .ac .an{font-size:11.5px!important;max-width:90px}
@@ -751,10 +776,10 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div class="bleft">
       <div class="agw" id="agw">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Kies een meester ›</span>
-          <button onclick="showGoGrid()" style="background:none;border:1px solid var(--b);border-radius:20px;cursor:pointer;padding:3px 10px;font-size:11px;color:var(--ink);-webkit-tap-highlight-color:transparent;line-height:1.5">◈ Elementen</button>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--m)" id="agw-label">Kies een element</span>
+          <button onclick="showGoGrid()" style="background:none;border:1px solid var(--b);border-radius:20px;cursor:pointer;padding:3px 10px;font-size:11px;color:var(--ink);-webkit-tap-highlight-color:transparent;line-height:1.5">◈ Detail</button>
         </div>
-        <div class="ag-scroll"><div class="ag" id="ag"></div></div>
+        <div class="ag" id="ag"></div>
       </div>
       <div class="go-grid" id="go-grid" style="display:none">
         <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 14px 4px">
@@ -1381,6 +1406,23 @@ const AGENTS={
   digital:{id:'digital',name:'間 Ma — Digitaal',ico:'間',dom:'Personal',col:'var(--m)',sys(){return`Digital Declutter Coach.\n"Attention is your scarcest resource."\n${allCtx()}\n${learnCtx('digital')}${memoirCtx('digital')}\n1 aandachtsinzicht + 1 actie. Max 30w. Nederlands.`;}},
   engagement:{id:'engagement',name:'道 Dō — Engagement',ico:'道',dom:'Meta',col:'var(--acc)',sys(){return`Engagement Coach. Platform navigatie.\n"The best tool is the one you actually use."\n1 platform-tip die direct waarde toevoegt. Max 30w. Nederlands.`;}}
 };
+// Elementen-hiërarchie: 5 Godai elementen met hun warriors
+const ELEMENTS = {
+  chi: {id:'chi', kanji:'地', name:'Chi', sub:'Aarde · Fundament', col:'#8B7355', primary:'strategic', warriors:['strategic','finance','routine']},
+  sui: {id:'sui', kanji:'水', name:'Sui', sub:'Water · Flow',     col:'#4A7C8E', primary:'health',    warriors:['health','reflection','learning']},
+  fu:  {id:'fu',  kanji:'風', name:'Fū',  sub:'Wind · Geest',     col:'#5C8A6F', primary:'writing',   warriors:['writing','relationship','engagement']},
+  ka:  {id:'ka',  kanji:'火', name:'Ka',  sub:'Vuur · Energie',   col:'var(--acc)',primary:'productivity',warriors:['productivity','decision','digital']},
+  ku:  {id:'ku',  kanji:'空', name:'Kū',  sub:'Leegte · Ruimte',  col:'#7A6B8A', primary:'board',     warriors:['board']}
+};
+// Welk element hoort bij welke warrior (omgekeerde lookup)
+const WARRIOR_TO_ELEMENT = (function(){
+  var m = {};
+  Object.keys(ELEMENTS).forEach(function(eid){
+    ELEMENTS[eid].warriors.forEach(function(wid){ m[wid] = eid; });
+  });
+  return m;
+})();
+const ELEMENT_ORDER = ['board','chi','sui','fu','ka','ku'];
 const ORD=['board','strategic','health','finance','reflection','productivity','decision','writing','relationship','learning','routine','digital','engagement'];
 
 
@@ -2330,26 +2372,76 @@ function initCK(){
 let busy=false;
 
 function renderGrid(){
-  document.getElementById('ag').innerHTML=ORD.map(id=>{
-    const a=AGENTS[id],isB=id==='board',isA=S.cur===id;
-    const shortName=a.name.split('—')[1]?.trim()||a.name;
-    const memCount = (S.memoirs[id] || []).length;
-    const memDot = memCount ? `<div style="position:absolute;top:4px;right:6px;background:var(--acc);color:#fff;font-size:9px;font-weight:600;min-width:14px;height:14px;border-radius:7px;display:flex;align-items:center;justify-content:center;padding:0 3px;line-height:1;border:1.5px solid var(--bg)" title="${memCount} memoirs">${memCount > 9 ? '9+' : memCount}</div>` : '';
-    if(isB)return`<div class="ac bm${isA?' on':''}" onclick="selAg('${id}')" style="position:relative">
-      ${memDot}
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:32px;height:32px;border-radius:50%;background:rgba(196,83,42,.1);border:1.5px solid var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:16px;color:var(--acc);flex-shrink:0">${a.ico}</div>
-        <div style="min-width:0"><div class="an" style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Volledig Board</div><div class="ad" style="font-size:9.5px;margin-top:1px;color:var(--m)">Vijf meesters</div></div>
-      </div>
-    </div>`;
-    return`<div class="ac${isA?' on':''}" onclick="selAg('${id}')" style="position:relative">
-      ${memDot}
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:30px;height:30px;border-radius:50%;background:${isA?a.col:'transparent'};border:1.5px solid ${a.col};display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:15px;color:${isA?'#fff':a.col};flex-shrink:0;transition:all .15s">${a.ico}</div>
-        <div class="an" style="font-size:11.5px;font-weight:${isA?600:400};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">${shortName}</div>
-      </div>
-    </div>`;
+  // Bepaal actief element op basis van huidige selectie
+  var activeEl = (S.cur === 'board') ? 'board' : (WARRIOR_TO_ELEMENT[S.cur] || 'chi');
+
+  // TOP: 6 elementen pillen
+  var elPillsHtml = ELEMENT_ORDER.map(function(eid){
+    if(eid === 'board'){
+      var isA = (S.cur === 'board');
+      var memCount = (S.memoirs.board || []).length;
+      var memDot = memCount ? '<div class="el-mem">'+(memCount>9?'9+':memCount)+'</div>' : '';
+      return '<div class="el-pill el-master'+(isA?' on':'')+'" onclick="selAg(\'board\')" title="Master Council">'+
+        memDot +
+        '<div class="el-kanji" style="color:var(--acc)">匠</div>'+
+        '<div class="el-name">Council</div>'+
+      '</div>';
+    }
+    var el = ELEMENTS[eid];
+    var isA = (activeEl === eid);
+    // Som memoirs over alle warriors van dit element
+    var elMemCount = el.warriors.reduce(function(acc, wid){ return acc + ((S.memoirs[wid]||[]).length); }, 0);
+    var memDot = elMemCount ? '<div class="el-mem">'+(elMemCount>9?'9+':elMemCount)+'</div>' : '';
+    return '<div class="el-pill'+(isA?' on':'')+'" onclick="selElement(\''+eid+'\')" title="'+el.name+' · '+el.sub+'" style="--ec:'+el.col+'">'+
+      memDot+
+      '<div class="el-kanji" style="color:'+el.col+'">'+el.kanji+'</div>'+
+      '<div class="el-name">'+el.name+'</div>'+
+    '</div>';
   }).join('');
+
+  // SECONDARY: warriors van actief element (alleen tonen als element gekozen, niet board)
+  var warriorsHtml = '';
+  if(activeEl !== 'board' && ELEMENTS[activeEl]){
+    var warriors = ELEMENTS[activeEl].warriors;
+    if(warriors.length > 1){
+      warriorsHtml = '<div class="wa-row">' + warriors.map(function(wid){
+        var w = AGENTS[wid];
+        if(!w) return '';
+        var isA = (S.cur === wid);
+        var shortName = w.name.split('—')[1]?.trim() || w.name.replace(/^[^\s]+\s/,'');
+        var memCount = (S.memoirs[wid] || []).length;
+        var memDot = memCount ? '<div class="el-mem" style="background:var(--acc)">'+(memCount>9?'9+':memCount)+'</div>' : '';
+        return '<div class="wa-pill'+(isA?' on':'')+'" onclick="selAg(\''+wid+'\')" style="--wc:'+w.col+'">'+
+          memDot+
+          '<span class="wa-kanji" style="color:'+w.col+'">'+w.ico+'</span>'+
+          '<span class="wa-name">'+shortName+'</span>'+
+        '</div>';
+      }).join('') + '</div>';
+    }
+  }
+
+  document.getElementById('ag').innerHTML = '<div class="ag-row-elements">'+elPillsHtml+'</div>' + warriorsHtml;
+
+  // Label boven pillen
+  var labelEl = document.getElementById('agw-label');
+  if(labelEl){
+    if(activeEl === 'board'){
+      labelEl.textContent = 'Master Council · alle vijf elementen';
+    } else if(ELEMENTS[activeEl] && ELEMENTS[activeEl].warriors.length > 1){
+      var el = ELEMENTS[activeEl];
+      labelEl.textContent = el.name + ' · ' + el.sub + ' › kies een warrior';
+    } else {
+      labelEl.textContent = 'Kies een element';
+    }
+  }
+}
+
+// Kies element — als element 1 warrior heeft (board, ku) selecteer die direct,
+// anders selecteer de primary warrior van dat element
+function selElement(eid){
+  var el = ELEMENTS[eid];
+  if(!el) return;
+  selAg(el.primary);
 }
 
 function selAg(id){
