@@ -353,6 +353,15 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 @keyframes breathe{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.8;transform:scale(1.05)}}
 /* ── ZEN COCKPIT ── */
 .ck-greeting{padding:28px 24px 0;text-align:center}
+/* ── DASHBOARD SECTIES ── */
+.dash-section{padding:24px 4px 28px;border-bottom:1px solid var(--b)}
+.dash-section:last-of-type{border-bottom:none}
+.dash-label{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:14px;opacity:.7}
+.dash-primary .dash-label{color:var(--acc);opacity:1}
+.dash-primary{padding-top:32px;padding-bottom:32px}
+.dash-primary #ck-synthese{font-size:16px;line-height:1.7}
+.dash-quiet{padding:18px 4px 22px;background:transparent}
+.dash-quiet .dash-label{opacity:.5}
 .ck-time{font-family:var(--FD);font-size:26px;font-weight:300;color:var(--ink);line-height:1.2}
 .ck-date{font-family:var(--F);font-size:11px;color:var(--m);letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
 
@@ -699,27 +708,43 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <span style="font-size:14px;color:var(--acc);flex-shrink:0">→</span>
     </div>
 
-    <!-- SYNTHESE BRIEF — wat het systeem concludeert -->
-    <div id="ck-synthese" style="margin:var(--sp-md) 0 0;padding:14px 16px;background:var(--pw);border-radius:var(--rs);border-left:3px solid var(--acc);font-size:13px;line-height:1.6;color:var(--ink)"></div>
-
-    <!-- DOELEN VOORTGANG STRIP — max 3 actieve doelen -->
-    <div id="ck-goals-strip" style="margin:var(--sp-md) 0 0"></div>
-
-    <!-- QUOTE -->
-    <div style="padding:16px 24px 4px;text-align:center">
-      <div id="ck-quote" style="font-size:13px;color:var(--ink);opacity:.6;font-style:italic;line-height:1.7;word-wrap:break-word"> </div>
-      <div id="ck-quote-auth" style="font-size:var(--text-xs);color:var(--ink);opacity:.35;margin-top:4px;letter-spacing:.1em;text-transform:uppercase"> </div>
+    <!-- ── VANDAAG ── synthese als hoofdfocus ── -->
+    <div class="dash-section dash-primary">
+      <div class="dash-label">Vandaag</div>
+      <div id="ck-synthese" style="font-size:15px;line-height:1.65;color:var(--ink);font-weight:400"></div>
     </div>
 
-    <!-- DAGELIJKSE OPENING — micro-ritueel -->
-    <div class="ck-opening" id="ck-opening">
-      <div class="ck-opening-q" id="ck-opening-q"></div>
-      <div class="ck-opening-cards" id="ck-opening-cards"></div>
+    <!-- ── DOELEN ── -->
+    <div class="dash-section">
+      <div class="dash-label">Doelen</div>
+      <div id="ck-goals-strip"></div>
     </div>
-    <!-- SPOTIFY MUZIEKSTRIP -->
-    <div class="ck-music" id="ck-music" style="display:none"></div>
 
-        <!-- THE WAVE — primair energiesignaal -->
+    <!-- ── ENERGIE ── micro-ritueel ── -->
+    <div class="dash-section">
+      <div class="dash-label">Energie</div>
+      <div class="ck-opening" id="ck-opening">
+        <div class="ck-opening-q" id="ck-opening-q"></div>
+        <div class="ck-opening-cards" id="ck-opening-cards"></div>
+      </div>
+    </div>
+
+    <!-- ── MUZIEK ── -->
+    <div class="dash-section" id="ck-music-section" style="display:none">
+      <div class="dash-label">Muziek</div>
+      <div class="ck-music" id="ck-music"></div>
+    </div>
+
+    <!-- ── WIJSHEID ── quote als afsluiter ── -->
+    <div class="dash-section dash-quiet">
+      <div class="dash-label">Wijsheid</div>
+      <div style="text-align:center;padding:8px 12px">
+        <div id="ck-quote" style="font-size:14px;color:var(--ink);opacity:.7;font-style:italic;line-height:1.7;word-wrap:break-word;font-family:var(--serif)"> </div>
+        <div id="ck-quote-auth" style="font-size:var(--text-xs);color:var(--ink);opacity:.4;margin-top:8px;letter-spacing:.1em;text-transform:uppercase"> </div>
+      </div>
+    </div>
+
+    <!-- THE WAVE — primair energiesignaal -->
     <div class="ck-wave-container" id="ck-wave-container">
       <svg class="ck-wave-svg" id="ck-wave-svg" viewBox="0 0 320 80" preserveAspectRatio="none" height="80">
         <!-- Maandgolf (achtergrond) -->
@@ -2267,6 +2292,9 @@ function showMusicSuggestie(mood){
   var el = document.getElementById('ck-music');
   if(!el) return;
   el.style.display = 'block';
+  // Toon de hele sectie wrapper
+  var sec = document.getElementById('ck-music-section');
+  if(sec) sec.style.display = 'block';
   el.innerHTML =
     '<div class="ck-music-inner">' +
     '<div class="ck-music-ico"><svg viewBox="0 0 168 168"><path d="M84 0C37.6 0 0 37.6 0 84s37.6 84 84 84 84-37.6 84-84S130.4 0 84 0zm38.6 121.3c-1.5 2.5-4.8 3.3-7.3 1.8-20-12.2-45.2-15-74.9-8.2-2.9.7-5.7-1.1-6.4-4-.7-2.9 1.1-5.7 4-6.4 32.5-7.4 60.4-4.2 82.9 9.5 2.5 1.5 3.3 4.8 1.8 7.3zm10.3-22.9c-1.9 3.1-6 4.1-9.1 2.2-22.9-14.1-57.8-18.1-84.8-9.9-3.5 1.1-7.2-.9-8.3-4.4-1-3.5.9-7.2 4.4-8.3 31-9.4 69.5-4.9 95.7 11.3 3.1 1.9 4.1 6 2.1 9.1zm.9-23.8c-27.5-16.3-72.8-17.8-99-9.8-4.2 1.3-8.7-1.1-10-5.3-1.3-4.2 1.1-8.7 5.3-10C60.6 40.2 110.1 41.9 141.3 60.5c3.8 2.3 5.1 7.2 2.8 11-2.2 3.8-7.1 5-11 2.7"/></svg></div>' +
