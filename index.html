@@ -504,6 +504,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 /* Element-row als grid 6 kolommen */
 #v-bo #ag::before{content:"";display:none}
 #v-bo .ag-row-elements{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;width:100%}
+@media(max-width:720px){
+  #v-bo .agw{padding-right:60px}
+}
 
 /* Tweede laag: warrior-chips */
 .wa-row{display:flex;gap:6px;flex-wrap:wrap;padding-top:4px;border-top:1px dashed var(--b)}
