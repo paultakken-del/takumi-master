@@ -3784,19 +3784,34 @@ function renderGoals(){
 function openGoal(id){
   const g=GOALS.find(x=>x.id===id);if(!g)return;
   activeGId=id;
+  // Echte acties (zonder placeholder)
+  const realActs = g.actions.filter(function(a){ return a.txt !== 'Eerste stap definiëren'; });
+  const hasOnlyPlaceholder = g.actions.length === 1 && g.actions[0].txt === 'Eerste stap definiëren';
   document.getElementById('gs-t').textContent=g.ico+' '+g.title;
   document.getElementById('gs-s').textContent=g.status+' · '+g.pct+'% voltooid';
   document.getElementById('gs-b').style.width=g.pct+'%';
   document.getElementById('gs-b').style.background=g.color;
   document.getElementById('gs-p').textContent=g.pct+'% voltooid';
-  document.getElementById('gs-body').innerHTML=`
+  // Handmatige slider boven inhoud
+  var sliderHtml = '<div style="margin-bottom:20px;padding:14px 16px;background:var(--p2);border-radius:8px;border:1px solid var(--b)">'+
+    '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">'+
+      '<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--m);font-weight:500">Handmatig zetten</div>'+
+      '<div style="font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums" id="manual-pct-display">'+g.pct+'%</div>'+
+    '</div>'+
+    '<input type="range" min="0" max="100" step="5" value="'+g.pct+'" '+
+      'oninput="document.getElementById(\'manual-pct-display\').textContent=this.value+\'%\'" '+
+      'onchange="setGoalPct(\''+id+'\',this.value)" '+
+      'style="width:100%;accent-color:'+g.color+'">'+
+    '<div style="font-size:11px;color:var(--m);margin-top:4px;line-height:1.4">Vakmeesterschap is eerder gevoel dan rekensom.</div>'+
+  '</div>';
+  document.getElementById('gs-body').innerHTML= sliderHtml + `
     <div style="margin-bottom:20px">
       <div class="ct">Milestones</div>
       ${g.milestones.map(m=>`<div class="mi"><span style="font-size:15px">${m.s==='done'?'✓':m.s==='active'?'◎':'○'}</span><span style="flex:1;font-size:12px;${m.s==='done'?'text-decoration:line-through;color:var(--m)':''}">${m.name}</span><span style="font-size:11px;color:var(--m)">${m.pct}%</span></div>`).join('')}
     </div>
     <div style="margin-bottom:20px">
       <div class="ct">Acties</div>
-      ${g.actions.map((a,i)=>`<div class="ai" onclick="togAct('${id}',${i})"><div class="ak${a.done?' on':''}">${a.done?'✓':''}</div><span class="at2${a.done?' done':''}">${a.txt}</span><span class="ae">${a.effort}</span></div>`).join('')}
+      ${hasOnlyPlaceholder ? '<div style="font-size:12px;color:var(--m);font-style:italic;padding:8px 0">Voeg eerste echte actie toe ↓</div>' : g.actions.map((a,i)=>`<div class="ai" onclick="togAct('${id}',${i})"><div class="ak${a.done?' on':''}">${a.done?'✓':''}</div><span class="at2${a.done?' done':''}">${a.txt}</span><span class="ae">${a.effort}</span></div>`).join('')}
       <div class="aar"><input class="aai" id="na-inp" placeholder="Nieuwe actie..." onkeydown="if(event.key==='Enter')addAct('${id}')"><button class="btn sm acc" onclick="addAct('${id}')">+</button></div>
     </div>
   `;
@@ -3809,11 +3824,34 @@ function openGoal(id){
 }
 function closeGoal(){document.getElementById('go').classList.remove('on');activeGId=null;}
 
+// Handmatige percentage override
+function setGoalPct(gid, val){
+  const g=GOALS.find(x=>x.id===gid);if(!g)return;
+  g.pct = Math.max(0, Math.min(100, parseInt(val)||0));
+  g.manualPct = true; // markeer dat gebruiker handmatig heeft gezet
+  saveGoals();
+  // Update header van modal zonder te re-renderen (anders verlies je slider focus)
+  document.getElementById('gs-s').textContent=g.status+' · '+g.pct+'% voltooid';
+  document.getElementById('gs-b').style.width=g.pct+'%';
+  document.getElementById('gs-p').textContent=g.pct+'% voltooid';
+  if(typeof renderGoals === 'function') renderGoals();
+}
+
 function togAct(gid,idx){
   const g=GOALS.find(x=>x.id===gid);if(!g)return;
   g.actions[idx].done=!g.actions[idx].done;
-  const done=g.actions.filter(a=>a.done).length;
-  g.pct=Math.round((done/g.actions.length)*100);
+  // Alleen automatische pct berekening over ECHTE acties (geen placeholder)
+  // En alleen als gebruiker geen handmatige override heeft gezet
+  if(!g.manualPct){
+    var realActs = g.actions.filter(function(a){ return a.txt !== 'Eerste stap definiëren'; });
+    if(realActs.length === 0){
+      // Alleen placeholder bestaat — geen voortgang
+      g.pct = 0;
+    } else {
+      var done = realActs.filter(function(a){ return a.done; }).length;
+      g.pct = Math.round((done / realActs.length) * 100);
+    }
+  }
   saveGoals();openGoal(gid);renderGoals();
 }
 function addAct(gid){
@@ -3821,7 +3859,15 @@ function addAct(gid){
   const inp=document.getElementById('na-inp');
   if(!g||!inp?.value.trim())return;
   g.actions.push({txt:inp.value.trim(),effort:'M',done:false});
-  inp.value='';saveGoals();openGoal(gid);
+  // Hercalculeer voortgang als geen handmatige override
+  if(!g.manualPct){
+    var realActs = g.actions.filter(function(a){ return a.txt !== 'Eerste stap definiëren'; });
+    if(realActs.length){
+      var done = realActs.filter(function(a){ return a.done; }).length;
+      g.pct = Math.round((done / realActs.length) * 100);
+    }
+  }
+  inp.value='';saveGoals();openGoal(gid);renderGoals();
 }
 function delGoal(gid){
   GOALS=GOALS.filter(x=>x.id!==gid);saveGoals();closeGoal();renderGoals();toast('Doel verwijderd');
