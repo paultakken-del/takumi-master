@@ -3426,36 +3426,44 @@ function showMemoirs(){
   if(!agent) return;
   var arr = (S.memoirs[id] || []).slice().reverse(); // nieuwste boven
 
-  var html = '<div id="memoir-bd" onclick="closeMemoirs(event)" style="position:fixed;inset:0;z-index:999;background:rgba(20,18,14,.7);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s">'+
-    '<div onclick="event.stopPropagation()" style="background:var(--bg);border-radius:12px;max-width:480px;width:100%;max-height:80vh;display:flex;flex-direction:column;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.4)">'+
-      '<div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">'+
+  // Detecteer dark mode voor expliciete bg-kleuren
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  var bgSolid = isDark ? '#1a1815' : '#faf7f2';
+  var bgInset = isDark ? '#242220' : '#f0ece4';
+  var inkColor = isDark ? '#f0ece4' : '#1a1815';
+  var mutedColor = isDark ? '#8a8478' : '#6e6558';
+  var borderColor = isDark ? '#3a3733' : '#e0d8c8';
+
+  var html = '<div id="memoir-bd" onclick="closeMemoirs(event)" style="position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s">'+
+    '<div onclick="event.stopPropagation()" style="background:'+bgSolid+';border-radius:12px;max-width:480px;width:100%;max-height:80vh;display:flex;flex-direction:column;border:1px solid '+borderColor+';box-shadow:0 20px 60px rgba(0,0,0,.5);position:relative;z-index:1;color:'+inkColor+'">'+
+      '<div style="padding:16px 20px;border-bottom:1px solid '+borderColor+';display:flex;align-items:center;gap:10px">'+
         '<span style="font-family:var(--FJ);font-size:22px;color:'+agent.col+'">'+agent.ico+'</span>'+
         '<div style="flex:1">'+
-          '<div style="font-size:14px;font-weight:600;color:var(--ink)">Geheugen — '+agent.name+'</div>'+
-          '<div style="font-size:11px;color:var(--m)">'+arr.length+' memoirs · max 20</div>'+
+          '<div style="font-size:14px;font-weight:600;color:'+inkColor+'">Geheugen — '+agent.name+'</div>'+
+          '<div style="font-size:11px;color:'+mutedColor+'">'+arr.length+' memoirs · max 20</div>'+
         '</div>'+
-        '<button onclick="closeMemoirs()" style="background:none;border:none;color:var(--m);font-size:18px;cursor:pointer;padding:4px 8px">✕</button>'+
+        '<button onclick="closeMemoirs()" style="background:none;border:none;color:'+mutedColor+';font-size:18px;cursor:pointer;padding:4px 8px">✕</button>'+
       '</div>'+
-      '<div style="flex:1;overflow-y:auto;padding:14px 20px">';
+      '<div style="flex:1;overflow-y:auto;padding:14px 20px;background:'+bgSolid+'">';
 
   if(!arr.length){
-    html += '<div style="text-align:center;padding:40px 20px;color:var(--m);font-size:13px;line-height:1.6">Nog geen memoirs.<br>Stel een vraag — na 30 minuten verschijnt hier de eerste herinnering.</div>';
+    html += '<div style="text-align:center;padding:40px 20px;color:'+mutedColor+';font-size:13px;line-height:1.6">Nog geen memoirs.<br>Stel een vraag — na 30 minuten verschijnt hier de eerste herinnering.</div>';
   } else {
     arr.forEach(function(m){
       var d = new Date(m.t);
       var dStr = d.toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'});
       var tStr = d.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
-      html += '<div style="padding:12px 14px;margin-bottom:8px;background:var(--p2);border-radius:8px;border-left:3px solid '+agent.col+'">'+
-        '<div style="font-size:10px;color:var(--m);margin-bottom:4px;letter-spacing:.04em">'+dStr+' · '+tStr+'</div>'+
-        '<div style="font-size:13px;color:var(--ink);line-height:1.5">'+m.summary+'</div>'+
+      html += '<div style="padding:12px 14px;margin-bottom:8px;background:'+bgInset+';border-radius:8px;border-left:3px solid '+agent.col+'">'+
+        '<div style="font-size:10px;color:'+mutedColor+';margin-bottom:4px;letter-spacing:.04em">'+dStr+' · '+tStr+'</div>'+
+        '<div style="font-size:13px;color:'+inkColor+';line-height:1.5">'+m.summary+'</div>'+
         '</div>';
     });
   }
 
   html += '</div>'+
-      '<div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px">'+
-        '<div style="font-size:11px;color:var(--m);flex:1">Memoirs blijven lokaal opgeslagen.</div>'+
-        (arr.length ? '<button onclick="confirmResetMemoirs()" style="background:none;border:1px solid var(--border);color:var(--m);font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer">Wis geheugen</button>' : '')+
+      '<div style="padding:12px 20px;border-top:1px solid '+borderColor+';display:flex;justify-content:space-between;align-items:center;gap:10px;background:'+bgSolid+';border-radius:0 0 12px 12px">'+
+        '<div style="font-size:11px;color:'+mutedColor+';flex:1">Memoirs blijven lokaal opgeslagen.</div>'+
+        (arr.length ? '<button onclick="confirmResetMemoirs()" style="background:none;border:1px solid '+borderColor+';color:'+mutedColor+';font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer">Wis geheugen</button>' : '')+
       '</div>'+
     '</div>'+
   '</div>';
