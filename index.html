@@ -2752,9 +2752,11 @@ function renderChat(){
         return '';
       }).join('') + '</div>';
     }
-    const fb=u?'':`<div style="display:flex;gap:4px;align-items:center"><button class="fb-btn" onclick="doFB(${i},'like')">👍</button><button class="fb-btn" onclick="doFB(${i},'rej')">👎</button><button class="fb-btn" onclick="openActionPicker('${S.cur}',${i},this)" title="Maak actie van" style="font-size:14px;font-weight:300;color:var(--acc);opacity:.6">+</button></div>`;
+    const fb=u?'':`<div style="display:flex;gap:4px;align-items:center"><button class="fb-btn" onclick="doFB(${i},'like')">👍</button><button class="fb-btn" onclick="doFB(${i},'rej')">👎</button></div>`;
+    // Aparte actie-knop onder het bericht — duidelijk als volgende stap
+    const actBtn = u ? '' : `<button onclick="openActionPicker('${S.cur}',${i},this)" style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:transparent;border:1px solid var(--b);border-radius:14px;font-size:11.5px;font-weight:500;color:var(--acc);cursor:pointer;font-family:inherit;letter-spacing:.02em;transition:all .15s;-webkit-tap-highlight-color:transparent" onmouseover="this.style.background='rgba(196,83,42,.06)';this.style.borderColor='var(--acc)'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--b)'"><span style="font-size:13px;line-height:1">+</span> Maak actie van dit advies</button>`;
     if(u)return`<div class="msg u"><div class="bub">${esc(m.content)}</div></div>`;
-    return`<div class="msg a"><div style="display:flex;gap:8px;align-items:flex-start">${avatar}<div style="flex:1;min-width:0"><div class="bub${m.stream?' stream':''}" style="border-left:3px solid ${a.col}">${esc(m.content)}</div>${actionStatus}<div class="mm">${sc}${tb}${fb}</div></div></div></div>`;
+    return`<div class="msg a"><div style="display:flex;gap:8px;align-items:flex-start">${avatar}<div style="flex:1;min-width:0"><div class="bub${m.stream?' stream':''}" style="border-left:3px solid ${a.col}">${esc(m.content)}</div>${actBtn}${actionStatus}<div class="mm">${sc}${tb}${fb}</div></div></div></div>`;
   }).join('');
   requestAnimationFrame(function(){c.scrollTop=c.scrollHeight;});
 }
