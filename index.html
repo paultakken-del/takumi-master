@@ -503,7 +503,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
 /* Element-row als grid 6 kolommen */
 #v-bo #ag::before{content:"";display:none}
-#v-bo .ag-row-elements{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;width:100%}
+#v-bo .ag-row-elements{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;width:100%}
 @media(max-width:720px){
   #v-bo .agw{padding-right:60px}
 }
@@ -1425,7 +1425,7 @@ const WARRIOR_TO_ELEMENT = (function(){
   });
   return m;
 })();
-const ELEMENT_ORDER = ['board','chi','sui','fu','ka','ku'];
+const ELEMENT_ORDER = ['board','chi','sui','fu','ka'];
 const ORD=['board','strategic','health','finance','reflection','productivity','decision','writing','relationship','learning','routine','digital','engagement'];
 
 
@@ -2376,7 +2376,15 @@ let busy=false;
 
 function renderGrid(){
   // Bepaal actief element op basis van huidige selectie
-  var activeEl = (S.cur === 'board') ? 'board' : (WARRIOR_TO_ELEMENT[S.cur] || 'chi');
+  // board = eigen pill (essentie van Kū-synthese), warriors mappen naar hun element
+  var activeEl;
+  if(S.cur === 'board') {
+    activeEl = 'board';
+  } else {
+    var mapped = WARRIOR_TO_ELEMENT[S.cur];
+    // Kū-warriors mappen we ook naar 'board' (Council representeert Kū)
+    activeEl = (mapped === 'ku') ? 'board' : (mapped || 'chi');
+  }
 
   // TOP: 6 elementen pillen
   var elPillsHtml = ELEMENT_ORDER.map(function(eid){
@@ -2429,7 +2437,7 @@ function renderGrid(){
   var labelEl = document.getElementById('agw-label');
   if(labelEl){
     if(activeEl === 'board'){
-      labelEl.textContent = 'Master Council · alle vijf elementen';
+      labelEl.textContent = '匠 Master Council · synthese van vijf elementen';
     } else if(ELEMENTS[activeEl] && ELEMENTS[activeEl].warriors.length > 1){
       var el = ELEMENTS[activeEl];
       labelEl.textContent = el.name + ' · ' + el.sub + ' › kies een warrior';
