@@ -714,6 +714,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <span style="font-size:14px;color:var(--acc);flex-shrink:0">→</span>
     </div>
 
+    <!-- ── COUNCIL DEZE WEEK ── verschijnt zon-do als richting voor de week ── -->
+    <div id="ck-week-council" style="display:none"></div>
+
     <!-- ── PRIMAIR DOEL ── spil van de app ── -->
     <div id="ck-primary-goal" style="display:none"></div>
 
@@ -1281,6 +1284,7 @@ const S={
   observations:ls('tm2_obs',[]),
   actions:ls('tm2_actions',[]), // Vandaag-acties van meesters: {id,t,master,sourceMsgId,text,kind,done,doneT}
   primaryGoalId:ls('tm2_primary_goal',null), // ID van het primaire doel — spil van de app
+  weekCouncil:ls('tm2_week_council',null), // {weekKey, advice, leadElement, supportElement, restElement, generatedAt, dismissed}
   goals:ls('tm2_goals',null),
   holdings:ls('tm2_hold',{BTC:{qty:.62,avgBuy:28000,name:'Bitcoin'},ETH:{qty:4.2,avgBuy:1800,name:'Ethereum'}}),
   degiro:ls('tm2_dg',{}),
@@ -3530,9 +3534,178 @@ function askLeaderToday(){
   setTimeout(function(){ selAg(leader.warrior.id); }, 100);
 }
 
+// ── COUNCIL-SUNDAYS ─────────────────────────────────────────────────
+// Op zondag (en eerste paar dagen erna) toont de Council één geconsolideerd
+// week-advies: welk element leidt, welk ondersteunt, welk rust.
+
+// Week-key: ISO-jaar+week zodat alleen 1 council per week gegenereerd wordt
+function getWeekKey(d){
+  d = d || new Date();
+  var target = new Date(d.valueOf());
+  var dayNr = (d.getDay() + 6) % 7;
+  target.setDate(target.getDate() - dayNr + 3);
+  var firstThursday = target.valueOf();
+  target.setMonth(0,1);
+  if(target.getDay() !== 4) target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+  var weekNr = 1 + Math.ceil((firstThursday - target) / 604800000);
+  return d.getFullYear() + '-W' + (weekNr<10?'0':'') + weekNr;
+}
+
+// Is het zondag of dagen na zondag (council still relevant for current week)
+function isCouncilWeek(){
+  // Council toont van zondag tot en met donderdag van de huidige week
+  var day = new Date().getDay();
+  return day === 0 || day === 1 || day === 2 || day === 3 || day === 4 || day === 6;
+}
+
+async function generateWeekCouncil(){
+  var primary = null;
+  if(typeof GOALS !== 'undefined' && GOALS && GOALS.length){
+    if(S.primaryGoalId) primary = GOALS.find(function(g){ return g.id === S.primaryGoalId && g.status === 'Actief'; });
+    if(!primary) primary = GOALS.find(function(g){ return g.status === 'Actief'; });
+  }
+  if(!primary) return; // Geen doel = geen council
+
+  var weekKey = getWeekKey();
+
+  // Al gegenereerd voor deze week?
+  if(S.weekCouncil && S.weekCouncil.weekKey === weekKey) return;
+
+  // Verzamel context
+  var hrvCtx = '';
+  if(S.hrv){
+    hrvCtx = 'HRV '+S.hrv.rmssd+' (baseline 53), recovery '+S.hrv.recovery+'/10, slaap '+S.hrv.sleep+'u. ';
+  }
+  var portCtx = '';
+  if(S.port && S.port.totalValue){
+    portCtx = 'Portfolio €'+Math.round(S.port.totalValue).toLocaleString('nl-NL')+' ('+(S.port.totalPnlPct>=0?'+':'')+S.port.totalPnlPct.toFixed(1)+'%). ';
+  }
+  // Recente memoirs over alle warriors
+  var allMemoirs = [];
+  Object.keys(S.memoirs||{}).forEach(function(mid){
+    (S.memoirs[mid]||[]).slice(-2).forEach(function(m){
+      allMemoirs.push('['+mid+'] '+m.summary);
+    });
+  });
+  var memCtx = allMemoirs.length ? 'Recente herinneringen: '+allMemoirs.slice(0,5).join(' | ')+'. ' : '';
+
+  var prompt = 'Je bent de Master Council — vijf Godai-meesters die wekelijks samenkomen voor een gebruiker. Schrijf een week-advies van max 60 woorden Nederlands voor deze week. Eerst noem je expliciet welk element LEIDT, welk ONDERSTEUNT, en welk RUST deze week (kies uit Chi/Sui/Fū/Ka/Kū). Dan één korte richting voor de week. Spreek vanuit collectieve wijsheid, niet als één meester.\n\nHet doel: "'+primary.title+'" (voortgang '+primary.pct+'%). '+hrvCtx+portCtx+memCtx+'\n\nFormat strikt:\nLEIDT: [element]\nONDERSTEUNT: [element]\nRUST: [element]\nADVIES: [één zin, max 30 woorden]';
+
+  try {
+    var res = await fetch('/api/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:300,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok) return;
+    var j = await res.json();
+    var txt = j.content?.[0]?.text?.trim();
+    if(!txt) return;
+
+    // Parse de gestructureerde response
+    var leadMatch = txt.match(/LEIDT:\s*([^\n]+)/i);
+    var supMatch = txt.match(/ONDERSTEUNT:\s*([^\n]+)/i);
+    var restMatch = txt.match(/RUST:\s*([^\n]+)/i);
+    var advMatch = txt.match(/ADVIES:\s*([^\n]+)/i);
+
+    function normEl(s){
+      if(!s) return null;
+      s = s.toLowerCase().trim();
+      if(s.includes('chi') || s.includes('地') || s.includes('aarde')) return 'chi';
+      if(s.includes('sui') || s.includes('水') || s.includes('water')) return 'sui';
+      if(s.includes('fu') || s.includes('fū') || s.includes('風') || s.includes('wind')) return 'fu';
+      if(s.includes('ka') || s.includes('火') || s.includes('vuur')) return 'ka';
+      if(s.includes('ku') || s.includes('kū') || s.includes('空') || s.includes('leegte')) return 'ku';
+      return null;
+    }
+
+    S.weekCouncil = {
+      weekKey: weekKey,
+      leadElement: normEl(leadMatch?.[1]) || 'chi',
+      supportElement: normEl(supMatch?.[1]) || 'sui',
+      restElement: normEl(restMatch?.[1]) || 'ku',
+      advice: (advMatch?.[1] || txt.split('\n').filter(function(l){return l.trim() && !l.match(/^(LEIDT|ONDERSTEUNT|RUST|ADVIES)/i);}).join(' ')).trim().replace(/^["'""]|["'""]$/g,''),
+      generatedAt: Date.now(),
+      dismissed: false
+    };
+    lsSet('tm2_week_council', S.weekCouncil);
+    renderWeekCouncil();
+  } catch(e){ /* silent */ }
+}
+
+function renderWeekCouncil(){
+  var sec = document.getElementById('ck-week-council');
+  if(!sec) return;
+  if(!isCouncilWeek() || !S.weekCouncil || S.weekCouncil.dismissed){
+    sec.style.display = 'none';
+    return;
+  }
+  // Check of council nog hoort bij deze week
+  var currentWeek = getWeekKey();
+  if(S.weekCouncil.weekKey !== currentWeek){
+    sec.style.display = 'none';
+    return;
+  }
+
+  var c = S.weekCouncil;
+  var leadEl = ELEMENTS[c.leadElement] || ELEMENTS.chi;
+  var supEl = ELEMENTS[c.supportElement] || ELEMENTS.sui;
+  var restEl = ELEMENTS[c.restElement] || ELEMENTS.ku;
+
+  sec.style.display = 'block';
+  sec.innerHTML =
+    '<div style="padding:24px 18px 22px;margin:0 0 8px;background:linear-gradient(135deg,rgba(196,83,42,.06),rgba(196,83,42,.01));border:1px solid rgba(196,83,42,.18);border-radius:12px;position:relative">'+
+      '<button onclick="dismissCouncil()" style="position:absolute;top:10px;right:10px;background:none;border:none;color:var(--m);font-size:14px;cursor:pointer;padding:4px 8px;opacity:.5" title="Verberg deze week">✕</button>'+
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'+
+        '<span style="font-family:var(--FJ);font-size:24px;color:var(--acc)">匠</span>'+
+        '<div>'+
+          '<div style="font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);font-weight:500;margin-bottom:1px">Council deze week</div>'+
+          '<div style="font-size:13px;font-weight:600;color:var(--ink)">Vijf meesters · één richting</div>'+
+        '</div>'+
+      '</div>'+
+
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">'+
+        '<div style="text-align:center;padding:10px 6px;background:var(--p2);border-radius:8px;border-top:2px solid '+leadEl.col+'">'+
+          '<div style="font-family:var(--FJ);font-size:22px;color:'+leadEl.col+';margin-bottom:4px">'+leadEl.kanji+'</div>'+
+          '<div style="font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--m);margin-bottom:1px">Leidt</div>'+
+          '<div style="font-size:11.5px;font-weight:600;color:var(--ink)">'+leadEl.name+'</div>'+
+        '</div>'+
+        '<div style="text-align:center;padding:10px 6px;background:var(--p2);border-radius:8px;border-top:2px solid '+supEl.col+';opacity:.85">'+
+          '<div style="font-family:var(--FJ);font-size:22px;color:'+supEl.col+';margin-bottom:4px">'+supEl.kanji+'</div>'+
+          '<div style="font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--m);margin-bottom:1px">Steunt</div>'+
+          '<div style="font-size:11.5px;font-weight:600;color:var(--ink)">'+supEl.name+'</div>'+
+        '</div>'+
+        '<div style="text-align:center;padding:10px 6px;background:var(--p2);border-radius:8px;border-top:2px solid '+restEl.col+';opacity:.6">'+
+          '<div style="font-family:var(--FJ);font-size:22px;color:'+restEl.col+';margin-bottom:4px">'+restEl.kanji+'</div>'+
+          '<div style="font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--m);margin-bottom:1px">Rust</div>'+
+          '<div style="font-size:11.5px;font-weight:600;color:var(--ink)">'+restEl.name+'</div>'+
+        '</div>'+
+      '</div>'+
+
+      '<div style="font-family:var(--serif);font-size:14px;color:var(--ink);line-height:1.6;font-style:italic;text-align:center">'+esc(c.advice||'')+'</div>'+
+    '</div>';
+}
+
+function dismissCouncil(){
+  if(!S.weekCouncil) return;
+  S.weekCouncil.dismissed = true;
+  lsSet('tm2_week_council', S.weekCouncil);
+  renderWeekCouncil();
+}
+
+// Trigger council generation on Sunday or when missing for current week
+function maybeGenerateCouncil(){
+  if(!isCouncilWeek()) return;
+  var currentWeek = getWeekKey();
+  // Genereer als er geen council is, of als hij van een andere week is
+  if(!S.weekCouncil || S.weekCouncil.weekKey !== currentWeek){
+    generateWeekCouncil();
+  }
+}
+
 // Run cleanup at startup
 document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(function(){ cleanupActions(); renderCkActions(); renderPrimaryGoal(); }, 1000);
+  setTimeout(function(){ cleanupActions(); renderCkActions(); renderPrimaryGoal(); renderWeekCouncil(); maybeGenerateCouncil(); }, 1000);
 });
 
 // ── MEMOIR VIEWER ──────────────────────────────────────────────────
