@@ -738,6 +738,12 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <div id="ck-actions-list"></div>
     </div>
 
+    <!-- ── MEER VOOR VANDAAG ── verborgen tot uitgevouwen ── -->
+    <div id="ck-more-toggle" style="padding:18px 4px;text-align:center">
+      <button onclick="toggleCkMore()" id="ck-more-btn" style="background:none;border:1px solid var(--b);color:var(--m);padding:8px 18px;border-radius:18px;font-size:11.5px;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:.04em;-webkit-tap-highlight-color:transparent;transition:all .15s">Meer voor vandaag ↓</button>
+    </div>
+
+    <div id="ck-more-content" style="display:none">
     <!-- ── ENERGIE ── micro-ritueel ── -->
     <div class="dash-section">
       <div class="dash-label">Energie</div>
@@ -754,12 +760,13 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     </div>
 
     <!-- ── WIJSHEID ── quote als afsluiter ── -->
-    <div class="dash-section dash-quiet">
+    <div class="dash-section dash-quiet" id="ck-wisdom-section">
       <div class="dash-label">Wijsheid</div>
       <div style="text-align:center;padding:8px 12px">
         <div id="ck-quote" style="font-size:14px;color:var(--ink);opacity:.7;font-style:italic;line-height:1.7;word-wrap:break-word;font-family:var(--serif)"> </div>
         <div id="ck-quote-auth" style="font-size:var(--text-xs);color:var(--ink);opacity:.4;margin-top:8px;letter-spacing:.1em;text-transform:uppercase"> </div>
       </div>
+    </div>
     </div>
 
     <!-- THE WAVE — primair energiesignaal -->
@@ -3534,6 +3541,45 @@ function askLeaderToday(){
   setTimeout(function(){ selAg(leader.warrior.id); }, 100);
 }
 
+// ── MEER VOOR VANDAAG ──────────────────────────────────────────────
+// Energie / Muziek / Wijsheid ingeklapt op werkdagen, open in weekend.
+function isWeekend(){
+  var d = new Date().getDay();
+  return d === 0 || d === 6;
+}
+
+function toggleCkMore(){
+  var content = document.getElementById('ck-more-content');
+  var btn = document.getElementById('ck-more-btn');
+  if(!content || !btn) return;
+  var isOpen = content.style.display !== 'none';
+  if(isOpen){
+    content.style.display = 'none';
+    btn.textContent = 'Meer voor vandaag ↓';
+    lsSet('tm2_more_open', '0');
+  } else {
+    content.style.display = 'block';
+    btn.textContent = 'Minder ↑';
+    lsSet('tm2_more_open', '1');
+  }
+}
+
+function applyMoreVisibility(){
+  var content = document.getElementById('ck-more-content');
+  var toggle = document.getElementById('ck-more-toggle');
+  var btn = document.getElementById('ck-more-btn');
+  if(!content || !toggle || !btn) return;
+  if(isWeekend()){
+    content.style.display = 'block';
+    toggle.style.display = 'none';
+  } else {
+    toggle.style.display = 'block';
+    var open = ls('tm2_more_open', '0') === '1';
+    content.style.display = open ? 'block' : 'none';
+    btn.textContent = open ? 'Minder ↑' : 'Meer voor vandaag ↓';
+  }
+}
+
 // ── COUNCIL-SUNDAYS ─────────────────────────────────────────────────
 // Op zondag (en eerste paar dagen erna) toont de Council één geconsolideerd
 // week-advies: welk element leidt, welk ondersteunt, welk rust.
@@ -3705,7 +3751,7 @@ function maybeGenerateCouncil(){
 
 // Run cleanup at startup
 document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(function(){ cleanupActions(); renderCkActions(); renderPrimaryGoal(); renderWeekCouncil(); maybeGenerateCouncil(); }, 1000);
+  setTimeout(function(){ cleanupActions(); renderCkActions(); renderPrimaryGoal(); renderWeekCouncil(); maybeGenerateCouncil(); applyMoreVisibility(); }, 1000);
 });
 
 // ── MEMOIR VIEWER ──────────────────────────────────────────────────
