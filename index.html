@@ -805,26 +805,26 @@ input[type=range]{width:100%;accent-color:var(--acc)}
           </defs>
           <!-- Buitenste cirkel rand -->
           <circle cx="120" cy="120" r="100" fill="none" stroke="var(--b)" stroke-width="1.2"/>
-          <!-- Binnen de cirkel: links=Doen (lichte kant), rechts=Zijn (donkere kant) -->
+          <!-- Binnen de cirkel: links=Doen (licht), rechts=Zijn (donker) — vaste kleuren ongeacht thema -->
           <g clip-path="url(#bal-circle)">
-            <!-- Linker helft (Doen) -->
-            <rect id="bal-doen-bg" x="20" y="20" width="100" height="200" fill="var(--p2)"/>
-            <!-- Rechter helft (Zijn) -->
-            <rect id="bal-zijn-bg" x="120" y="20" width="100" height="200" fill="var(--ink)" fill-opacity=".82"/>
-            <!-- Wave als scheidingslijn — gevuld pad dat afhankelijk van balans naar links/rechts schuift -->
-            <path id="bal-wave-fill" d="" fill="var(--ink)" fill-opacity=".82"/>
-            <!-- Kanji's links (Doen) — Chi + Ka -->
-            <g id="bal-doen-kanjis" font-family="var(--FJ)" fill="var(--ink)"></g>
-            <!-- Kanji's rechts (Zijn) — Sui + Kū -->
-            <g id="bal-zijn-kanjis" font-family="var(--FJ)" fill="var(--p2)"></g>
+            <!-- Linker helft (Doen) — licht beige -->
+            <rect id="bal-doen-bg" x="20" y="20" width="100" height="200" fill="#f0ece4"/>
+            <!-- Rechter helft (Zijn) — diep zwart -->
+            <rect id="bal-zijn-bg" x="120" y="20" width="100" height="200" fill="#1a1815"/>
+            <!-- Wave als scheidingslijn — gevuld pad in zwart, schuift met balans -->
+            <path id="bal-wave-fill" d="" fill="#1a1815"/>
+            <!-- Kanji's links (Doen) — zwart op licht -->
+            <g id="bal-doen-kanjis"></g>
+            <!-- Kanji's rechts (Zijn) — wit op zwart -->
+            <g id="bal-zijn-kanjis"></g>
             <!-- Fū vloeit ertussen — kleine kanji op de wave-lijn -->
-            <text id="bal-fu-kanji" font-family="var(--FJ)" font-size="14" text-anchor="middle" fill="var(--m)" opacity=".9"></text>
+            <text id="bal-fu-kanji" font-family="var(--FJ)" font-size="14" text-anchor="middle"></text>
           </g>
         </svg>
         <div id="ck-balance-summary" style="font-size:13.5px;color:var(--ink);text-align:center;margin-top:14px;line-height:1.5;font-style:italic;font-family:var(--serif);max-width:280px"></div>
         <div id="ck-balance-legend" style="font-size:10px;color:var(--m);text-align:center;margin-top:6px;letter-spacing:.06em;display:flex;gap:14px;justify-content:center">
-          <span><span style="display:inline-block;width:8px;height:8px;background:var(--p2);border:1px solid var(--b);border-radius:50%;vertical-align:middle;margin-right:4px"></span>Doen</span>
-          <span><span style="display:inline-block;width:8px;height:8px;background:var(--ink);border-radius:50%;vertical-align:middle;margin-right:4px"></span>Zijn</span>
+          <span><span style="display:inline-block;width:9px;height:9px;background:#f0ece4;border:1px solid #1a1815;border-radius:50%;vertical-align:middle;margin-right:5px"></span>Doen</span>
+          <span><span style="display:inline-block;width:9px;height:9px;background:#1a1815;border-radius:50%;vertical-align:middle;margin-right:5px"></span>Zijn</span>
           <span style="opacity:.7"><span style="font-family:var(--FJ);font-size:11px;color:var(--m);vertical-align:middle;margin-right:3px">風</span>tussen</span>
         </div>
       </div>
@@ -3731,36 +3731,34 @@ function renderElementBalance(){
   if(waveEl) waveEl.setAttribute('d', wavePath);
 
   // Plaats kanji's
-  // Doen-kant (links): 地 Chi top, 火 Ka bottom
+  // Doen-kant (licht beige): 地 Chi top, 火 Ka bottom — zwarte kanji
   var chiSize = 18 + Math.min(20, bal.counts.chi * 1.5);
   var kaSize = 18 + Math.min(20, bal.counts.ka * 1.5);
   var doenKanjisEl = document.getElementById('bal-doen-kanjis');
   if(doenKanjisEl){
-    // Plaats links van wave-center, op vaste x-positie 70 (kwart cirkel links)
     doenKanjisEl.innerHTML =
-      '<text x="70" y="92" text-anchor="middle" font-size="'+chiSize+'" fill="var(--ink)" opacity=".85">地</text>'+
-      '<text x="70" y="172" text-anchor="middle" font-size="'+kaSize+'" fill="var(--ink)" opacity=".85">火</text>';
+      '<text x="70" y="92" text-anchor="middle" font-family="var(--FJ)" font-size="'+chiSize+'" fill="#1a1815" opacity=".82">地</text>'+
+      '<text x="70" y="172" text-anchor="middle" font-family="var(--FJ)" font-size="'+kaSize+'" fill="#1a1815" opacity=".82">火</text>';
   }
 
-  // Zijn-kant (rechts): 水 Sui top, 空 Kū bottom
+  // Zijn-kant (zwart): 水 Sui top, 空 Kū bottom — witte kanji
   var suiSize = 18 + Math.min(20, bal.counts.sui * 1.5);
   var kuSize = 18 + Math.min(20, bal.counts.ku * 1.5);
   var zijnKanjisEl = document.getElementById('bal-zijn-kanjis');
   if(zijnKanjisEl){
     zijnKanjisEl.innerHTML =
-      '<text x="170" y="92" text-anchor="middle" font-size="'+suiSize+'" fill="var(--p2)" opacity=".95">水</text>'+
-      '<text x="170" y="172" text-anchor="middle" font-size="'+kuSize+'" fill="var(--p2)" opacity=".95">空</text>';
+      '<text x="170" y="92" text-anchor="middle" font-family="var(--FJ)" font-size="'+suiSize+'" fill="#f0ece4" opacity=".88">水</text>'+
+      '<text x="170" y="172" text-anchor="middle" font-family="var(--FJ)" font-size="'+kuSize+'" fill="#f0ece4" opacity=".88">空</text>';
   }
 
-  // Fū kanji op de wave (vloeit ertussen)
+  // Fū kanji op de wave (vloeit ertussen) — neutraal grijs, zichtbaar tegen beide
   var fuEl = document.getElementById('bal-fu-kanji');
   if(fuEl){
     var fuSize = 12 + Math.min(8, bal.counts.fu * 1.2);
     fuEl.setAttribute('font-size', fuSize);
     fuEl.setAttribute('x', waveCenterX);
     fuEl.setAttribute('y', 124);
-    // Fū tekst kleur op grens — half doen half zijn — neutraal
-    fuEl.setAttribute('fill', 'var(--m)');
+    fuEl.setAttribute('fill', '#a8a39a');
     fuEl.textContent = '風';
   }
 
