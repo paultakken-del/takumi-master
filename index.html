@@ -822,10 +822,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   <div class="bl">
     <div class="bleft">
       <div class="agw" id="agw">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--m)" id="agw-label">Kies een element</span>
-          <button onclick="showGoGrid()" style="background:none;border:1px solid var(--b);border-radius:20px;cursor:pointer;padding:3px 10px;font-size:11px;color:var(--ink);-webkit-tap-highlight-color:transparent;line-height:1.5">◈ Detail</button>
-        </div>
+        <div id="agw-context" style="font-size:10.5px;letter-spacing:.04em;color:var(--m);margin-bottom:8px;padding:0 2px;font-style:italic;font-family:var(--serif)"></div>
         <div class="ag" id="ag"></div>
       </div>
       <div class="go-grid" id="go-grid" style="display:none">
@@ -876,6 +873,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
           </div>
           <div style="margin-left:auto;flex-shrink:0;display:flex;gap:4px">
             <button class="btn sm gh" id="btn-memoirs" onclick="showMemoirs()" title="Bekijk geheugen van deze meester" aria-label="Geheugen">脳<span id="btn-mem-count" style="font-size:9px;margin-left:3px;color:var(--acc);font-weight:600"></span></button>
+            <button class="btn sm gh" onclick="showGoGrid()" title="Element-detail" aria-label="Detail">◈</button>
             <button class="btn sm gh" onclick="clearChat()" title="Wis huidig gesprek" aria-label="Reset">↺</button>
           </div>
         </div>
@@ -2519,16 +2517,18 @@ function renderGrid(){
 
   document.getElementById('ag').innerHTML = '<div class="ag-row-elements">'+elPillsHtml+'</div>' + warriorsHtml;
 
-  // Label boven pillen
-  var labelEl = document.getElementById('agw-label');
-  if(labelEl){
-    if(activeEl === 'board'){
-      labelEl.textContent = '匠 Master Council · synthese van vijf elementen';
-    } else if(ELEMENTS[activeEl] && ELEMENTS[activeEl].warriors.length > 1){
-      var el = ELEMENTS[activeEl];
-      labelEl.textContent = el.name + ' · ' + el.sub + ' › kies een warrior';
-    } else {
-      labelEl.textContent = 'Kies een element';
+  // Dag-context boven pillen — geen breadcrumb meer, wel tijdsbesef
+  var ctxEl = document.getElementById('agw-context');
+  if(ctxEl && typeof getDayLeader === 'function'){
+    try {
+      var dagen = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+      var dagNaam = dagen[new Date().getDay()];
+      var leader = getDayLeader();
+      var leaderShort = leader.warrior?.name?.split(' ')[1] || leader.element?.name || 'Council';
+      var leaderKanji = leader.warrior?.ico || '匠';
+      ctxEl.innerHTML = 'Vandaag · ' + dagNaam + ' — <span style="color:var(--ink)">'+leaderKanji+' '+esc(leaderShort)+'</span> leidt';
+    } catch(e){
+      ctxEl.textContent = '';
     }
   }
 }
