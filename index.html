@@ -356,7 +356,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 /* ── DASHBOARD SECTIES ── */
 .dash-section{padding:24px 0 28px;border-bottom:1px solid var(--b)}
 .dash-section:last-of-type{border-bottom:none}
-.dash-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:14px;display:inline-flex;align-items:center;gap:6px}
+.dash-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);font-weight:700;margin-bottom:14px;display:inline-flex;align-items:center;gap:6px;opacity:.85}
 .ico{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:middle}
 .ico-sm{width:13px;height:13px}
 .ico-lg{width:22px;height:22px}
@@ -3530,7 +3530,7 @@ function renderPrimaryGoal(){
   sec.innerHTML =
     '<div style="padding:28px 0 24px;border-bottom:1px solid var(--b)">'+
       // Header — minimal
-      '<div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:16px;display:flex;align-items:center;gap:6px"><svg class="ico ico-sm"><use href="#i-compass"/></svg> Jouw richting</div>'+
+      '<div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:6px;opacity:.85"><svg class="ico ico-sm"><use href="#i-compass"/></svg> Jouw richting</div>'+
 
       // Doel — geen kaart, gewoon tekst met progress
       '<div onclick="openGoal(\''+primary.id+'\')" style="cursor:pointer;margin-bottom:20px">'+
@@ -3764,7 +3764,7 @@ function renderWeekCouncil(){
       '<button onclick="dismissCouncil()" style="position:absolute;top:10px;right:10px;background:none;border:none;color:var(--m);font-size:14px;cursor:pointer;padding:4px 8px;opacity:.4" title="Verberg deze week">✕</button>'+
       '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px">'+
         '<span style="font-family:var(--FJ);font-size:16px;color:var(--m)">匠</span>'+
-        '<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:500">Council deze week</div>'+
+        '<div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);font-weight:700;opacity:.85">Council deze week</div>'+
       '</div>'+
 
       '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px">'+
