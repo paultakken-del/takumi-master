@@ -793,6 +793,26 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     </div>
     </div>
 
+    <!-- ── BALANS ── element-radar over week ── -->
+    <div class="dash-section" id="ck-balance-section">
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-compass"/></svg> Balans deze week</div>
+      <div id="ck-balance-content" style="display:flex;flex-direction:column;align-items:center;padding:8px 0">
+        <svg id="ck-balance-svg" viewBox="0 0 240 240" width="240" height="240" style="max-width:100%">
+          <!-- Achtergrond cirkels -->
+          <circle cx="120" cy="120" r="90" fill="none" stroke="var(--b)" stroke-width="1" opacity=".4"/>
+          <circle cx="120" cy="120" r="60" fill="none" stroke="var(--b)" stroke-width="1" opacity=".3"/>
+          <circle cx="120" cy="120" r="30" fill="none" stroke="var(--b)" stroke-width="1" opacity=".25"/>
+          <!-- Assen naar 5 punten -->
+          <g id="ck-balance-axes" stroke="var(--b)" stroke-width="1" opacity=".3"></g>
+          <!-- Polygoon van waarden -->
+          <polygon id="ck-balance-poly" fill="var(--acc)" fill-opacity=".12" stroke="var(--acc)" stroke-width="1.5" stroke-linejoin="round"/>
+          <!-- Element-labels -->
+          <g id="ck-balance-labels" font-family="var(--FJ)" font-size="16" fill="var(--ink)"></g>
+        </svg>
+        <div id="ck-balance-summary" style="font-size:13px;color:var(--m);text-align:center;margin-top:8px;line-height:1.6;font-style:italic;font-family:var(--serif);max-width:300px"></div>
+      </div>
+    </div>
+
     <!-- THE WAVE — primair energiesignaal -->
     <div class="ck-wave-container" id="ck-wave-container">
       <svg class="ck-wave-svg" id="ck-wave-svg" viewBox="0 0 320 80" preserveAspectRatio="none" height="80">
@@ -3601,6 +3621,119 @@ function askLeaderToday(){
   if(typeof markVandaag === 'function') markVandaag('bo');
 }
 
+// ── ELEMENT-BALANS ──────────────────────────────────────────────────
+function calcElementBalance(){
+  var w2e = {
+    strategic:'chi', finance:'chi', routine:'chi',
+    health:'sui', reflection:'sui', learning:'sui',
+    writing:'fu', relationship:'fu', engagement:'fu',
+    productivity:'ka', decision:'ka', digital:'ka',
+    board:'ku'
+  };
+  var counts = {chi:0, sui:0, fu:0, ka:0, ku:0};
+  var weekAgo = Date.now() - 7*24*60*60*1000;
+  (S.actions||[]).forEach(function(a){
+    if(a.done && a.doneT && a.doneT > weekAgo){
+      var el = w2e[a.master];
+      if(el) counts[el] += 2;
+    } else if(!a.done && a.t > weekAgo){
+      var el = w2e[a.master];
+      if(el) counts[el] += 0.5;
+    }
+  });
+  Object.keys(S.memoirs || {}).forEach(function(mid){
+    var mems = S.memoirs[mid] || [];
+    mems.forEach(function(m){
+      if(m.t > weekAgo){
+        var el = w2e[mid];
+        if(el) counts[el] += 1;
+      }
+    });
+  });
+  var total = counts.chi + counts.sui + counts.fu + counts.ka + counts.ku;
+  var normalized = {chi:0, sui:0, fu:0, ka:0, ku:0};
+  if(total > 0){
+    var maxV = Math.max(counts.chi, counts.sui, counts.fu, counts.ka, counts.ku);
+    if(maxV > 0){
+      Object.keys(normalized).forEach(function(k){ normalized[k] = counts[k] / maxV; });
+    }
+  }
+  return {counts: counts, total: total, normalized: normalized};
+}
+
+function renderElementBalance(){
+  var sec = document.getElementById('ck-balance-section');
+  if(!sec) return;
+  var bal = calcElementBalance();
+  if(bal.total < 1){
+    document.getElementById('ck-balance-content').innerHTML =
+      '<div style="padding:32px 20px;text-align:center;color:var(--m);font-size:13px;line-height:1.6">'+
+        '<div style="font-family:var(--FJ);font-size:32px;color:var(--m);opacity:.4;margin-bottom:12px">空</div>'+
+        '<div>Nog geen activiteit deze week.<br>De balans verschijnt na je eerste gesprekken en acties.</div>'+
+      '</div>';
+    return;
+  }
+  var elements = [
+    {id:'chi', kanji:'地', name:'Chi', angle:-90},
+    {id:'sui', kanji:'水', name:'Sui', angle:-18},
+    {id:'fu',  kanji:'風', name:'Fū',  angle:54},
+    {id:'ka',  kanji:'火', name:'Ka',  angle:126},
+    {id:'ku',  kanji:'空', name:'Kū',  angle:-162}
+  ];
+  var cx = 120, cy = 120, rMax = 90;
+  var polyPoints = elements.map(function(el){
+    var v = bal.normalized[el.id];
+    var r = Math.max(8, v * rMax);
+    var rad = el.angle * Math.PI / 180;
+    var x = cx + Math.cos(rad) * r;
+    var y = cy + Math.sin(rad) * r;
+    return x.toFixed(1) + ',' + y.toFixed(1);
+  }).join(' ');
+  var poly = document.getElementById('ck-balance-poly');
+  if(poly) poly.setAttribute('points', polyPoints);
+  var axesEl = document.getElementById('ck-balance-axes');
+  if(axesEl){
+    axesEl.innerHTML = elements.map(function(el){
+      var rad = el.angle * Math.PI / 180;
+      var x2 = cx + Math.cos(rad) * rMax;
+      var y2 = cy + Math.sin(rad) * rMax;
+      return '<line x1="'+cx+'" y1="'+cy+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'"/>';
+    }).join('');
+  }
+  var labelsEl = document.getElementById('ck-balance-labels');
+  if(labelsEl){
+    labelsEl.innerHTML = elements.map(function(el){
+      var rad = el.angle * Math.PI / 180;
+      var rLbl = rMax + 20;
+      var x = cx + Math.cos(rad) * rLbl;
+      var y = cy + Math.sin(rad) * rLbl + 5;
+      var pct = bal.total > 0 ? Math.round((bal.counts[el.id] / bal.total) * 100) : 0;
+      return '<g>'+
+        '<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" text-anchor="middle" font-family="var(--FJ)" font-size="16" fill="var(--ink)" opacity=".85">'+el.kanji+'</text>'+
+        '<text x="'+x.toFixed(1)+'" y="'+(y+13).toFixed(1)+'" text-anchor="middle" font-family="inherit" font-size="9" fill="var(--m)" letter-spacing=".05em">'+pct+'%</text>'+
+      '</g>';
+    }).join('');
+  }
+  var sorted = Object.keys(bal.counts).sort(function(a,b){ return bal.counts[b] - bal.counts[a]; });
+  var dominant = sorted[0];
+  var weakest = sorted[4];
+  var elNames = {chi:'Chi (Aarde)', sui:'Sui (Water)', fu:'Fū (Wind)', ka:'Ka (Vuur)', ku:'Kū (Leegte)'};
+  var dominantPct = Math.round((bal.counts[dominant] / bal.total) * 100);
+  var weakestPct = Math.round((bal.counts[weakest] / bal.total) * 100);
+  var summary;
+  if(dominantPct > 50){
+    summary = elNames[dominant]+' overheerst — overweeg '+elNames[weakest]+' aandacht.';
+  } else if(weakestPct < 5){
+    summary = elNames[weakest]+' is afwezig deze week.';
+  } else if(dominantPct - weakestPct < 15){
+    summary = 'Mooi in balans tussen alle vijf elementen.';
+  } else {
+    summary = elNames[dominant]+' krijgt veel aandacht. '+elNames[weakest]+' minder.';
+  }
+  var summaryEl = document.getElementById('ck-balance-summary');
+  if(summaryEl) summaryEl.textContent = summary;
+}
+
 // ── MEER VOOR VANDAAG ──────────────────────────────────────────────
 // Energie / Muziek / Wijsheid ingeklapt op werkdagen, open in weekend.
 function isWeekend(){
@@ -3808,7 +3941,7 @@ function maybeGenerateCouncil(){
 
 // Run cleanup at startup
 document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(function(){ cleanupActions(); renderCkActions(); renderPrimaryGoal(); renderWeekCouncil(); maybeGenerateCouncil(); applyMoreVisibility(); }, 1000);
+  setTimeout(function(){ cleanupActions(); renderCkActions(); renderPrimaryGoal(); renderWeekCouncil(); maybeGenerateCouncil(); applyMoreVisibility(); renderElementBalance(); }, 1000);
 });
 
 // ── MEMOIR VIEWER ──────────────────────────────────────────────────
