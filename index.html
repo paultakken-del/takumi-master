@@ -524,7 +524,10 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 }
 
 /* Tweede laag: warrior-chips */
-.wa-row{display:flex;gap:6px;flex-wrap:wrap;padding-top:4px;border-top:1px dashed var(--b)}
+.wa-row{display:flex;gap:6px;flex-wrap:wrap;padding-top:4px;border-top:1px dashed var(--b);align-items:center}
+.wa-actions{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+.wa-act-btn{background:transparent;border:1px solid var(--b);border-radius:14px;padding:5px 10px;font-size:11.5px;color:var(--m);cursor:pointer;font-family:var(--FJ);line-height:1;transition:all .15s;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center}
+.wa-act-btn:hover{border-color:var(--acc);color:var(--acc)}
 .wa-pill{position:relative;display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:transparent;border:1px solid var(--b);border-radius:14px;cursor:pointer;font-size:11px;color:var(--ink);transition:all .15s;-webkit-tap-highlight-color:transparent}
 .wa-pill:hover{background:var(--pc)}
 .wa-pill.on{background:var(--wc,var(--acc));border-color:var(--wc,var(--acc));color:#fff}
@@ -861,21 +864,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
         </div>
       </div>
       <div class="ca">
-        <div class="ch" id="ch" style="border-bottom:3px solid var(--acc)">
-          <button onclick="showGoGrid()" style="background:none;border:none;cursor:pointer;padding:4px 8px 4px 0;color:var(--m);font-size:18px;line-height:1;flex-shrink:0;-webkit-tap-highlight-color:transparent" title="Elementen">‹</button>
-          <div id="ch-avatar-wrap" style="position:relative;flex-shrink:0">
-            <div id="ch-avatar" style="width:36px;height:36px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:18px;color:#fff">匠</div>
-            <div id="ch-mem-badge" style="display:none;position:absolute;top:-2px;right:-2px;background:var(--acc);color:#fff;font-size:9.5px;font-weight:600;min-width:16px;height:16px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg);line-height:1"></div>
-          </div>
-          <div style="min-width:0">
-            <div style="font-size:13px;font-weight:600;line-height:1.3" id="ch-n">Master Council</div>
-            <div style="font-size:11px;color:var(--m);line-height:1.2" id="ch-d">Vijf Godai meesters</div>
-          </div>
-          <div style="margin-left:auto;flex-shrink:0;display:flex;gap:4px">
-            <button class="btn sm gh" id="btn-memoirs" onclick="showMemoirs()" title="Bekijk geheugen van deze meester" aria-label="Geheugen">脳<span id="btn-mem-count" style="font-size:9px;margin-left:3px;color:var(--acc);font-weight:600"></span></button>
-            <button class="btn sm gh" onclick="clearChat()" title="Wis huidig gesprek" aria-label="Reset">↺</button>
-          </div>
-        </div>
+        <!-- Chat-header verwijderd: warrior-info zit al in chip-rij hierboven, knoppen verhuisd naar daar -->
+        <!-- Hidden helpers behouden voor backward compat met code die textContent zet -->
+        <span id="ch-n" style="display:none"></span><span id="ch-d" style="display:none"></span><span id="ch-avatar" style="display:none"></span><span id="ch-mem-badge" style="display:none"></span><span id="btn-mem-count" style="display:none"></span><div id="ch" style="display:none"></div>
         <div class="cm" id="cm"><div class="es"><div class="es-ico" id="es-i" style="font-family:var(--FJ)">匠</div><div style="font-size:12px;text-align:center;max-width:200px;color:var(--m)">Stel een vraag aan het advisory board</div></div></div>
         <div class="cia">
           <textarea class="ci" id="ci" rows="1" placeholder="Stel je vraag..."
@@ -2495,6 +2486,18 @@ function renderGrid(){
 
   // SECONDARY: warriors van actief element (alleen tonen als element gekozen, niet board)
   var warriorsHtml = '';
+  // Acties-knopjes voor de actieve warrior (geheugen + reset)
+  var actionsHtml = '';
+  if(S.cur && S.cur !== 'board'){
+    var memCount = (S.memoirs[S.cur] || []).length;
+    var memBadge = memCount ? '<span style="font-size:9px;margin-left:3px;color:var(--acc);font-weight:600">'+memCount+'</span>' : '';
+    actionsHtml = '<div class="wa-actions"><button class="wa-act-btn" onclick="showMemoirs()" title="Bekijk geheugen van deze meester" aria-label="Geheugen">脳'+memBadge+'</button><button class="wa-act-btn" onclick="clearChat()" title="Wis huidig gesprek" aria-label="Reset">↺</button></div>';
+  } else if(S.cur === 'board'){
+    var memCount = (S.memoirs.board || []).length;
+    var memBadge = memCount ? '<span style="font-size:9px;margin-left:3px;color:var(--acc);font-weight:600">'+memCount+'</span>' : '';
+    actionsHtml = '<div class="wa-actions"><button class="wa-act-btn" onclick="showMemoirs()" title="Bekijk geheugen" aria-label="Geheugen">脳'+memBadge+'</button><button class="wa-act-btn" onclick="clearChat()" title="Wis huidig gesprek" aria-label="Reset">↺</button></div>';
+  }
+
   if(activeEl !== 'board' && ELEMENTS[activeEl]){
     var warriors = ELEMENTS[activeEl].warriors;
     if(warriors.length > 1){
@@ -2510,8 +2513,14 @@ function renderGrid(){
           '<span class="wa-kanji" style="color:'+w.col+'">'+w.ico+'</span>'+
           '<span class="wa-name">'+shortName+'</span>'+
         '</div>';
-      }).join('') + '</div>';
+      }).join('') + actionsHtml + '</div>';
+    } else {
+      // Element met 1 warrior — toon alleen acties als rij
+      if(actionsHtml) warriorsHtml = '<div class="wa-row" style="justify-content:flex-end">'+actionsHtml+'</div>';
     }
+  } else if(activeEl === 'board') {
+    // Voor Master Council ook de actie-knoppen tonen
+    if(actionsHtml) warriorsHtml = '<div class="wa-row" style="justify-content:flex-end">'+actionsHtml+'</div>';
   }
 
   document.getElementById('ag').innerHTML = '<div class="ag-row-elements">'+elPillsHtml+'</div>' + warriorsHtml;
