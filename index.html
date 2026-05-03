@@ -3471,6 +3471,10 @@ function renderPrimaryGoal(){
   var weekNumber = primary.weekNumber || Math.max(1, Math.floor((Date.now() - (primary.createdAt||Date.now()))/(7*24*60*60*1000)) + 1);
   var warriorShort = leader.warrior?.name?.split(' ')[1] || 'meester';
   var leaderIco = leader.warrior?.ico || '匠';
+  // Nederlandse domein: na het em-streepje in de meester-naam (bijv. "観 Kan — Reflectie" → "Reflectie")
+  var warriorDomain = leader.warrior?.name?.split('—')[1]?.trim() || '';
+  // Voor Master Council: andere woordkeuze
+  if(leader.warrior?.id === 'board') warriorDomain = 'Synthese van vijf';
 
   sec.innerHTML =
     '<div style="padding:28px 0 24px;border-bottom:1px solid var(--b)">'+
@@ -3486,13 +3490,16 @@ function renderPrimaryGoal(){
 
       // Dag-leider in uniforme kaart, geen border-left
       '<div style="padding:16px;background:var(--p2);border:1px solid var(--b);border-radius:12px">'+
-        '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">'+
-          '<span style="font-family:var(--FJ);font-size:16px;color:var(--m)">'+leaderIco+'</span>'+
-          '<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--m)">Vandaag spreekt '+esc(warriorShort)+'</div>'+
+        '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">'+
+          '<span style="font-family:var(--FJ);font-size:18px;color:var(--m);line-height:1;margin-top:1px">'+leaderIco+'</span>'+
+          '<div style="flex:1;min-width:0">'+
+            '<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--m);margin-bottom:2px">Vandaag spreekt</div>'+
+            '<div style="font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.3">'+esc(warriorShort)+(warriorDomain ? ' <span style="font-weight:400;color:var(--m)">· '+esc(warriorDomain)+'</span>' : '')+'</div>'+
+          '</div>'+
         '</div>'+
         '<div id="ck-leader-msg" style="font-size:13.5px;color:var(--ink);line-height:1.6;font-style:italic;font-family:var(--serif);min-height:20px;margin-bottom:14px">Een ogenblik...</div>'+
         '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
-          '<button onclick="askLeaderToday()" style="font-size:11.5px;padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;font-weight:500;display:inline-flex;align-items:center;gap:6px"><span style="font-family:var(--FJ);font-size:13px;line-height:1">'+leaderIco+'</span><span>Vraag '+esc(warriorShort)+' →</span></button>'+
+          '<button onclick="askLeaderToday()" style="font-size:11.5px;padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;font-weight:500;display:inline-flex;align-items:center;gap:6px"><span style="font-family:var(--FJ);font-size:13px;line-height:1">'+leaderIco+'</span><span>Vraag '+esc(warriorShort)+(warriorDomain ? ' ('+esc(warriorDomain)+')' : '')+' →</span></button>'+
           (S.primaryGoalId !== primary.id ? '<button onclick="setPrimaryGoal(\''+primary.id+'\')" style="font-size:11.5px;padding:7px 14px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:14px;cursor:pointer;font-family:inherit">Markeer als spil</button>' : '')+
         '</div>'+
       '</div>'+
