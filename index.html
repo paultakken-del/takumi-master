@@ -354,14 +354,14 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 /* ── ZEN COCKPIT ── */
 .ck-greeting{padding:28px 24px 0;text-align:center}
 /* ── DASHBOARD SECTIES ── */
-.dash-section{padding:24px 4px 28px;border-bottom:1px solid var(--b)}
+.dash-section{padding:24px 0 28px;border-bottom:1px solid var(--b)}
 .dash-section:last-of-type{border-bottom:none}
-.dash-label{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:14px;opacity:.7}
-.dash-primary .dash-label{color:var(--acc);opacity:1}
-.dash-primary{padding-top:32px;padding-bottom:32px}
-.dash-primary #ck-synthese{font-size:16px;line-height:1.7}
-.dash-quiet{padding:18px 4px 22px;background:transparent}
-.dash-quiet .dash-label{opacity:.5}
+.dash-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:14px}
+.dash-primary .dash-label{color:var(--m)}
+.dash-primary{padding-top:28px;padding-bottom:28px}
+.dash-primary #ck-synthese{font-size:15px;line-height:1.7}
+.dash-quiet{padding:18px 0 22px;background:transparent}
+.dash-quiet .dash-label{opacity:.7}
 .ck-time{font-family:var(--FD);font-size:26px;font-weight:300;color:var(--ink);line-height:1.2}
 .ck-date{font-family:var(--F);font-size:11px;color:var(--m);letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
 
@@ -3402,22 +3402,20 @@ function renderCkActions(){
   sec.style.display = 'block';
   list.innerHTML = acts.map(function(a){
     var agent = AGENTS[a.master];
-    var col = agent?.col || 'var(--acc)';
-    // Indicator: 📅 voor geplande, anders niets
     var planLabel = '';
     if(a.kind === 'plan' && a.plannedFor){
       var pd = new Date(a.plannedFor);
       var isPast = a.plannedFor < (Date.now() - 24*60*60*1000);
       if(isPast){
-        planLabel = '<span style="font-size:10px;color:#c4532a;font-weight:500;margin-right:6px">↶ uit '+pd.toLocaleDateString('nl-NL',{day:'numeric',month:'short'})+'</span>';
+        planLabel = '<span style="font-size:10px;color:var(--acc);font-weight:500;margin-right:6px">↶ uit '+pd.toLocaleDateString('nl-NL',{day:'numeric',month:'short'})+'</span>';
       } else {
         planLabel = '<span style="font-size:10px;color:var(--m);margin-right:6px">📅</span>';
       }
     }
-    return '<div onclick="toggleAction(\''+a.id+'\')" style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:'+(a.done?'rgba(58,135,88,.06)':'var(--p2)')+';border:1px solid '+(a.done?'rgba(58,135,88,.2)':'var(--b)')+';border-left:3px solid '+col+';border-radius:8px;cursor:pointer;margin-bottom:6px;transition:all .15s">'+
-      '<div style="font-size:16px;color:'+(a.done?'var(--green,#3a8758)':'var(--m)')+';flex-shrink:0">'+(a.done?'✓':'○')+'</div>'+
-      '<div style="flex:1;font-size:13px;color:var(--ink);line-height:1.4;'+(a.done?'text-decoration:line-through;opacity:.5':'')+'">'+planLabel+esc(a.text)+'</div>'+
-      '<div style="font-family:var(--FJ);font-size:14px;color:'+col+';flex-shrink:0;opacity:.7" title="'+(agent?.name||'')+'">'+(agent?.ico||'匠')+'</div>'+
+    return '<div onclick="toggleAction(\''+a.id+'\')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--p2);border:1px solid var(--b);border-radius:10px;cursor:pointer;margin-bottom:6px;transition:all .15s;'+(a.done?'opacity:.55':'')+'">'+
+      '<div style="font-size:14px;color:'+(a.done?'var(--acc)':'var(--m)')+';flex-shrink:0;font-weight:500">'+(a.done?'✓':'○')+'</div>'+
+      '<div style="flex:1;font-size:13px;color:var(--ink);line-height:1.4;'+(a.done?'text-decoration:line-through':'')+'">'+planLabel+esc(a.text)+'</div>'+
+      '<div style="font-family:var(--FJ);font-size:13px;color:var(--m);flex-shrink:0;opacity:.6" title="'+(agent?.name||'')+'">'+(agent?.ico||'匠')+'</div>'+
     '</div>';
   }).join('');
 }
@@ -3457,42 +3455,41 @@ function renderPrimaryGoal(){
   if(!primary){
     sec.style.display = 'block';
     sec.innerHTML =
-      '<div style="padding:36px 20px;text-align:center;border-bottom:1px solid var(--b);margin-bottom:8px">'+
-        '<div style="font-family:var(--FJ);font-size:38px;color:var(--acc);margin-bottom:18px;opacity:.6">空</div>'+
-        '<div style="font-family:var(--serif);font-size:18px;color:var(--ink);line-height:1.5;margin-bottom:8px;font-style:italic">Begin met een doel.</div>'+
-        '<div style="font-size:13px;color:var(--m);line-height:1.6;margin-bottom:20px;max-width:280px;margin-left:auto;margin-right:auto">Alles wat hierna komt — de meesters, de ritmes, de adviezen — vloeit voort uit jouw richting.</div>'+
-        '<button onclick="go(\'gl\')" style="background:var(--acc);color:#fff;border:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">Stel een doel in →</button>'+
+      '<div style="padding:32px 20px;text-align:center;border-bottom:1px solid var(--b)">'+
+        '<div style="font-family:var(--FJ);font-size:32px;color:var(--m);margin-bottom:16px;opacity:.4">空</div>'+
+        '<div style="font-family:var(--serif);font-size:16px;color:var(--ink);line-height:1.5;margin-bottom:8px;font-style:italic">Begin met een doel.</div>'+
+        '<div style="font-size:12.5px;color:var(--m);line-height:1.6;margin-bottom:18px;max-width:280px;margin-left:auto;margin-right:auto">Alles wat hierna komt vloeit voort uit jouw richting.</div>'+
+        '<button onclick="go(\'gl\')" style="background:var(--acc);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;font-family:inherit">Stel een doel in →</button>'+
       '</div>';
     return;
   }
   sec.style.display = 'block';
-  var leaderColor = leader.warrior?.col || 'var(--acc)';
-  var leaderIco = leader.warrior?.ico || '匠';
   var weekNumber = primary.weekNumber || Math.max(1, Math.floor((Date.now() - (primary.createdAt||Date.now()))/(7*24*60*60*1000)) + 1);
   var warriorShort = leader.warrior?.name?.split(' ')[1] || 'meester';
+  var leaderIco = leader.warrior?.ico || '匠';
+
   sec.innerHTML =
-    '<div style="padding:28px 4px 24px;border-bottom:1px solid var(--b)">'+
-      '<div style="font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);font-weight:500;margin-bottom:12px">Jouw richting</div>'+
-      '<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:18px;cursor:pointer" onclick="openGoal(\''+primary.id+'\')">'+
-        '<div style="font-size:26px;line-height:1;flex-shrink:0">'+(primary.ico||'🎯')+'</div>'+
-        '<div style="flex:1;min-width:0">'+
-          '<div style="font-size:18px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:6px">'+esc(primary.title)+'</div>'+
-          '<div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--m)"><span>Week '+weekNumber+'</span><span>·</span><span style="font-weight:500;color:'+(primary.color||'var(--acc)')+'">'+primary.pct+'% voortgang</span></div>'+
-          '<div style="margin-top:10px;height:4px;background:var(--p2);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+primary.pct+'%;background:'+(primary.color||'var(--acc)')+';transition:width .4s"></div></div>'+
-        '</div>'+
+    '<div style="padding:28px 0 24px;border-bottom:1px solid var(--b)">'+
+      // Header — minimal
+      '<div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:16px">Jouw richting</div>'+
+
+      // Doel — geen kaart, gewoon tekst met progress
+      '<div onclick="openGoal(\''+primary.id+'\')" style="cursor:pointer;margin-bottom:20px">'+
+        '<div style="font-size:20px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:8px">'+esc(primary.title)+'</div>'+
+        '<div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--m);margin-bottom:8px"><span>Week '+weekNumber+'</span><span>·</span><span style="font-weight:500">'+primary.pct+'%</span></div>'+
+        '<div style="height:3px;background:var(--p2);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+primary.pct+'%;background:var(--acc);transition:width .4s"></div></div>'+
       '</div>'+
-      '<div style="padding:14px 16px;background:var(--p2);border-radius:10px;border-left:3px solid '+leaderColor+'">'+
-        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+
-          '<span style="font-family:var(--FJ);font-size:20px;color:'+leaderColor+';line-height:1">'+leaderIco+'</span>'+
-          '<div style="flex:1">'+
-            '<div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--m);margin-bottom:1px">Vandaag spreekt</div>'+
-            '<div style="font-size:13.5px;font-weight:600;color:var(--ink)">'+esc(leader.label)+'</div>'+
-          '</div>'+
+
+      // Dag-leider in uniforme kaart, geen border-left
+      '<div style="padding:16px;background:var(--p2);border:1px solid var(--b);border-radius:12px">'+
+        '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">'+
+          '<span style="font-family:var(--FJ);font-size:16px;color:var(--m)">'+leaderIco+'</span>'+
+          '<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--m)">Vandaag spreekt '+esc(warriorShort)+'</div>'+
         '</div>'+
-        '<div id="ck-leader-msg" style="font-size:13px;color:var(--ink);line-height:1.6;font-style:italic;font-family:var(--serif);min-height:20px">Een ogenblik...</div>'+
-        '<div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap">'+
-          '<button onclick="askLeaderToday()" style="font-size:11.5px;padding:6px 12px;background:'+leaderColor+';color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit">Vraag '+esc(warriorShort)+' →</button>'+
-          (S.primaryGoalId !== primary.id ? '<button onclick="setPrimaryGoal(\''+primary.id+'\')" style="font-size:11.5px;padding:6px 12px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:14px;cursor:pointer;font-family:inherit">Markeer als spil</button>' : '')+
+        '<div id="ck-leader-msg" style="font-size:13.5px;color:var(--ink);line-height:1.6;font-style:italic;font-family:var(--serif);min-height:20px;margin-bottom:14px">Een ogenblik...</div>'+
+        '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+          '<button onclick="askLeaderToday()" style="font-size:11.5px;padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;font-weight:500">Vraag '+esc(warriorShort)+' →</button>'+
+          (S.primaryGoalId !== primary.id ? '<button onclick="setPrimaryGoal(\''+primary.id+'\')" style="font-size:11.5px;padding:7px 14px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:14px;cursor:pointer;font-family:inherit">Markeer als spil</button>' : '')+
         '</div>'+
       '</div>'+
     '</div>';
@@ -3694,35 +3691,32 @@ function renderWeekCouncil(){
 
   sec.style.display = 'block';
   sec.innerHTML =
-    '<div style="padding:24px 18px 22px;margin:0 0 8px;background:linear-gradient(135deg,rgba(196,83,42,.06),rgba(196,83,42,.01));border:1px solid rgba(196,83,42,.18);border-radius:12px;position:relative">'+
-      '<button onclick="dismissCouncil()" style="position:absolute;top:10px;right:10px;background:none;border:none;color:var(--m);font-size:14px;cursor:pointer;padding:4px 8px;opacity:.5" title="Verberg deze week">✕</button>'+
-      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'+
-        '<span style="font-family:var(--FJ);font-size:24px;color:var(--acc)">匠</span>'+
-        '<div>'+
-          '<div style="font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);font-weight:500;margin-bottom:1px">Council deze week</div>'+
-          '<div style="font-size:13px;font-weight:600;color:var(--ink)">Vijf meesters · één richting</div>'+
+    '<div style="padding:20px 16px 18px;margin:0 0 8px;background:var(--p2);border:1px solid var(--b);border-radius:12px;position:relative">'+
+      '<button onclick="dismissCouncil()" style="position:absolute;top:10px;right:10px;background:none;border:none;color:var(--m);font-size:14px;cursor:pointer;padding:4px 8px;opacity:.4" title="Verberg deze week">✕</button>'+
+      '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px">'+
+        '<span style="font-family:var(--FJ);font-size:16px;color:var(--m)">匠</span>'+
+        '<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:500">Council deze week</div>'+
+      '</div>'+
+
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px">'+
+        '<div style="text-align:center;padding:10px 4px;background:var(--bg);border:1px solid var(--b);border-radius:8px">'+
+          '<div style="font-family:var(--FJ);font-size:18px;color:var(--ink);margin-bottom:4px">'+leadEl.kanji+'</div>'+
+          '<div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);font-weight:600;margin-bottom:1px">Leidt</div>'+
+          '<div style="font-size:11px;color:var(--ink);font-weight:500">'+leadEl.name+'</div>'+
+        '</div>'+
+        '<div style="text-align:center;padding:10px 4px;background:var(--bg);border:1px solid var(--b);border-radius:8px">'+
+          '<div style="font-family:var(--FJ);font-size:18px;color:var(--m);margin-bottom:4px">'+supEl.kanji+'</div>'+
+          '<div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:1px">Steunt</div>'+
+          '<div style="font-size:11px;color:var(--ink)">'+supEl.name+'</div>'+
+        '</div>'+
+        '<div style="text-align:center;padding:10px 4px;background:var(--bg);border:1px solid var(--b);border-radius:8px;opacity:.6">'+
+          '<div style="font-family:var(--FJ);font-size:18px;color:var(--m);margin-bottom:4px">'+restEl.kanji+'</div>'+
+          '<div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:1px">Rust</div>'+
+          '<div style="font-size:11px;color:var(--ink)">'+restEl.name+'</div>'+
         '</div>'+
       '</div>'+
 
-      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">'+
-        '<div style="text-align:center;padding:10px 6px;background:var(--p2);border-radius:8px;border-top:2px solid '+leadEl.col+'">'+
-          '<div style="font-family:var(--FJ);font-size:22px;color:'+leadEl.col+';margin-bottom:4px">'+leadEl.kanji+'</div>'+
-          '<div style="font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--m);margin-bottom:1px">Leidt</div>'+
-          '<div style="font-size:11.5px;font-weight:600;color:var(--ink)">'+leadEl.name+'</div>'+
-        '</div>'+
-        '<div style="text-align:center;padding:10px 6px;background:var(--p2);border-radius:8px;border-top:2px solid '+supEl.col+';opacity:.85">'+
-          '<div style="font-family:var(--FJ);font-size:22px;color:'+supEl.col+';margin-bottom:4px">'+supEl.kanji+'</div>'+
-          '<div style="font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--m);margin-bottom:1px">Steunt</div>'+
-          '<div style="font-size:11.5px;font-weight:600;color:var(--ink)">'+supEl.name+'</div>'+
-        '</div>'+
-        '<div style="text-align:center;padding:10px 6px;background:var(--p2);border-radius:8px;border-top:2px solid '+restEl.col+';opacity:.6">'+
-          '<div style="font-family:var(--FJ);font-size:22px;color:'+restEl.col+';margin-bottom:4px">'+restEl.kanji+'</div>'+
-          '<div style="font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--m);margin-bottom:1px">Rust</div>'+
-          '<div style="font-size:11.5px;font-weight:600;color:var(--ink)">'+restEl.name+'</div>'+
-        '</div>'+
-      '</div>'+
-
-      '<div style="font-family:var(--serif);font-size:14px;color:var(--ink);line-height:1.6;font-style:italic;text-align:center">'+esc(c.advice||'')+'</div>'+
+      '<div style="font-family:var(--serif);font-size:13px;color:var(--ink);line-height:1.6;font-style:italic">'+esc(c.advice||'')+'</div>'+
     '</div>';
 }
 
