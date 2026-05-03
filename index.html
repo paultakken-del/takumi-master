@@ -819,32 +819,10 @@ input[type=range]{width:100%;accent-color:var(--acc)}
             <g id="bal-zijn-kanjis"></g>
             <!-- Fū vloeit ertussen — kleine kanji op de wave-lijn -->
             <text id="bal-fu-kanji" font-family="var(--FJ)" font-size="14" text-anchor="middle"></text>
+            <text id="bal-fu-label" font-family="inherit" font-size="9" text-anchor="middle" fill="#a8a39a" opacity=".75" letter-spacing=".5"></text>
           </g>
         </svg>
         <div id="ck-balance-summary" style="font-size:13.5px;color:var(--ink);text-align:center;margin-top:14px;line-height:1.5;font-style:italic;font-family:var(--serif);max-width:280px"></div>
-        <div id="ck-balance-legend" style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;width:100%;max-width:340px;font-size:11px;color:var(--m)">
-          <!-- Doen-kant -->
-          <div style="display:flex;align-items:flex-start;gap:8px">
-            <span style="font-family:var(--FJ);font-size:18px;color:var(--ink);line-height:1;flex-shrink:0;margin-top:1px">地</span>
-            <div><div style="color:var(--ink);font-weight:500;font-size:11.5px">Chi · Aarde</div><div style="opacity:.85">Fundament, structuur</div></div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:8px">
-            <span style="font-family:var(--FJ);font-size:18px;color:var(--ink);line-height:1;flex-shrink:0;margin-top:1px">水</span>
-            <div><div style="color:var(--ink);font-weight:500;font-size:11.5px">Sui · Water</div><div style="opacity:.85">Herstel, flow</div></div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:8px">
-            <span style="font-family:var(--FJ);font-size:18px;color:var(--ink);line-height:1;flex-shrink:0;margin-top:1px">火</span>
-            <div><div style="color:var(--ink);font-weight:500;font-size:11.5px">Ka · Vuur</div><div style="opacity:.85">Energie, actie</div></div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:8px">
-            <span style="font-family:var(--FJ);font-size:18px;color:var(--ink);line-height:1;flex-shrink:0;margin-top:1px">空</span>
-            <div><div style="color:var(--ink);font-weight:500;font-size:11.5px">Kū · Leegte</div><div style="opacity:.85">Reflectie, rust</div></div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:8px;grid-column:1/-1;justify-content:center;padding-top:6px;border-top:1px solid var(--b);margin-top:2px">
-            <span style="font-family:var(--FJ);font-size:18px;color:var(--m);line-height:1;flex-shrink:0;margin-top:1px">風</span>
-            <div><div style="color:var(--ink);font-weight:500;font-size:11.5px">Fū · Wind</div><div style="opacity:.85">Geest, communicatie — vloeit ertussen</div></div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -3738,36 +3716,51 @@ function renderElementBalance(){
   var waveEl = document.getElementById('bal-wave-fill');
   if(waveEl) waveEl.setAttribute('d', wavePath);
 
-  // Plaats kanji's
-  // Doen-kant (licht beige): 地 Chi top, 火 Ka bottom — zwarte kanji
-  var chiSize = 18 + Math.min(20, bal.counts.chi * 1.5);
-  var kaSize = 18 + Math.min(20, bal.counts.ka * 1.5);
+  // Plaats kanji's met romaji + domein-label
+  // Doen-kant (licht beige): 地 Chi top, 火 Ka bottom — zwarte tekst
+  var chiSize = 22 + Math.min(14, bal.counts.chi * 1.2);
+  var kaSize = 22 + Math.min(14, bal.counts.ka * 1.2);
   var doenKanjisEl = document.getElementById('bal-doen-kanjis');
   if(doenKanjisEl){
     doenKanjisEl.innerHTML =
-      '<text x="70" y="92" text-anchor="middle" font-family="var(--FJ)" font-size="'+chiSize+'" fill="#1a1815" opacity=".82">地</text>'+
-      '<text x="70" y="172" text-anchor="middle" font-family="var(--FJ)" font-size="'+kaSize+'" fill="#1a1815" opacity=".82">火</text>';
+      // Chi
+      '<text x="68" y="78" text-anchor="middle" font-family="var(--FJ)" font-size="'+chiSize+'" fill="#1a1815" opacity=".88">地</text>'+
+      '<text x="68" y="98" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#1a1815" opacity=".55" letter-spacing=".5">Chi · Aarde</text>'+
+      // Ka
+      '<text x="68" y="166" text-anchor="middle" font-family="var(--FJ)" font-size="'+kaSize+'" fill="#1a1815" opacity=".88">火</text>'+
+      '<text x="68" y="186" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#1a1815" opacity=".55" letter-spacing=".5">Ka · Vuur</text>';
   }
 
-  // Zijn-kant (zwart): 水 Sui top, 空 Kū bottom — witte kanji
-  var suiSize = 18 + Math.min(20, bal.counts.sui * 1.5);
-  var kuSize = 18 + Math.min(20, bal.counts.ku * 1.5);
+  // Zijn-kant (rood): 水 Sui top, 空 Kū bottom — beige tekst
+  var suiSize = 22 + Math.min(14, bal.counts.sui * 1.2);
+  var kuSize = 22 + Math.min(14, bal.counts.ku * 1.2);
   var zijnKanjisEl = document.getElementById('bal-zijn-kanjis');
   if(zijnKanjisEl){
     zijnKanjisEl.innerHTML =
-      '<text x="170" y="92" text-anchor="middle" font-family="var(--FJ)" font-size="'+suiSize+'" fill="#f0ece4" opacity=".88">水</text>'+
-      '<text x="170" y="172" text-anchor="middle" font-family="var(--FJ)" font-size="'+kuSize+'" fill="#f0ece4" opacity=".88">空</text>';
+      // Sui
+      '<text x="172" y="78" text-anchor="middle" font-family="var(--FJ)" font-size="'+suiSize+'" fill="#f0ece4" opacity=".95">水</text>'+
+      '<text x="172" y="98" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#f0ece4" opacity=".7" letter-spacing=".5">Sui · Water</text>'+
+      // Ku
+      '<text x="172" y="166" text-anchor="middle" font-family="var(--FJ)" font-size="'+kuSize+'" fill="#f0ece4" opacity=".95">空</text>'+
+      '<text x="172" y="186" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#f0ece4" opacity=".7" letter-spacing=".5">Kū · Leegte</text>';
   }
 
-  // Fū kanji op de wave (vloeit ertussen) — neutraal grijs, zichtbaar tegen beide
+  // Fū kanji op de wave (vloeit ertussen) met label eronder
   var fuEl = document.getElementById('bal-fu-kanji');
   if(fuEl){
-    var fuSize = 12 + Math.min(8, bal.counts.fu * 1.2);
+    var fuSize = 14 + Math.min(8, bal.counts.fu * 1.2);
     fuEl.setAttribute('font-size', fuSize);
     fuEl.setAttribute('x', waveCenterX);
-    fuEl.setAttribute('y', 124);
+    fuEl.setAttribute('y', 122);
     fuEl.setAttribute('fill', '#a8a39a');
     fuEl.textContent = '風';
+  }
+  // Fū label
+  var fuLblEl = document.getElementById('bal-fu-label');
+  if(fuLblEl){
+    fuLblEl.setAttribute('x', waveCenterX);
+    fuLblEl.setAttribute('y', 138);
+    fuLblEl.textContent = 'Fū · Wind';
   }
 
   // Korte samenvatting — geen percentages
