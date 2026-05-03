@@ -2643,7 +2643,11 @@ function selElement(eid){
 })();
 
 function selAg(id){
-  S.cur=id;renderGrid();renderChat();
+  S.cur=id;
+  // Verlaat grid-mode — toon de chat-view in plaats van elementen-grid
+  var bo = document.getElementById('v-bo');
+  if(bo) bo.classList.remove('grid-mode');
+  renderGrid();renderChat();
   const a=AGENTS[id];
   const shortName=a.id==='board'?'Master Council':(a.name.split('—')[1]?.trim()||a.name);
   const avatar=document.getElementById('ch-avatar');
