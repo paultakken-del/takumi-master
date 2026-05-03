@@ -2650,6 +2650,8 @@ function selAg(id){
   renderGrid();renderChat();
   const a=AGENTS[id];
   const shortName=a.id==='board'?'Master Council':(a.name.split('—')[1]?.trim()||a.name);
+  // Warrior naam = stuk vóór em-streep zonder kanji-prefix (bijv. "財 Zai — Financieel" → "Zai")
+  const warriorName = a.id==='board' ? '' : (a.name.split('—')[0]?.replace(/^[^\s]+\s*/,'').trim() || '');
   const avatar=document.getElementById('ch-avatar');
   if(avatar){avatar.textContent=a.ico;avatar.style.background=a.col;}
   // Memoir badge update
@@ -2665,8 +2667,8 @@ function selAg(id){
   }
   var btnCount = document.getElementById('btn-mem-count');
   if(btnCount) btnCount.textContent = memCount ? memCount : '';
-  document.getElementById('ch-n').textContent=shortName;
-  document.getElementById('ch-d').textContent=a.id==='board'?'Vijf Godai meesters · volledige synthese':a.dom;
+  document.getElementById('ch-n').textContent=a.id==='board' ? 'Master Council' : (warriorName || shortName);
+  document.getElementById('ch-d').textContent=a.id==='board' ? 'Vijf Godai meesters · volledige synthese' : shortName;
   const ch=document.getElementById('ch');
   if(ch)ch.style.borderBottomColor=a.col;
   var _esi=document.getElementById('es-i');if(_esi){_esi.textContent=a.ico;_esi.style.color=a.col;_esi.style.opacity='1';}
