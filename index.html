@@ -524,7 +524,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 }
 
 /* Tweede laag: warrior-chips */
-.wa-row{display:flex;gap:6px;flex-wrap:wrap;padding-top:4px;border-top:1px dashed var(--b);align-items:center}
+.wa-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .wa-actions{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
 .wa-act-btn{background:transparent;border:1px solid var(--b);border-radius:14px;padding:5px 10px;font-size:11.5px;color:var(--m);cursor:pointer;font-family:var(--FJ);line-height:1;transition:all .15s;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center}
 .wa-act-btn:hover{border-color:var(--acc);color:var(--acc)}
@@ -2523,7 +2523,11 @@ function renderGrid(){
     if(actionsHtml) warriorsHtml = '<div class="wa-row" style="justify-content:flex-end">'+actionsHtml+'</div>';
   }
 
-  document.getElementById('ag').innerHTML = '<div class="ag-row-elements">'+elPillsHtml+'</div>' + warriorsHtml;
+  document.getElementById('ag').innerHTML =
+    '<div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--m);margin-bottom:6px;padding:0 2px;font-weight:500;opacity:.7">Elementen</div>'+
+    '<div class="ag-row-elements">'+elPillsHtml+'</div>'+
+    (warriorsHtml ? '<div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--m);margin-top:10px;margin-bottom:6px;padding:0 2px;font-weight:500;opacity:.7">'+(activeEl !== 'board' && ELEMENTS[activeEl] ? 'Krijgers van '+ELEMENTS[activeEl].name : 'Acties')+'</div>' : '')+
+    warriorsHtml;
 
   // Dag-context boven pillen — geen breadcrumb meer, wel tijdsbesef
   var ctxEl = document.getElementById('agw-context');
@@ -3736,8 +3740,8 @@ function renderWeekCouncil(){
       '</div>'+
 
       '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px">'+
-        '<div style="text-align:center;padding:10px 4px;background:var(--bg);border:1px solid var(--b);border-radius:8px">'+
-          '<div style="font-family:var(--FJ);font-size:18px;color:var(--ink);margin-bottom:4px">'+leadEl.kanji+'</div>'+
+        '<div style="text-align:center;padding:10px 4px;background:var(--bg);border:1px solid '+leadEl.col+';border-radius:8px">'+
+          '<div style="font-family:var(--FJ);font-size:18px;color:'+leadEl.col+';margin-bottom:4px">'+leadEl.kanji+'</div>'+
           '<div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);font-weight:600;margin-bottom:1px">Leidt</div>'+
           '<div style="font-size:11px;color:var(--ink);font-weight:500">'+leadEl.name+'</div>'+
         '</div>'+
