@@ -3532,11 +3532,14 @@ function setPrimaryGoal(gid){
 function askLeaderToday(){
   var leader = getDayLeader();
   if(!leader.warrior) return;
-  go('bo');
-  setTimeout(function(){
-    selAg(leader.warrior.id);
-    if(typeof showChat === 'function') showChat();
-  }, 100);
+  // Direct naar de chat-view zonder grid-mode flash
+  document.querySelectorAll('[data-v]').forEach(function(el){ el.classList.toggle('on', el.dataset.v === 'bo'); });
+  var v = document.getElementById('v-bo');
+  if(v){ v.classList.add('on'); v.classList.remove('grid-mode'); }
+  // Hide alle andere views
+  document.querySelectorAll('.view').forEach(function(el){ if(el.id !== 'v-bo') el.classList.remove('on'); });
+  selAg(leader.warrior.id);
+  if(typeof markVandaag === 'function') markVandaag('bo');
 }
 
 // ── MEER VOOR VANDAAG ──────────────────────────────────────────────
