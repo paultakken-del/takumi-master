@@ -1035,6 +1035,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div id="dj-content" style="max-width:600px;margin:0 auto;padding:0 4px">
       <!-- Intro -->
       <div id="dj-intro">
+        <!-- Terugkomvraag — verschijnt als er een oud gesprek is -->
+        <div id="dj-return-question" style="display:none"></div>
+
         <div style="text-align:center;padding:20px 12px 32px">
           <div style="font-family:var(--FJ);font-size:42px;color:var(--ink);opacity:.7;margin-bottom:18px">道</div>
           <div style="font-family:var(--serif);font-size:17px;color:var(--ink);line-height:1.6;font-style:italic;max-width:440px;margin:0 auto 12px">"Niet AI die alles weet. Vijf stemmen die je leren beter te zien."</div>
@@ -1053,13 +1056,14 @@ input[type=range]{width:100%;accent-color:var(--acc)}
           </div>
         </div>
 
-        <!-- Toekomstige oefeningen — placeholder -->
-        <div style="padding:20px 18px;background:transparent;border:1px dashed var(--b);border-radius:14px;margin-bottom:14px;opacity:.55">
+        <!-- Oefening 2: Element-portretten -->
+        <div onclick="openElementPortraits()" style="padding:22px 20px;background:var(--p2);border:1px solid var(--b);border-radius:14px;cursor:pointer;transition:all .15s;margin-bottom:14px" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--b)'">
           <div style="display:flex;align-items:flex-start;gap:14px">
-            <div style="font-family:var(--FJ);font-size:24px;color:var(--m);line-height:1;flex-shrink:0">五</div>
+            <div style="font-family:var(--FJ);font-size:28px;color:var(--acc);line-height:1;flex-shrink:0">五</div>
             <div style="flex:1">
-              <div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px">Element-portretten</div>
-              <div style="font-size:12px;color:var(--m);line-height:1.5">Wat heb jij geleerd over Chi, Sui, Fū, Ka en Kū door je gesprekken? Komt later.</div>
+              <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:6px">Element-portretten</div>
+              <div style="font-size:13px;color:var(--m);line-height:1.6;margin-bottom:10px">Wat heb jij geleerd over Chi, Sui, Fū, Ka en Kū door je gesprekken? Een portret per element, gevuld door jouw eigen geschiedenis.</div>
+              <div style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--acc);font-weight:500">Open portretten <svg class="ico ico-sm" style="color:var(--acc)"><use href="#i-arrow-right"/></svg></div>
             </div>
           </div>
         </div>
@@ -1262,8 +1266,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <nav id="mob"><div class="mn2">
   <div class="mi2 on" data-v="ck"><div class="mico">⬡</div><div class="mlb">Cockpit</div></div>
   <div class="mi2" data-v="bo"><div class="mico">◈</div><div class="mlb">Raad</div></div>
+  <div class="mi2" data-v="dj"><div class="mico" style="font-family:var(--FJ)">道</div><div class="mlb">Dojo</div></div>
   <div class="mi2" data-v="gl"><div class="mico">◇</div><div class="mlb">Doelen</div></div>
-  <div class="mi2" data-v="da"><div class="mico">▤</div><div class="mlb">Data</div></div>
   <div class="mi2" data-v="ri"><div class="mico">習</div><div class="mlb">Rituelen</div></div>
 </div></nav>
 
@@ -4373,6 +4377,48 @@ function renderDojoHistory(){
   var hist = ls('tm2_dojo_history', []);
   S.dojoHistory = hist;
   var box = document.getElementById('dj-history');
+  var returnBox = document.getElementById('dj-return-question');
+
+  // Terugkomvraag: oudste niet-revisited gesprek van 7+ dagen geleden
+  if(returnBox){
+    var now = Date.now();
+    var weekAgo = now - 7*24*60*60*1000;
+    var monthAgo = now - 30*24*60*60*1000;
+    var dismissedReturns = ls('tm2_dojo_returns_dismissed', []);
+    var returnable = hist.filter(function(h){
+      var t = h.completedAt || h.startedAt;
+      return t < weekAgo && t > monthAgo && dismissedReturns.indexOf(h.id) === -1 && !h.revisitedAt;
+    });
+    if(returnable.length > 0){
+      var entry = returnable[0]; // oudste eerst (al gesorteerd, hist is unshifted)
+      var t = entry.completedAt || entry.startedAt;
+      var daysAgo = Math.floor((now - t) / (24*60*60*1000));
+      var timeAgo;
+      if(daysAgo < 14) timeAgo = daysAgo+' dagen geleden';
+      else if(daysAgo < 21) timeAgo = 'twee weken geleden';
+      else timeAgo = 'drie weken geleden';
+      returnBox.style.display = 'block';
+      returnBox.innerHTML =
+        '<div style="padding:18px 20px;margin-bottom:12px;background:linear-gradient(135deg,rgba(196,83,42,.06),rgba(196,83,42,.01));border:1px solid rgba(196,83,42,.22);border-radius:14px">'+
+          '<div style="display:flex;align-items:flex-start;gap:12px">'+
+            '<div style="font-family:var(--FJ);font-size:24px;color:var(--acc);line-height:1;flex-shrink:0;margin-top:2px">問</div>'+
+            '<div style="flex:1">'+
+              '<div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:6px">Terugkomvraag</div>'+
+              '<div style="font-family:var(--serif);font-size:14.5px;color:var(--ink);line-height:1.6;font-style:italic;margin-bottom:4px">"'+esc(entry.question)+'"</div>'+
+              '<div style="font-size:11.5px;color:var(--m);margin-bottom:12px">'+timeAgo+' — hoe staat het er nu mee?</div>'+
+              '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+                '<button onclick="revisitDojoEntry(\''+entry.id+'\')" style="padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;font-size:11.5px;font-weight:500">Open gesprek</button>'+
+                '<button onclick="dismissDojoReturn(\''+entry.id+'\')" style="padding:7px 14px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:14px;cursor:pointer;font-family:inherit;font-size:11.5px">Niet nu</button>'+
+              '</div>'+
+            '</div>'+
+          '</div>'+
+        '</div>';
+    } else {
+      returnBox.style.display = 'none';
+      returnBox.innerHTML = '';
+    }
+  }
+
   if(!box) return;
   if(!hist.length){
     box.innerHTML = '';
@@ -4388,6 +4434,27 @@ function renderDojoHistory(){
         '<div style="font-size:13px;color:var(--ink);line-height:1.4">'+esc(preview)+(h.question.length > 80 ? '...' : '')+'</div>'+
       '</div>';
     }).join('');
+}
+
+function dismissDojoReturn(entryId){
+  var dismissed = ls('tm2_dojo_returns_dismissed', []);
+  if(dismissed.indexOf(entryId) === -1){
+    dismissed.push(entryId);
+    lsSet('tm2_dojo_returns_dismissed', dismissed);
+  }
+  renderDojoHistory();
+}
+
+function revisitDojoEntry(entryId){
+  // Markeer als revisited en open het oude gesprek
+  var hist = ls('tm2_dojo_history', []);
+  var entry = hist.find(function(h){ return h.id === entryId; });
+  if(entry){
+    entry.revisitedAt = Date.now();
+    lsSet('tm2_dojo_history', hist);
+    S.dojoHistory = hist;
+  }
+  openDojoEntry(entryId);
 }
 
 function openDojoEntry(id){
@@ -4430,6 +4497,211 @@ function openDojoEntry(id){
     '<div style="display:flex;gap:8px;margin-top:24px;justify-content:flex-end">'+
       '<button onclick="endTransformatief()" style="padding:10px 18px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px">← Terug</button>'+
     '</div>';
+}
+
+// ── DOJO — ELEMENT-PORTRETTEN ──────────────────────────────────────
+// Per element een portret: wat heb jij door Takumi geleerd over Chi/Sui/Fū/Ka/Kū?
+
+var ELEMENT_PORTRAITS = [
+  {id:'chi', kanji:'地', name:'Chi', dom:'Aarde', sub:'Fundament', warriors:['strategic','finance','routine'], desc:'Wat draagt onder. Structuur, strategie, ritme. Aarde leert je: zonder fundament geen verandering.'},
+  {id:'sui', kanji:'水', name:'Sui', dom:'Water', sub:'Flow',      warriors:['health','reflection','learning'], desc:'Wat stroomt en herstelt. Water past zich aan, maar bereikt zijn doel. Sui leert je: geef ruimte aan wat onder de oppervlakte stroomt.'},
+  {id:'fu',  kanji:'風', name:'Fū',  dom:'Wind',  sub:'Geest',     warriors:['writing','relationship','engagement'], desc:'Wat verbindt en verandert. Wind beweegt, breekt aannames open. Fū leert je: zien wat tussen mensen gebeurt.'},
+  {id:'ka',  kanji:'火', name:'Ka',  dom:'Vuur',  sub:'Energie',   warriors:['productivity','decision','digital'], desc:'Wat brandt en handelt. Vuur eist actie nu. Ka leert je: het juiste moment komt zelden terug.'},
+  {id:'ku',  kanji:'空', name:'Kū',  dom:'Leegte', sub:'Synthese', warriors:['board'], desc:'Wat alles draagt zonder te zijn. Leegte spreekt zelden, maar wanneer ze spreekt is het wezenlijk. Kū leert je: niet alles hoeft gevuld.'}
+];
+
+function openElementPortraits(){
+  document.getElementById('dj-intro').style.display = 'none';
+  var box = document.getElementById('dj-active');
+  box.style.display = 'block';
+
+  // Bereken statistieken per element
+  var stats = {};
+  ELEMENT_PORTRAITS.forEach(function(ep){
+    var memCount = 0;
+    var actDone = 0;
+    var actTotal = 0;
+    ep.warriors.forEach(function(wid){
+      memCount += (S.memoirs[wid] || []).length;
+    });
+    (S.actions || []).forEach(function(a){
+      if(ep.warriors.indexOf(a.master) !== -1){
+        actTotal++;
+        if(a.done) actDone++;
+      }
+    });
+    // Transformatieve antwoorden waarin dit element antwoord gaf
+    var dojoAnswers = 0;
+    (S.dojoHistory || ls('tm2_dojo_history', [])).forEach(function(h){
+      (h.answers || []).forEach(function(a){
+        if(a.element === ep.id) dojoAnswers++;
+      });
+    });
+    stats[ep.id] = {memCount: memCount, actDone: actDone, actTotal: actTotal, dojoAnswers: dojoAnswers};
+  });
+
+  box.innerHTML =
+    '<div style="text-align:center;padding:14px 12px 28px">'+
+      '<div style="font-family:var(--FJ);font-size:38px;color:var(--ink);opacity:.7;margin-bottom:12px">五</div>'+
+      '<div style="font-family:var(--serif);font-size:17px;font-style:italic;color:var(--ink);line-height:1.5;margin-bottom:6px">Vijf elementen, vijf portretten</div>'+
+      '<div style="font-size:12.5px;color:var(--m);line-height:1.6;max-width:440px;margin:0 auto">Wat jij hebt geleerd, opgeschreven, gevraagd. Klik op een element om jouw portret ervan te zien.</div>'+
+    '</div>'+
+
+    '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">'+
+      ELEMENT_PORTRAITS.map(function(ep){
+        var s = stats[ep.id];
+        var totalActivity = s.memCount + s.actDone + s.dojoAnswers;
+        var statText;
+        if(totalActivity === 0) statText = 'Nog onaangeraakt';
+        else statText = s.memCount+' herinnering'+(s.memCount===1?'':'en')+' · '+s.actDone+'/'+s.actTotal+' acties · '+s.dojoAnswers+' dojo-antwoord'+(s.dojoAnswers===1?'':'en');
+        return '<div onclick="openElementPortrait(\''+ep.id+'\')" style="padding:18px 20px;background:var(--p2);border:1px solid var(--b);border-radius:12px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor=\'var(--acc)\'" onmouseout="this.style.borderColor=\'var(--b)\'">'+
+          '<div style="display:flex;align-items:flex-start;gap:14px">'+
+            '<div style="font-family:var(--FJ);font-size:30px;color:var(--ink);opacity:'+(totalActivity > 0 ? '0.92' : '0.4')+';line-height:1;flex-shrink:0;width:40px;text-align:center">'+ep.kanji+'</div>'+
+            '<div style="flex:1;min-width:0">'+
+              '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px">'+
+                '<span style="font-size:15px;font-weight:600;color:var(--ink)">'+ep.name+'</span>'+
+                '<span style="font-size:11px;color:var(--m)">· '+ep.dom+' · '+ep.sub+'</span>'+
+              '</div>'+
+              '<div style="font-size:11px;color:var(--m);font-weight:500;letter-spacing:.04em">'+statText+'</div>'+
+            '</div>'+
+            '<svg class="ico ico-sm" style="color:var(--m);flex-shrink:0;margin-top:6px"><use href="#i-arrow-right"/></svg>'+
+          '</div>'+
+        '</div>';
+      }).join('')+
+    '</div>'+
+
+    '<div style="display:flex;gap:8px;justify-content:flex-end">'+
+      '<button onclick="endTransformatief()" style="padding:10px 18px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px">← Terug</button>'+
+    '</div>';
+}
+
+async function openElementPortrait(elementId){
+  var ep = ELEMENT_PORTRAITS.find(function(e){ return e.id === elementId; });
+  if(!ep) return;
+
+  document.getElementById('dj-intro').style.display = 'none';
+  var box = document.getElementById('dj-active');
+  box.style.display = 'block';
+
+  // Verzamel alle relevante data
+  var memoirs = [];
+  ep.warriors.forEach(function(wid){
+    (S.memoirs[wid] || []).forEach(function(m){
+      memoirs.push({warrior: wid, summary: m.summary, t: m.t});
+    });
+  });
+  memoirs.sort(function(a,b){ return b.t - a.t; });
+
+  var dojoAnswers = [];
+  (S.dojoHistory || ls('tm2_dojo_history', [])).forEach(function(h){
+    (h.answers || []).forEach(function(a){
+      if(a.element === ep.id){
+        dojoAnswers.push({question: a.question, answer: a.answer, sourceQ: h.question, t: h.startedAt});
+      }
+    });
+  });
+  dojoAnswers.sort(function(a,b){ return b.t - a.t; });
+
+  var actions = (S.actions || []).filter(function(a){ return ep.warriors.indexOf(a.master) !== -1; });
+  var actDone = actions.filter(function(a){ return a.done; });
+
+  // Render skelet met loading state voor AI-inzicht
+  box.innerHTML =
+    '<div style="text-align:center;padding:18px 12px 24px">'+
+      '<div style="font-family:var(--FJ);font-size:54px;color:var(--ink);margin-bottom:8px">'+ep.kanji+'</div>'+
+      '<div style="font-size:18px;font-weight:600;color:var(--ink);margin-bottom:2px">'+ep.name+'</div>'+
+      '<div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:600">'+ep.dom+' · '+ep.sub+'</div>'+
+    '</div>'+
+
+    '<div style="padding:16px 18px;background:var(--p2);border:1px solid var(--b);border-radius:12px;margin-bottom:18px">'+
+      '<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:8px">Wat dit element is</div>'+
+      '<div style="font-family:var(--serif);font-size:14px;color:var(--ink);line-height:1.6;font-style:italic">'+esc(ep.desc)+'</div>'+
+    '</div>'+
+
+    // Stat-strip
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px">'+
+      '<div style="text-align:center;padding:14px 6px;background:var(--p2);border:1px solid var(--b);border-radius:10px">'+
+        '<div style="font-size:18px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums">'+memoirs.length+'</div>'+
+        '<div style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--m);margin-top:3px">Herinneringen</div>'+
+      '</div>'+
+      '<div style="text-align:center;padding:14px 6px;background:var(--p2);border:1px solid var(--b);border-radius:10px">'+
+        '<div style="font-size:18px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums">'+actDone.length+'<span style="font-size:11px;color:var(--m);font-weight:400">/'+actions.length+'</span></div>'+
+        '<div style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--m);margin-top:3px">Acties</div>'+
+      '</div>'+
+      '<div style="text-align:center;padding:14px 6px;background:var(--p2);border:1px solid var(--b);border-radius:10px">'+
+        '<div style="font-size:18px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums">'+dojoAnswers.length+'</div>'+
+        '<div style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--m);margin-top:3px">Dojo</div>'+
+      '</div>'+
+    '</div>'+
+
+    '<div id="ep-insight" style="padding:18px 20px;background:linear-gradient(135deg,rgba(196,83,42,.04),rgba(196,83,42,.01));border:1px solid rgba(196,83,42,.18);border-radius:12px;margin-bottom:18px;min-height:80px">'+
+      '<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:8px">Wat jij geleerd hebt</div>'+
+      '<div id="ep-insight-text" style="font-family:var(--serif);font-size:14.5px;color:var(--ink);line-height:1.7;font-style:italic">'+
+        (memoirs.length + dojoAnswers.length === 0
+          ? 'Je hebt '+ep.name+' nog niet aangeraakt. Eerste gesprek is altijd de scherpste leraar.'
+          : ep.name+' bezint zich over wat jij hebt gedeeld...')+
+      '</div>'+
+    '</div>'+
+
+    // Recente herinneringen
+    (memoirs.length > 0 ?
+      '<div style="margin-bottom:18px">'+
+        '<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:10px">Recente herinneringen</div>'+
+        memoirs.slice(0, 4).map(function(m){
+          var w = AGENTS[m.warrior];
+          var wname = w?.name?.split(' ')[1] || m.warrior;
+          return '<div style="padding:12px 14px;margin-bottom:6px;background:var(--p2);border-left:2px solid var(--b);border-radius:0 8px 8px 0">'+
+            '<div style="font-size:10px;color:var(--m);letter-spacing:.04em;margin-bottom:4px">'+wname+' · '+new Date(m.t).toLocaleDateString('nl-NL',{day:'numeric',month:'short'})+'</div>'+
+            '<div style="font-size:13px;color:var(--ink);line-height:1.5">'+esc(m.summary)+'</div>'+
+          '</div>';
+        }).join('')+
+      '</div>'
+    : '')+
+
+    '<div style="display:flex;gap:8px;justify-content:flex-end">'+
+      '<button onclick="openElementPortraits()" style="padding:10px 18px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px">← Alle elementen</button>'+
+    '</div>';
+
+  // Async: AI-inzicht genereren als er materiaal is
+  if(memoirs.length + dojoAnswers.length > 0){
+    generateElementInsight(ep, memoirs, dojoAnswers);
+  }
+}
+
+async function generateElementInsight(ep, memoirs, dojoAnswers){
+  // Cache per dag (max 1x per dag genereren per element)
+  var dayKey = new Date().toISOString().slice(0,10);
+  var cacheKey = 'tm2_element_insight_' + dayKey + '_' + ep.id;
+  var cached = ls(cacheKey, null);
+  var insightEl = document.getElementById('ep-insight-text');
+  if(!insightEl) return;
+  if(cached){ insightEl.textContent = cached; return; }
+
+  // Bouw context — laatste 8 memoirs + alle dojo-antwoorden
+  var memText = memoirs.slice(0, 8).map(function(m){ return '- '+m.summary; }).join('\n');
+  var dojoText = dojoAnswers.slice(0, 5).map(function(d){ return '- (over: "'+d.sourceQ+'") '+d.answer; }).join('\n');
+
+  var prompt = 'Je bent het '+ep.name+'-element van de Godai (Musashi\'s Go Rin No Sho), domein "'+ep.dom+' · '+ep.sub+'". Hieronder staan herinneringen uit gesprekken met de gebruiker — niet wat jij hebt gezegd, maar wat de gebruiker heeft gedeeld of geantwoord — gerelateerd aan jouw element.\n\n'+
+    (memText ? 'Herinneringen uit gesprekken:\n'+memText+'\n\n' : '') +
+    (dojoText ? 'Dojo-antwoorden (transformatieve gesprekken):\n'+dojoText+'\n\n' : '') +
+    'Schrijf 2-4 zinnen Nederlands die spiegelen wat de gebruiker over jouw element heeft geleerd. NIET algemeen wijs over '+ep.name+'. Wel specifiek: welk patroon zie je in wat ze gedeeld hebben? Welk thema komt terug? Spreek de gebruiker aan met "je", in een rustige, observerende toon. Geen aanhalingstekens om eigen tekst. Begin met een waarneming, niet met inleiding. Max 60 woorden.';
+
+  try {
+    var res = await fetch('/api/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:250,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok) throw new Error();
+    var j = await res.json();
+    var txt = j.content?.[0]?.text?.trim();
+    if(!txt) throw new Error();
+    txt = txt.replace(/^["'""]|["'""]$/g,'').trim();
+    insightEl.textContent = txt;
+    lsSet(cacheKey, txt);
+  } catch(e){
+    insightEl.textContent = ep.name + ' is even stil. Kom later terug.';
+  }
 }
 
 // ── MEER VOOR VANDAAG ──────────────────────────────────────────────
