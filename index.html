@@ -702,6 +702,8 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div class="sb-sec">Strategie</div>
     <div class="ni" data-v="gl"><span class="ico">◇</span>Doelen</div>
     <div class="ni" data-v="wc"><span class="ico">○</span>Wereldcontext</div>
+    <div class="sb-sec">Oefenen</div>
+    <div class="ni" data-v="dj"><span class="ico" style="font-family:var(--FJ)">道</span>Dojo</div>
     <div class="sb-sec">Data</div>
     <div class="ni" data-v="da"><span class="ico">▤</span>Data Hub</div>
     <a id="admin-link" href="/admin/users" target="_blank" style="display:none;align-items:center;gap:10px;padding:8px 16px;font-size:13px;color:rgba(255,255,255,.55);text-decoration:none;border-radius:8px" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='none'"><span style="font-size:14px">👥</span>Gebruikers</a>
@@ -1019,6 +1021,67 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <div class="view" id="v-gl">
   <div class="tb"><div><div class="tb-t">Strategische Doelen <span style="font-family:var(--FJ);font-weight:300;color:var(--gold)">配</span></div><div class="tb-s" id="g-sub">laden...</div></div><div style="display:flex;align-items:center;gap:10px"><div id="snoei-indicator" style="font-size:11px;color:var(--m)"></div><button class="btn sm pri" onclick="checkSnoei()">+ Nieuw doel</button></div></div>
   <div class="vs"><div class="gg" id="gg"></div></div>
+</div>
+
+<!-- DOJO — oefenruimte voor de Godai -->
+<div class="view" id="v-dj">
+  <div class="tb">
+    <div>
+      <div class="tb-t" style="display:flex;align-items:baseline;gap:8px"><span style="font-family:var(--FJ);font-weight:300;color:var(--ink)">道</span>Dojo</div>
+      <div class="tb-s">Leer spelen met de elementen</div>
+    </div>
+  </div>
+  <div class="vs">
+    <div id="dj-content" style="max-width:600px;margin:0 auto;padding:0 4px">
+      <!-- Intro -->
+      <div id="dj-intro">
+        <div style="text-align:center;padding:20px 12px 32px">
+          <div style="font-family:var(--FJ);font-size:42px;color:var(--ink);opacity:.7;margin-bottom:18px">道</div>
+          <div style="font-family:var(--serif);font-size:17px;color:var(--ink);line-height:1.6;font-style:italic;max-width:440px;margin:0 auto 12px">"Niet AI die alles weet. Vijf stemmen die je leren beter te zien."</div>
+          <div style="font-size:13px;color:var(--m);line-height:1.7;max-width:440px;margin:0 auto">De dojo is een oefenruimte. Geen advies, geen voortgang — alleen het slijpen van je waarneming. Welke vraag heb je vandaag te dragen?</div>
+        </div>
+
+        <!-- Oefening 1: Transformatief gesprek -->
+        <div onclick="startTransformatief()" style="padding:22px 20px;background:var(--p2);border:1px solid var(--b);border-radius:14px;cursor:pointer;transition:all .15s;margin-bottom:14px" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--b)'">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="font-family:var(--FJ);font-size:28px;color:var(--acc);line-height:1;flex-shrink:0">問</div>
+            <div style="flex:1">
+              <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:6px">Transformatief gesprek</div>
+              <div style="font-size:13px;color:var(--m);line-height:1.6;margin-bottom:10px">Voor vragen waar geen advies bij past. Vier elementen, vier vragen, één spiegel. Zo leer je welke stem nu spreekt.</div>
+              <div style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--acc);font-weight:500">Begin oefening <svg class="ico ico-sm" style="color:var(--acc)"><use href="#i-arrow-right"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toekomstige oefeningen — placeholder -->
+        <div style="padding:20px 18px;background:transparent;border:1px dashed var(--b);border-radius:14px;margin-bottom:14px;opacity:.55">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="font-family:var(--FJ);font-size:24px;color:var(--m);line-height:1;flex-shrink:0">五</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px">Element-portretten</div>
+              <div style="font-size:12px;color:var(--m);line-height:1.5">Wat heb jij geleerd over Chi, Sui, Fū, Ka en Kū door je gesprekken? Komt later.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:20px 18px;background:transparent;border:1px dashed var(--b);border-radius:14px;opacity:.55">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="font-family:var(--FJ);font-size:24px;color:var(--m);line-height:1;flex-shrink:0">観</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px">Leesraster oefenen</div>
+              <div style="font-size:12px;color:var(--m);line-height:1.5">Krijg een situatie, leer welk element domineert. Komt later.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Geschiedenis van transformatieve gesprekken -->
+        <div id="dj-history" style="margin-top:32px"></div>
+      </div>
+
+      <!-- Actief gesprek (verborgen tot gestart) -->
+      <div id="dj-active" style="display:none"></div>
+    </div>
+  </div>
 </div>
 
 <!-- WORLD CONTEXT -->
@@ -1991,6 +2054,7 @@ function go(id){
   if(id==='bo'){renderGrid();renderChat();upCtx();upLearn();showGoGrid();markVandaag('bo');}
   if(id==='dy'){initPulse();markVandaag('dy');}
   if(id==='gl')renderGoals();
+  if(id==='dj'){ if(typeof renderDojoHistory === 'function') renderDojoHistory(); }
   if(id==='rt'){go_rt();}
   if(id==='ri'){go_ri();markVandaag('ri');}
 }
@@ -4060,6 +4124,312 @@ function openAppointment(aptId){
     if(typeof renderChat === 'function') renderChat();
     renderAppointments();
   }, 200);
+}
+
+// ── DOJO — TRANSFORMATIEF GESPREK ───────────────────────────────────
+// Vier elementen vragen één vraag elk, dan synthese.
+// Geen advies — een spiegel uit jouw eigen antwoorden.
+
+// Vier elementen + hun vragen-prompt voor deze oefening
+var DOJO_ELEMENTS = [
+  {id:'chi', kanji:'地', name:'Chi', warrior:'Ryaku', domein:'Aarde · Fundament', col:'var(--ink)'},
+  {id:'sui', kanji:'水', name:'Sui', warrior:'Kan',   domein:'Water · Reflectie', col:'var(--ink)'},
+  {id:'fu',  kanji:'風', name:'Fū',  warrior:'En',    domein:'Wind · Verbinding', col:'var(--ink)'},
+  {id:'ka',  kanji:'火', name:'Ka',  warrior:'Hataraki', domein:'Vuur · Energie', col:'var(--ink)'}
+];
+
+function startTransformatief(){
+  // Init nieuw gesprek
+  S.dojoActive = {
+    id: 'tg_' + Date.now(),
+    startedAt: Date.now(),
+    initialQuestion: null,
+    answers: [], // {element, question, answer}
+    synthesis: null,
+    step: 0
+  };
+  document.getElementById('dj-intro').style.display = 'none';
+  document.getElementById('dj-active').style.display = 'block';
+  renderDojoStep();
+}
+
+function renderDojoStep(){
+  var dj = S.dojoActive;
+  if(!dj) return;
+  var box = document.getElementById('dj-active');
+
+  // Stap 0: vraag de initiële vraag
+  if(dj.step === 0){
+    box.innerHTML =
+      '<div style="text-align:center;padding:18px 12px 28px">'+
+        '<div style="font-family:var(--FJ);font-size:36px;color:var(--ink);opacity:.7;margin-bottom:14px">問</div>'+
+        '<div style="font-family:var(--serif);font-size:17px;font-style:italic;color:var(--ink);line-height:1.5;margin-bottom:6px">Welke vraag draag je?</div>'+
+        '<div style="font-size:12.5px;color:var(--m);line-height:1.6;max-width:380px;margin:0 auto">Een vraag waar geen pasklaar advies bij hoort. Mag groot of klein, persoonlijk of over een ander.</div>'+
+      '</div>'+
+      '<textarea id="dj-q-input" placeholder="Bijvoorbeeld: hoe breng ik mijn organisatie in balans na de reorganisatie?" rows="4" style="width:100%;padding:14px;border:1px solid var(--b);border-radius:10px;font-family:inherit;font-size:14px;background:var(--bg);color:var(--ink);box-sizing:border-box;resize:vertical;line-height:1.5"></textarea>'+
+      '<div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">'+
+        '<button onclick="cancelTransformatief()" style="padding:10px 18px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px">Annuleren</button>'+
+        '<button onclick="submitInitialQuestion()" style="padding:10px 20px;background:var(--acc);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500">Begin →</button>'+
+      '</div>';
+    setTimeout(function(){ document.getElementById('dj-q-input')?.focus(); }, 100);
+    return;
+  }
+
+  // Stappen 1-4: één element per stap
+  if(dj.step >= 1 && dj.step <= 4){
+    var elIdx = dj.step - 1;
+    var el = DOJO_ELEMENTS[elIdx];
+
+    // Toon eerdere antwoorden samengevat + huidige vraag
+    var prevHtml = '';
+    if(dj.answers.length > 0){
+      prevHtml = '<div style="margin-bottom:24px;padding:14px 16px;background:var(--p2);border-radius:10px;border:1px solid var(--b)">'+
+        '<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:8px">Tot nu toe</div>'+
+        dj.answers.map(function(a){
+          var ae = DOJO_ELEMENTS.find(function(e){ return e.id === a.element; });
+          return '<div style="display:flex;gap:10px;margin-bottom:6px"><span style="font-family:var(--FJ);color:var(--m);font-size:14px">'+ae.kanji+'</span><span style="font-size:12px;color:var(--ink);line-height:1.5;font-style:italic">'+esc(a.answer)+'</span></div>';
+        }).join('')+
+      '</div>';
+    }
+
+    // Question loading state
+    var loadId = 'dj-loading-'+el.id;
+    box.innerHTML = prevHtml +
+      '<div style="text-align:center;padding:20px 12px 24px">'+
+        '<div style="font-family:var(--FJ);font-size:48px;color:var(--ink);margin-bottom:8px">'+el.kanji+'</div>'+
+        '<div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:4px">'+el.warrior+' · '+esc(el.domein)+'</div>'+
+        '<div style="font-size:12px;color:var(--m);margin-bottom:24px">Stap '+dj.step+' van 4</div>'+
+        '<div id="'+loadId+'" style="font-family:var(--serif);font-size:16px;font-style:italic;color:var(--m);line-height:1.6;max-width:420px;margin:0 auto">De meester denkt na...</div>'+
+      '</div>';
+
+    // Genereer vraag voor deze stap
+    generateElementQuestion(dj, el);
+    return;
+  }
+
+  // Stap 5: synthese
+  if(dj.step === 5){
+    box.innerHTML =
+      '<div style="text-align:center;padding:18px 12px 24px">'+
+        '<div style="font-family:var(--FJ);font-size:42px;color:var(--acc);margin-bottom:8px">匠</div>'+
+        '<div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:600;margin-bottom:4px">Master Council · Synthese</div>'+
+        '<div style="font-size:12px;color:var(--m);margin-bottom:20px">Een spiegel uit jouw antwoorden</div>'+
+      '</div>'+
+      '<div id="dj-synth" style="font-family:var(--serif);font-size:15px;line-height:1.7;color:var(--ink);padding:18px 18px;background:var(--p2);border:1px solid var(--b);border-radius:12px;font-style:italic">Het Council bezint zich...</div>'+
+      '<div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">'+
+        '<button onclick="endTransformatief()" style="padding:10px 18px;background:var(--acc);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500">Sluiten</button>'+
+      '</div>';
+    generateSynthesis(S.dojoActive);
+    return;
+  }
+}
+
+function submitInitialQuestion(){
+  var inp = document.getElementById('dj-q-input');
+  if(!inp || !inp.value.trim()){ toast('Beschrijf je vraag','err'); return; }
+  S.dojoActive.initialQuestion = inp.value.trim();
+  S.dojoActive.step = 1;
+  renderDojoStep();
+}
+
+async function generateElementQuestion(dj, el){
+  // Bouw context
+  var prevContext = '';
+  if(dj.answers.length > 0){
+    prevContext = '\n\nWat de gebruiker tot nu toe heeft gezegd:\n' +
+      dj.answers.map(function(a){
+        var ae = DOJO_ELEMENTS.find(function(e){ return e.id === a.element; });
+        return ae.warrior + ' ('+ae.name+') vroeg: ' + a.question + '\nAntwoord: ' + a.answer;
+      }).join('\n\n');
+  }
+
+  var prompt = 'Je bent '+el.warrior+', meester van het '+el.name+'-element ('+el.domein+'). De gebruiker heeft een transformatieve vraag voorgelegd:\n\n"'+dj.initialQuestion+'"'+prevContext+
+    '\n\nStel ÉÉN doorvraag vanuit jouw element. Niet adviseren, niet beantwoorden — alleen één vraag stellen die de gebruiker dieper laat kijken. Spreek vanuit het perspectief van '+el.name+':'+
+    (el.id === 'chi' ? ' Chi vraagt naar fundament, structuur, wat draagt onder het probleem.' : '') +
+    (el.id === 'sui' ? ' Sui vraagt naar wat is verloren, welk gesprek verdwenen is, wat onder de oppervlakte stroomt.' : '') +
+    (el.id === 'fu'  ? ' Fū vraagt naar verbindingen die zijn gebroken of veranderd, naar relaties tussen mensen of dingen.' : '') +
+    (el.id === 'ka'  ? ' Ka vraagt naar waar de energie heen is gegaan, waar het vuur was en nu niet meer is, naar momenten en plekken.' : '') +
+    '\n\nFormaat: 2-4 zinnen, Nederlands, geen aanhalingstekens. Begin direct met de vraag of een korte aanloop. Eindig met een concrete vraag waar de gebruiker mee aan de slag kan. Houd het uitnodigend en ruim, niet diagnosticerend.';
+
+  try {
+    var res = await fetch('/api/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:300,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok) throw new Error('API fout');
+    var j = await res.json();
+    var question = j.content?.[0]?.text?.trim();
+    if(!question) throw new Error('Geen vraag gegenereerd');
+    question = question.replace(/^["'""]|["'""]$/g,'').trim();
+
+    // Toon vraag + input
+    var box = document.getElementById('dj-active');
+    if(!box) return;
+    var loadEl = document.getElementById('dj-loading-'+el.id);
+    if(loadEl){
+      loadEl.outerHTML =
+        '<div style="font-family:var(--serif);font-size:15.5px;color:var(--ink);line-height:1.65;max-width:460px;margin:0 auto 24px;text-align:left">'+esc(question)+'</div>'+
+        '<textarea id="dj-a-input" placeholder="Antwoord wanneer je er bent..." rows="3" style="width:100%;max-width:460px;display:block;margin:0 auto;padding:14px;border:1px solid var(--b);border-radius:10px;font-family:inherit;font-size:14px;background:var(--bg);color:var(--ink);box-sizing:border-box;resize:vertical;line-height:1.5"></textarea>'+
+        '<div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end;max-width:460px;margin-left:auto;margin-right:auto">'+
+          '<button onclick="cancelTransformatief()" style="padding:10px 16px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px">Annuleren</button>'+
+          '<button onclick="submitElementAnswer(\''+el.id+'\','+JSON.stringify(question).replace(/"/g,'&quot;')+')" style="padding:10px 20px;background:var(--acc);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500">Volgende →</button>'+
+        '</div>';
+    }
+    // Sla question op voor volgende stap
+    S.dojoActive._currentQuestion = question;
+    setTimeout(function(){ document.getElementById('dj-a-input')?.focus(); }, 100);
+  } catch(e){
+    var loadEl2 = document.getElementById('dj-loading-'+el.id);
+    if(loadEl2) loadEl2.textContent = 'De meester is even stil. Probeer opnieuw.';
+  }
+}
+
+function submitElementAnswer(elementId){
+  var inp = document.getElementById('dj-a-input');
+  if(!inp || !inp.value.trim()){ toast('Antwoord wanneer je er bent','err'); return; }
+  var dj = S.dojoActive;
+  if(!dj) return;
+  dj.answers.push({
+    element: elementId,
+    question: dj._currentQuestion || '',
+    answer: inp.value.trim()
+  });
+  delete dj._currentQuestion;
+  dj.step += 1;
+  renderDojoStep();
+}
+
+async function generateSynthesis(dj){
+  if(!dj) return;
+  var antwoorden = dj.answers.map(function(a){
+    var ae = DOJO_ELEMENTS.find(function(e){ return e.id === a.element; });
+    return '['+ae.kanji+' '+ae.name+'] '+a.question + '\n→ '+a.answer;
+  }).join('\n\n');
+
+  var prompt = 'Je bent het Master Council — vijf Godai-meesters samen. De gebruiker heeft een transformatieve vraag onderzocht via vier elementen. Lees de antwoorden en geef een synthese.\n\n'+
+    'Oorspronkelijke vraag: "'+dj.initialQuestion+'"\n\n'+
+    'Antwoorden:\n'+antwoorden+'\n\n'+
+    'Schrijf een synthese in 4-6 zinnen Nederlands die:\n'+
+    '1. Begint met "Voor je naar oplossingen zoekt..." of vergelijkbaar\n'+
+    '2. Wijst op het patroon dat door de antwoorden heenloopt (zonder zelf te interpreteren — leg samen wat de gebruiker zei)\n'+
+    '3. Eindigt met de vraag onder de vraag — wat de gebruiker eigenlijk vraagt, in hun eigen woorden geherformuleerd\n'+
+    '\n'+
+    'Geen advies. Geen oplossing. Een spiegel. Gebruik kalme, serif-achtige toon. Geen aanhalingstekens om eigen tekst, wel om geherformuleerde vraag.';
+
+  try {
+    var res = await fetch('/api/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:400,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok) throw new Error('API fout');
+    var j = await res.json();
+    var synth = j.content?.[0]?.text?.trim();
+    if(!synth) throw new Error('Geen synthese');
+
+    dj.synthesis = synth;
+    dj.completedAt = Date.now();
+
+    // Sla op in geschiedenis
+    if(!S.dojoHistory) S.dojoHistory = [];
+    S.dojoHistory.unshift({
+      id: dj.id,
+      startedAt: dj.startedAt,
+      completedAt: dj.completedAt,
+      question: dj.initialQuestion,
+      answers: dj.answers,
+      synthesis: synth
+    });
+    // Beperk tot laatste 20
+    S.dojoHistory = S.dojoHistory.slice(0, 20);
+    lsSet('tm2_dojo_history', S.dojoHistory);
+
+    var synthEl = document.getElementById('dj-synth');
+    if(synthEl) synthEl.innerHTML = esc(synth).replace(/\n/g,'<br>');
+  } catch(e){
+    var synthEl2 = document.getElementById('dj-synth');
+    if(synthEl2) synthEl2.textContent = 'Het Council is even stil. Probeer opnieuw.';
+  }
+}
+
+function endTransformatief(){
+  S.dojoActive = null;
+  document.getElementById('dj-intro').style.display = 'block';
+  document.getElementById('dj-active').style.display = 'none';
+  renderDojoHistory();
+}
+
+function cancelTransformatief(){
+  if(S.dojoActive && S.dojoActive.answers.length > 0){
+    if(!confirm('Het gesprek wordt verwijderd. Doorgaan?')) return;
+  }
+  S.dojoActive = null;
+  document.getElementById('dj-intro').style.display = 'block';
+  document.getElementById('dj-active').style.display = 'none';
+}
+
+function renderDojoHistory(){
+  var hist = ls('tm2_dojo_history', []);
+  S.dojoHistory = hist;
+  var box = document.getElementById('dj-history');
+  if(!box) return;
+  if(!hist.length){
+    box.innerHTML = '';
+    return;
+  }
+  box.innerHTML = '<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:14px">Eerdere gesprekken</div>'+
+    hist.slice(0, 5).map(function(h){
+      var d = new Date(h.completedAt || h.startedAt);
+      var dStr = d.toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'});
+      var preview = (h.question || '').slice(0, 80);
+      return '<div onclick="openDojoEntry(\''+h.id+'\')" style="padding:14px 16px;background:var(--p2);border:1px solid var(--b);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseover="this.style.borderColor=\'var(--acc)\'" onmouseout="this.style.borderColor=\'var(--b)\'">'+
+        '<div style="font-size:11px;color:var(--m);margin-bottom:4px">'+dStr+'</div>'+
+        '<div style="font-size:13px;color:var(--ink);line-height:1.4">'+esc(preview)+(h.question.length > 80 ? '...' : '')+'</div>'+
+      '</div>';
+    }).join('');
+}
+
+function openDojoEntry(id){
+  var hist = S.dojoHistory || ls('tm2_dojo_history', []);
+  var entry = hist.find(function(h){ return h.id === id; });
+  if(!entry) return;
+  // Toon read-only versie van het gesprek
+  document.getElementById('dj-intro').style.display = 'none';
+  var box = document.getElementById('dj-active');
+  box.style.display = 'block';
+  var d = new Date(entry.completedAt || entry.startedAt);
+  var dStr = d.toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  box.innerHTML =
+    '<div style="text-align:center;padding:14px 12px 22px">'+
+      '<div style="font-family:var(--FJ);font-size:32px;color:var(--ink);opacity:.6;margin-bottom:8px">問</div>'+
+      '<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--m);font-weight:600">'+dStr+'</div>'+
+    '</div>'+
+    '<div style="margin-bottom:24px;padding:16px 18px;background:var(--p2);border-radius:12px;border-left:3px solid var(--acc)">'+
+      '<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:6px">Jouw vraag</div>'+
+      '<div style="font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.5;font-style:italic">'+esc(entry.question)+'</div>'+
+    '</div>'+
+    entry.answers.map(function(a){
+      var ae = DOJO_ELEMENTS.find(function(e){ return e.id === a.element; }) || {kanji:'?',name:'?',warrior:'?'};
+      return '<div style="margin-bottom:18px;padding:14px 16px;background:var(--p2);border:1px solid var(--b);border-radius:10px">'+
+        '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">'+
+          '<span style="font-family:var(--FJ);font-size:18px;color:var(--ink)">'+ae.kanji+'</span>'+
+          '<span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--m);font-weight:600">'+ae.warrior+'</span>'+
+        '</div>'+
+        '<div style="font-family:var(--serif);font-size:13.5px;color:var(--ink);line-height:1.6;margin-bottom:8px;font-style:italic">'+esc(a.question)+'</div>'+
+        '<div style="font-size:13px;color:var(--ink);line-height:1.5;padding-left:14px;border-left:2px solid var(--b)">'+esc(a.answer)+'</div>'+
+      '</div>';
+    }).join('')+
+    (entry.synthesis ? '<div style="margin-top:24px;padding:18px;background:var(--p2);border:1px solid var(--acc);border-radius:12px">'+
+      '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">'+
+        '<span style="font-family:var(--FJ);font-size:20px;color:var(--acc)">匠</span>'+
+        '<span style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:600">Synthese</span>'+
+      '</div>'+
+      '<div style="font-family:var(--serif);font-size:14.5px;color:var(--ink);line-height:1.7;font-style:italic">'+esc(entry.synthesis).replace(/\n/g,'<br>')+'</div>'+
+    '</div>' : '')+
+    '<div style="display:flex;gap:8px;margin-top:24px;justify-content:flex-end">'+
+      '<button onclick="endTransformatief()" style="padding:10px 18px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px">← Terug</button>'+
+    '</div>';
 }
 
 // ── MEER VOOR VANDAAG ──────────────────────────────────────────────
