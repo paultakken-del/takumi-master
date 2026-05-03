@@ -873,7 +873,6 @@ input[type=range]{width:100%;accent-color:var(--acc)}
           </div>
           <div style="margin-left:auto;flex-shrink:0;display:flex;gap:4px">
             <button class="btn sm gh" id="btn-memoirs" onclick="showMemoirs()" title="Bekijk geheugen van deze meester" aria-label="Geheugen">脳<span id="btn-mem-count" style="font-size:9px;margin-left:3px;color:var(--acc);font-weight:600"></span></button>
-            <button class="btn sm gh" onclick="showGoGrid()" title="Element-detail" aria-label="Detail">◈</button>
             <button class="btn sm gh" onclick="clearChat()" title="Wis huidig gesprek" aria-label="Reset">↺</button>
           </div>
         </div>
@@ -2519,14 +2518,24 @@ function renderGrid(){
 
   // Dag-context boven pillen — geen breadcrumb meer, wel tijdsbesef
   var ctxEl = document.getElementById('agw-context');
-  if(ctxEl && typeof getDayLeader === 'function'){
+  if(ctxEl){
     try {
       var dagen = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
       var dagNaam = dagen[new Date().getDay()];
-      var leader = getDayLeader();
-      var leaderShort = leader.warrior?.name?.split(' ')[1] || leader.element?.name || 'Council';
-      var leaderKanji = leader.warrior?.ico || '匠';
-      ctxEl.innerHTML = 'Vandaag · ' + dagNaam + ' — <span style="color:var(--ink)">'+leaderKanji+' '+esc(leaderShort)+'</span> leidt';
+      // Als warrior actief is in een element: toon dat element. Anders: toon dag-leider
+      var contextLine;
+      if(activeEl && activeEl !== 'board' && ELEMENTS[activeEl]){
+        var el = ELEMENTS[activeEl];
+        contextLine = dagNaam + ' · <span style="color:var(--ink)">'+el.kanji+' '+esc(el.name)+'</span> — '+esc(el.sub.split(' · ')[1]||'');
+      } else if(typeof getDayLeader === 'function') {
+        var leader = getDayLeader();
+        var leaderShort = leader.warrior?.name?.split(' ')[1] || leader.element?.name || 'Council';
+        var leaderKanji = leader.warrior?.ico || '匠';
+        contextLine = 'Vandaag · ' + dagNaam + ' — <span style="color:var(--ink)">'+leaderKanji+' '+esc(leaderShort)+'</span> leidt';
+      } else {
+        contextLine = dagNaam;
+      }
+      ctxEl.innerHTML = contextLine;
     } catch(e){
       ctxEl.textContent = '';
     }
