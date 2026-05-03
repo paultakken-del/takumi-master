@@ -3488,7 +3488,7 @@ function renderPrimaryGoal(){
         '</div>'+
         '<div id="ck-leader-msg" style="font-size:13.5px;color:var(--ink);line-height:1.6;font-style:italic;font-family:var(--serif);min-height:20px;margin-bottom:14px">Een ogenblik...</div>'+
         '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
-          '<button onclick="askLeaderToday()" style="font-size:11.5px;padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;font-weight:500">Vraag '+esc(warriorShort)+' →</button>'+
+          '<button onclick="askLeaderToday()" style="font-size:11.5px;padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;font-weight:500;display:inline-flex;align-items:center;gap:6px"><span style="font-family:var(--FJ);font-size:13px;line-height:1">'+leaderIco+'</span><span>Vraag '+esc(warriorShort)+' →</span></button>'+
           (S.primaryGoalId !== primary.id ? '<button onclick="setPrimaryGoal(\''+primary.id+'\')" style="font-size:11.5px;padding:7px 14px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:14px;cursor:pointer;font-family:inherit">Markeer als spil</button>' : '')+
         '</div>'+
       '</div>'+
