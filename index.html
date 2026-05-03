@@ -2270,6 +2270,21 @@ function renderWave(moodOverride){
 
   var phaseData = WAVE_PHASES[w.phase];
 
+  // Update detail metrics (HRV/Slaap/Herstel) — werkt ook zonder wave-svg
+  var hrvVal = S.hrv.rmssd || 45;
+  var recVal = S.hrv.recovery || 7;
+  var slaapVal = S.hrv.sleep || 7;
+  var hrvElEarly = document.getElementById('ck-stat-hrv');
+  var sleepElEarly = document.getElementById('ck-stat-sleep');
+  var recElEarly = document.getElementById('ck-stat-rec');
+  if (hrvElEarly) hrvElEarly.textContent = hrvVal + ' rMSSD';
+  if (sleepElEarly) sleepElEarly.textContent = slaapVal.toFixed(1) + 'u';
+  if (recElEarly) recElEarly.textContent = recVal + '/10';
+
+  // Store wave state globally for allCtx (gebruikt door agents)
+  window._wavePhase = w.phase;
+  window._waveScore = w.score;
+
   // Draw SVG wave
   var svg = document.getElementById('ck-wave-svg');
   var dayPath = document.getElementById('wave-day');
