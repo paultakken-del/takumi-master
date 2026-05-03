@@ -744,6 +744,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       <span style="font-size:14px;color:var(--acc);flex-shrink:0">→</span>
     </div>
 
+    <!-- ── AFSPRAKEN ── meesters die op je wachten ── -->
+    <div id="ck-appointments" style="display:none;margin-top:16px"></div>
+
     <!-- ── COUNCIL DEZE WEEK ── verschijnt zon-do als richting voor de week ── -->
     <div id="ck-week-council" style="display:none"></div>
 
@@ -1324,6 +1327,7 @@ const S={
   actions:ls('tm2_actions',[]), // Vandaag-acties van meesters: {id,t,master,sourceMsgId,text,kind,done,doneT}
   primaryGoalId:ls('tm2_primary_goal',null), // ID van het primaire doel — spil van de app
   weekCouncil:ls('tm2_week_council',null), // {weekKey, advice, leadElement, supportElement, restElement, generatedAt, dismissed}
+  appointments:ls('tm2_appointments',[]), // [{id, master, dueDate, openingPhrase, sourceMsgId, createdAt, status:'open'|'kept'|'missed'}]
   goals:ls('tm2_goals',null),
   holdings:ls('tm2_hold',{BTC:{qty:.62,avgBuy:28000,name:'Bitcoin'},ETH:{qty:4.2,avgBuy:1800,name:'Ethereum'}}),
   degiro:ls('tm2_dg',{}),
@@ -3027,6 +3031,14 @@ async function send(){
     lsSet('tm2_chat',S.chat);renderChat();upLearn();
     // Genereer memoir samenvatting (async, niet blocking)
     saveMemoir(S.cur, text, full);
+    // Stel afspraak voor als het past — alleen na min 3 berichten in dit gesprek
+    var chatLen = (S.chat[S.cur]||[]).length;
+    if(chatLen >= 3 && S.cur !== 'board' && typeof maybeProposeAppointment === 'function'){
+      setTimeout(async function(){
+        var prop = await maybeProposeAppointment(S.cur, text, full);
+        if(prop) showAppointmentProposal(S.cur, prop);
+      }, 600);
+    }
   }catch(err){
     if(S.chat[S.cur][li]?.type==='load')S.chat[S.cur].splice(li,1);
     S.chat[S.cur].push({role:'assistant',content:`⚠ ${err.message}\n\n→ Controleer ANTHROPIC_API_KEY in Cloudflare Settings\n→ Controleer credits: console.anthropic.com`});
@@ -3794,6 +3806,189 @@ function renderElementBalance(){
   if(summaryEl) summaryEl.textContent = summary;
 }
 
+// ── AFSPRAKEN MET MEESTERS ─────────────────────────────────────────
+// Een meester kan vragen om terug te komen op een specifieke dag.
+// Commitment-loop: meester wacht op gebruiker. Max 2 actieve, stille verdwijning na 7 dagen.
+
+function getActiveAppointments(){
+  if(!S.appointments) return [];
+  var now = Date.now();
+  var cleaned = S.appointments.filter(function(a){
+    if(a.status !== 'open') return false;
+    var daysOverdue = (now - a.dueDate) / (24*60*60*1000);
+    return daysOverdue < 7;
+  });
+  if(cleaned.length !== (S.appointments||[]).length){
+    S.appointments = cleaned;
+    lsSet('tm2_appointments', S.appointments);
+  }
+  return cleaned.sort(function(a,b){ return a.dueDate - b.dueDate; });
+}
+
+function getDueAppointments(){
+  var now = Date.now();
+  return getActiveAppointments().filter(function(a){
+    return a.dueDate <= now + 12*60*60*1000;
+  });
+}
+
+function canScheduleNew(){
+  return getActiveAppointments().length < 2;
+}
+
+async function maybeProposeAppointment(masterId, lastUserMsg, lastAssistantMsg){
+  if(!canScheduleNew()) return null;
+  var agent = AGENTS[masterId];
+  if(!agent) return null;
+  var prompt = 'Je bent '+agent.name+'. Hieronder een recent gesprek met de gebruiker. Bepaal of het natuurlijk zou zijn om een afspraak te maken — een terugkomvraag op een specifieke dag (bv. "Kom donderdag terug en vertel me of X werkte").\n\n'+
+    'Gesprek:\nGebruiker: '+lastUserMsg+'\nJij: '+lastAssistantMsg+'\n\n'+
+    'Antwoord STRIKT in dit format:\n'+
+    'PAST: ja|nee\n'+
+    'DAGEN: [getal 1-14, hoeveel dagen vanaf vandaag]\n'+
+    'OPENING: [korte zin in jouw stem die de gebruiker terugbegroet, max 20 woorden, alsof je hem terug ziet]\n\n'+
+    'Past alleen "ja" als er iets concreets is om op terug te komen (een experiment, een keuze, een patroon). Niet bij algemeen advies.';
+  try {
+    var res = await fetch('/api/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:200,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok) return null;
+    var j = await res.json();
+    var txt = j.content?.[0]?.text?.trim();
+    if(!txt) return null;
+    var pastMatch = txt.match(/PAST:\s*(ja|nee)/i);
+    if(!pastMatch || pastMatch[1].toLowerCase() !== 'ja') return null;
+    var dagenMatch = txt.match(/DAGEN:\s*(\d+)/i);
+    var openingMatch = txt.match(/OPENING:\s*([^\n]+)/i);
+    if(!dagenMatch || !openingMatch) return null;
+    var dagen = Math.min(14, Math.max(1, parseInt(dagenMatch[1])));
+    var opening = openingMatch[1].trim().replace(/^["'""]|["'""]$/g,'');
+    var dueDate = Date.now() + dagen * 24*60*60*1000;
+    return {dagen: dagen, dueDate: dueDate, opening: opening};
+  } catch(e){
+    return null;
+  }
+}
+
+function acceptAppointment(masterId, dueDate, opening, sourceMsgId){
+  if(!S.appointments) S.appointments = [];
+  S.appointments.push({
+    id: 'apt_'+Date.now(),
+    master: masterId,
+    dueDate: dueDate,
+    openingPhrase: opening,
+    sourceMsgId: sourceMsgId || null,
+    createdAt: Date.now(),
+    status: 'open'
+  });
+  lsSet('tm2_appointments', S.appointments);
+  var dStr = new Date(dueDate).toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'short'});
+  toast('✓ Afspraak gemaakt voor '+dStr,'ok');
+  // Verwijder proposal UI
+  var prop = document.getElementById('appointment-proposal');
+  if(prop) prop.remove();
+  renderAppointments();
+}
+
+function dismissAppointmentProposal(){
+  var el = document.getElementById('appointment-proposal');
+  if(el) el.remove();
+}
+
+// Toon voorstel onderaan chat (gebruiker accepteert of negeert)
+function showAppointmentProposal(masterId, prop){
+  // Verwijder bestaand voorstel als er al één is
+  var existing = document.getElementById('appointment-proposal');
+  if(existing) existing.remove();
+
+  var agent = AGENTS[masterId];
+  if(!agent) return;
+  var dStr = new Date(prop.dueDate).toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'short'});
+  var dagWoord = prop.dagen === 1 ? 'morgen' : (prop.dagen+' dagen');
+
+  var pop = document.createElement('div');
+  pop.id = 'appointment-proposal';
+  pop.style.cssText = 'margin:14px 0;padding:16px;background:linear-gradient(135deg,rgba(196,83,42,.06),rgba(196,83,42,.01));border:1px solid rgba(196,83,42,.25);border-radius:12px;animation:slideUp .3s';
+  pop.innerHTML =
+    '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">'+
+      '<svg class="ico ico-sm" style="color:var(--acc);margin-top:2px;flex-shrink:0"><use href="#i-calendar"/></svg>'+
+      '<div style="flex:1">'+
+        '<div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:6px">Afspraak voorstellen</div>'+
+        '<div style="font-size:13.5px;color:var(--ink);line-height:1.55;font-style:italic;font-family:var(--serif);margin-bottom:6px">'+esc(prop.opening)+'</div>'+
+        '<div style="font-size:11px;color:var(--m)">Over '+dagWoord+' ('+dStr+')</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+      '<button onclick="acceptAppointment(\''+masterId+'\','+prop.dueDate+',\''+prop.opening.replace(/'/g,"\\'")+'\')" style="font-size:11.5px;padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;font-weight:500;display:inline-flex;align-items:center;gap:6px"><svg class="ico ico-sm" style="color:#fff"><use href="#i-check"/></svg> Ik kom terug</button>'+
+      '<button onclick="dismissAppointmentProposal()" style="font-size:11.5px;padding:7px 14px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:14px;cursor:pointer;font-family:inherit">Niet nu</button>'+
+    '</div>';
+
+  // Plaats onder de chat-messages, boven het input-veld
+  var cm = document.getElementById('cm');
+  if(cm && cm.parentElement){
+    cm.parentElement.insertBefore(pop, cm.nextSibling);
+    // Scroll into view
+    setTimeout(function(){
+      pop.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }, 100);
+  }
+}
+
+function renderAppointments(){
+  var sec = document.getElementById('ck-appointments');
+  if(!sec) return;
+  var due = getDueAppointments();
+  if(!due.length){
+    sec.style.display = 'none';
+    return;
+  }
+  sec.style.display = 'block';
+  sec.innerHTML = due.map(function(a){
+    var agent = AGENTS[a.master];
+    if(!agent) return '';
+    var warriorName = agent.name?.split('—')[0]?.replace(/^[^\s]+\s*/,'').trim() || 'meester';
+    return '<div onclick="openAppointment(\''+a.id+'\')" style="padding:18px 16px;margin-bottom:10px;background:linear-gradient(135deg,rgba(196,83,42,.05),rgba(196,83,42,.01));border:1px solid rgba(196,83,42,.2);border-radius:12px;cursor:pointer;transition:all .2s">'+
+      '<div style="display:flex;align-items:flex-start;gap:12px">'+
+        '<div style="width:36px;height:36px;border-radius:50%;background:'+agent.col+';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--FJ);font-size:17px;color:#fff">'+agent.ico+'</div>'+
+        '<div style="flex:1;min-width:0">'+
+          '<div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:4px">'+esc(warriorName)+' wacht op je</div>'+
+          '<div style="font-size:13.5px;color:var(--ink);line-height:1.5;font-style:italic;font-family:var(--serif)">'+esc(a.openingPhrase)+'</div>'+
+          '<div style="margin-top:10px;display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--acc);font-weight:500">Open gesprek</span><svg class="ico ico-sm" style="color:var(--acc)"><use href="#i-arrow-right"/></svg></div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function openAppointment(aptId){
+  var apt = (S.appointments||[]).find(function(a){ return a.id === aptId; });
+  if(!apt) return;
+  var agent = AGENTS[apt.master];
+  if(!agent) return;
+  apt.status = 'kept';
+  apt.keptAt = Date.now();
+  lsSet('tm2_appointments', S.appointments);
+  document.querySelectorAll('[data-v]').forEach(function(el){ el.classList.toggle('on', el.dataset.v === 'bo'); });
+  var v = document.getElementById('v-bo');
+  if(v){ v.classList.add('on'); v.classList.remove('grid-mode'); }
+  document.querySelectorAll('.view').forEach(function(el){ if(el.id !== 'v-bo') el.classList.remove('on'); });
+  selAg(apt.master);
+  if(typeof markVandaag === 'function') markVandaag('bo');
+  setTimeout(function(){
+    if(!S.chats[apt.master]) S.chats[apt.master] = [];
+    S.chats[apt.master].push({
+      role: 'assistant',
+      content: apt.openingPhrase,
+      t: Date.now(),
+      fromAppointment: true
+    });
+    lsSet('tm2_chats', S.chats);
+    if(typeof renderChat === 'function') renderChat();
+    renderAppointments();
+  }, 200);
+}
+
 // ── MEER VOOR VANDAAG ──────────────────────────────────────────────
 // Energie / Muziek / Wijsheid ingeklapt op werkdagen, open in weekend.
 function isWeekend(){
@@ -4001,7 +4196,7 @@ function maybeGenerateCouncil(){
 
 // Run cleanup at startup
 document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(function(){ cleanupActions(); renderCkActions(); renderPrimaryGoal(); renderWeekCouncil(); maybeGenerateCouncil(); applyMoreVisibility(); renderElementBalance(); }, 1000);
+  setTimeout(function(){ cleanupActions(); renderCkActions(); renderPrimaryGoal(); renderWeekCouncil(); maybeGenerateCouncil(); applyMoreVisibility(); renderElementBalance(); renderAppointments(); }, 1000);
 });
 
 // ── MEMOIR VIEWER ──────────────────────────────────────────────────
