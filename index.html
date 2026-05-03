@@ -3791,6 +3791,7 @@ function renderElementBalance(){
   }
 
   // Korte samenvatting — geen percentages
+  // Statische snelle samenvatting als fallback
   var diff = Math.abs(doenRatio - 0.5);
   var summary;
   if(diff < 0.08){
@@ -3804,6 +3805,78 @@ function renderElementBalance(){
   }
   var summaryEl = document.getElementById('ck-balance-summary');
   if(summaryEl) summaryEl.textContent = summary;
+
+  // Async AI-analyse — overschrijft fallback wanneer klaar (1x per dag gecached)
+  loadBalanceAnalysis(bal, doenRatio);
+}
+
+// AI-gegenereerde balans-analyse, gecached per dag
+async function loadBalanceAnalysis(bal, doenRatio){
+  var summaryEl = document.getElementById('ck-balance-summary');
+  if(!summaryEl) return;
+
+  // Cache key: dagdatum + ruwe ratio (gerond op 5%) — voorkomt onnodig regeneren bij kleine schommelingen
+  var dayKey = new Date().toISOString().slice(0,10);
+  var ratioKey = Math.round(doenRatio * 20) / 20; // 0.05 stappen
+  var cacheKey = 'tm2_balance_analysis_' + dayKey + '_' + ratioKey;
+  var cached = ls(cacheKey, null);
+  if(cached){
+    summaryEl.textContent = cached;
+    return;
+  }
+
+  // Bouw context
+  var primary = null;
+  if(typeof GOALS !== 'undefined' && GOALS && GOALS.length){
+    if(S.primaryGoalId) primary = GOALS.find(function(g){ return g.id === S.primaryGoalId && g.status === 'Actief'; });
+    if(!primary) primary = GOALS.find(function(g){ return g.status === 'Actief'; });
+  }
+  var leader = (typeof getDayLeader === 'function') ? getDayLeader() : null;
+  var leaderName = leader?.warrior?.name?.split('—')[1]?.trim() || leader?.element?.name || '';
+
+  // Recente memoirs (laatste 5)
+  var allMems = [];
+  Object.keys(S.memoirs || {}).forEach(function(mid){
+    (S.memoirs[mid] || []).slice(-2).forEach(function(m){
+      var agentName = AGENTS[mid]?.name?.split(' ')[1] || mid;
+      allMems.push(agentName + ': ' + m.summary);
+    });
+  });
+  allMems = allMems.slice(0, 5);
+
+  var doenPct = Math.round(doenRatio * 100);
+  var counts = bal.counts;
+  var elInfo = '地 Chi='+counts.chi+', 火 Ka='+counts.ka+', 水 Sui='+counts.sui+', 空 Kū='+counts.ku+', 風 Fū='+counts.fu;
+
+  var prompt = 'Je bent een Godai-meester die kijkt naar de week-balans van een gebruiker. '+
+    'Doen-helft (Chi+Ka): '+doenPct+'%. Zijn-helft (Sui+Kū): '+(100-doenPct)+'%. '+
+    'Activiteit per element: '+elInfo+'.\n'+
+    (primary ? 'Hun doel: "'+primary.title+'" (voortgang '+primary.pct+'%).\n' : '') +
+    (leaderName ? 'Vandaag leidt: '+leaderName+'.\n' : '') +
+    (allMems.length ? 'Recente gesprekken: '+allMems.join(' | ')+'.\n' : '') +
+    '\n'+
+    'Schrijf 2-3 zinnen Nederlands die deze balans LEZEN — niet beschrijven. '+
+    'Verbind met hun doel en/of dag-leider. Eindig met één concrete suggestie als de balans dat vraagt. '+
+    'Niet generiek wijs, maar specifiek voor deze week. Geen aanhalingstekens. Max 50 woorden. '+
+    'Spreek de gebruiker aan met "je".';
+
+  try {
+    var res = await fetch('/api/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:200,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok) return;
+    var j = await res.json();
+    var txt = j.content?.[0]?.text?.trim();
+    if(!txt) return;
+    txt = txt.replace(/^["'""]|["'""]$/g,'').trim();
+    if(txt.length > 400) txt = txt.slice(0, 397) + '...';
+    summaryEl.textContent = txt;
+    lsSet(cacheKey, txt);
+  } catch(e){
+    // Statische fallback blijft staan
+  }
 }
 
 // ── AFSPRAKEN MET MEESTERS ─────────────────────────────────────────
