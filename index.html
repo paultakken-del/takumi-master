@@ -3533,7 +3533,10 @@ function askLeaderToday(){
   var leader = getDayLeader();
   if(!leader.warrior) return;
   go('bo');
-  setTimeout(function(){ selAg(leader.warrior.id); }, 100);
+  setTimeout(function(){
+    selAg(leader.warrior.id);
+    if(typeof showChat === 'function') showChat();
+  }, 100);
 }
 
 // ── MEER VOOR VANDAAG ──────────────────────────────────────────────
