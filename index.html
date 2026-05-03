@@ -356,7 +356,12 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 /* ── DASHBOARD SECTIES ── */
 .dash-section{padding:24px 0 28px;border-bottom:1px solid var(--b)}
 .dash-section:last-of-type{border-bottom:none}
-.dash-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:14px}
+.dash-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:14px;display:inline-flex;align-items:center;gap:6px}
+.ico{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:middle}
+.ico-sm{width:13px;height:13px}
+.ico-lg{width:22px;height:22px}
+.ico-xl{width:28px;height:28px}
+.ico.on{fill:currentColor}
 .dash-primary .dash-label{color:var(--m)}
 .dash-primary{padding-top:28px;padding-bottom:28px}
 .dash-primary #ck-synthese{font-size:15px;line-height:1.7}
@@ -639,6 +644,28 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 </style>
 </head>
 <body>
+<!-- ── ICON LIBRARY ── line icons, gebruikt via <svg class="ico"><use href="#i-name"/></svg> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></symbol>
+    <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></symbol>
+    <symbol id="i-circle-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M 8,12 L 11,15 L 16,9"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M 5,12 L 10,17 L 19,7"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M 4,10 L 20,10"/><path d="M 9,3 L 9,7"/><path d="M 15,3 L 15,7"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M 12,3 L 13.5,10.5 L 21,12 L 13.5,13.5 L 12,21 L 10.5,13.5 L 3,12 L 10.5,10.5 Z"/></symbol>
+    <symbol id="i-diamond" viewBox="0 0 24 24"><path d="M 12,3 L 21,12 L 12,21 L 3,12 Z"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M 5,12 L 19,12"/><path d="M 13,6 L 19,12 L 13,18"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M 12,5 L 12,19"/><path d="M 5,12 L 19,12"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M 12,3 L 12,5"/><path d="M 12,19 L 12,21"/><path d="M 3,12 L 5,12"/><path d="M 19,12 L 21,12"/><path d="M 5.6,5.6 L 7,7"/><path d="M 17,17 L 18.4,18.4"/><path d="M 18.4,5.6 L 17,7"/><path d="M 7,17 L 5.6,18.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M 20,15 A 8,8 0 1 1 9,4 A 6,6 0 0 0 20,15 Z"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M 15,9 L 13,13 L 9,15 L 11,11 Z"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M 4,9 A 8,8 0 0 1 18,7"/><path d="M 18,3 L 18,7 L 14,7"/><path d="M 20,15 A 8,8 0 0 1 6,17"/><path d="M 6,21 L 6,17 L 10,17"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M 4,5 A 1,1 0 0 1 5,4 L 19,4 A 1,1 0 0 1 20,5 L 20,16 A 1,1 0 0 1 19,17 L 11,17 L 7,21 L 7,17 L 5,17 A 1,1 0 0 1 4,16 Z"/></symbol>
+    <symbol id="i-mountain" viewBox="0 0 24 24"><path d="M 3,20 L 9,10 L 13,15 L 17,8 L 21,20 Z"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M 3,12 Q 7,8 12,12 T 21,12"/><path d="M 3,17 Q 7,13 12,17 T 21,17"/></symbol>
+  </defs>
+</svg>
+
 <!-- AUTH GATE -->
 <div id="auth-gate" style="display:none;position:fixed;inset:0;background:var(--paper);z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center">
   <div style="width:64px;height:64px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--FJ);font-size:32px;color:#fff;margin:0 auto 24px">匠</div>
@@ -725,13 +752,13 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
     <!-- ── VANDAAG ── synthese als hoofdfocus ── -->
     <div class="dash-section dash-primary">
-      <div class="dash-label">Vandaag</div>
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-sun"/></svg> Vandaag</div>
       <div id="ck-synthese" style="font-size:15px;line-height:1.65;color:var(--ink);font-weight:400"></div>
     </div>
 
     <!-- ── ACTIES VANDAAG ── van meesters ── -->
     <div class="dash-section" id="ck-actions-section" style="display:none">
-      <div class="dash-label">Acties vandaag</div>
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-circle"/></svg> Acties vandaag</div>
       <div id="ck-actions-list"></div>
     </div>
 
@@ -743,7 +770,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div id="ck-more-content" style="display:none">
     <!-- ── ENERGIE ── micro-ritueel ── -->
     <div class="dash-section">
-      <div class="dash-label">Energie</div>
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-wave"/></svg> Energie</div>
       <div class="ck-opening" id="ck-opening">
         <div class="ck-opening-q" id="ck-opening-q"></div>
         <div class="ck-opening-cards" id="ck-opening-cards"></div>
@@ -752,13 +779,13 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
     <!-- ── MUZIEK ── -->
     <div class="dash-section" id="ck-music-section" style="display:none">
-      <div class="dash-label">Muziek</div>
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-wave"/></svg> Muziek</div>
       <div class="ck-music" id="ck-music"></div>
     </div>
 
     <!-- ── WIJSHEID ── quote als afsluiter ── -->
     <div class="dash-section dash-quiet" id="ck-wisdom-section">
-      <div class="dash-label">Wijsheid</div>
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-sparkle"/></svg> Wijsheid</div>
       <div style="text-align:center;padding:8px 12px">
         <div id="ck-quote" style="font-size:14px;color:var(--ink);opacity:.7;font-style:italic;line-height:1.7;word-wrap:break-word;font-family:var(--serif)"> </div>
         <div id="ck-quote-auth" style="font-size:var(--text-xs);color:var(--ink);opacity:.4;margin-top:8px;letter-spacing:.1em;text-transform:uppercase"> </div>
@@ -2722,7 +2749,7 @@ function renderChat(){
         var when = hrs < 1 ? 'zojuist' : (hrs === 1 ? '1u geleden' : hrs+'u geleden');
         return '<div style="width:100%;max-width:340px;margin:0 auto 14px;padding:14px 16px;background:linear-gradient(135deg,rgba(212,168,71,.08),rgba(212,168,71,.02));border:1px solid rgba(212,168,71,.25);border-radius:10px;position:relative">'+
           '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">'+
-            '<div style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#a8853a;font-weight:500">✦ Observatie</div>'+
+            '<div style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#a8853a;font-weight:500;display:flex;align-items:center;gap:6px"><svg class="ico ico-sm"><use href="#i-sparkle"/></svg> Observatie</div>'+
             '<div style="font-size:10px;color:var(--m)">'+when+'</div>'+
           '</div>'+
           '<div style="font-family:var(--serif);font-size:14px;line-height:1.6;color:var(--ink);font-style:italic">'+esc(o.text)+'</div>'+
@@ -2776,25 +2803,25 @@ function renderChat(){
     if(msgActions.length){
       actionStatus = '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px">' + msgActions.map(function(act){
         if(act.kind === 'today'){
-          return '<span class="action-pill" onclick="toggleAction(\''+act.id+'\')" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;background:'+(act.done?'rgba(58,135,88,.12)':'var(--p2)')+';border:1px solid '+(act.done?'rgba(58,135,88,.3)':'var(--b)')+';font-size:11px;color:'+(act.done?'var(--green,#3a8758)':'var(--ink)')+';cursor:pointer;font-weight:500">'+(act.done?'✓':'○')+' Vandaag</span>';
+          return '<span class="action-pill" onclick="toggleAction(\''+act.id+'\')" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;background:'+(act.done?'rgba(58,135,88,.12)':'var(--p2)')+';border:1px solid '+(act.done?'rgba(58,135,88,.3)':'var(--b)')+';font-size:11px;color:'+(act.done?'var(--green,#3a8758)':'var(--ink)')+';cursor:pointer;font-weight:500"><svg class="ico ico-sm"><use href="'+(act.done?'#i-circle-check':'#i-circle')+'"/></svg> Vandaag</span>';
         }
         if(act.kind === 'goal'){
           var g = (typeof GOALS !== 'undefined' && GOALS) ? GOALS.find(function(x){return x.id===act.goalId;}) : null;
           var pct = g ? g.pct : 0;
-          return '<span class="action-pill" onclick="go(\'gl\')" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;background:rgba(196,83,42,.08);border:1px solid rgba(196,83,42,.25);font-size:11px;color:var(--acc);cursor:pointer;font-weight:500">◇ Doel · '+pct+'%</span>';
+          return '<span class="action-pill" onclick="go(\'gl\')" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;background:rgba(196,83,42,.08);border:1px solid rgba(196,83,42,.25);font-size:11px;color:var(--acc);cursor:pointer;font-weight:500"><svg class="ico ico-sm"><use href="#i-target"/></svg> Doel · '+pct+'%</span>';
         }
         if(act.kind === 'plan' || act.kind === 'reminder'){
           var d = act.plannedFor ? new Date(act.plannedFor) : null;
           var dStr = d ? d.toLocaleDateString('nl-NL',{day:'numeric',month:'short'}) : '';
           var isPast = d && d.getTime() < Date.now() - 24*60*60*1000;
-          return '<span class="action-pill" onclick="toggleAction(\''+act.id+'\')" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;background:'+(act.done?'rgba(58,135,88,.12)':'var(--p2)')+';border:1px solid '+(act.done?'rgba(58,135,88,.3)':'var(--b)')+';font-size:11px;color:'+(act.done?'var(--green,#3a8758)':'var(--ink)')+';cursor:pointer;font-weight:500" title="'+(d?d.toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'}):'')+'">'+(act.done?'✓':'📅')+' '+(dStr||'Gepland')+'</span>';
+          return '<span class="action-pill" onclick="toggleAction(\''+act.id+'\')" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;background:'+(act.done?'rgba(58,135,88,.12)':'var(--p2)')+';border:1px solid '+(act.done?'rgba(58,135,88,.3)':'var(--b)')+';font-size:11px;color:'+(act.done?'var(--green,#3a8758)':'var(--ink)')+';cursor:pointer;font-weight:500" title="'+(d?d.toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'}):'')+'"><svg class="ico ico-sm"><use href="'+(act.done?'#i-circle-check':'#i-calendar')+'"/></svg> '+(dStr||'Gepland')+'</span>';
         }
         return '';
       }).join('') + '</div>';
     }
     const fb=u?'':`<div style="display:flex;gap:4px;align-items:center"><button class="fb-btn" onclick="doFB(${i},'like')">👍</button><button class="fb-btn" onclick="doFB(${i},'rej')">👎</button></div>`;
     // Aparte actie-knop onder het bericht — duidelijk als volgende stap
-    const actBtn = u ? '' : `<button onclick="openActionPicker('${S.cur}',${i},this)" style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:transparent;border:1px solid var(--b);border-radius:14px;font-size:11.5px;font-weight:500;color:var(--acc);cursor:pointer;font-family:inherit;letter-spacing:.02em;transition:all .15s;-webkit-tap-highlight-color:transparent" onmouseover="this.style.background='rgba(196,83,42,.06)';this.style.borderColor='var(--acc)'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--b)'"><span style="font-size:13px;line-height:1">+</span> Maak actie van dit advies</button>`;
+    const actBtn = u ? '' : `<button onclick="openActionPicker('${S.cur}',${i},this)" style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:transparent;border:1px solid var(--b);border-radius:14px;font-size:11.5px;font-weight:500;color:var(--acc);cursor:pointer;font-family:inherit;letter-spacing:.02em;transition:all .15s;-webkit-tap-highlight-color:transparent" onmouseover="this.style.background='rgba(196,83,42,.06)';this.style.borderColor='var(--acc)'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--b)'"><svg class="ico ico-sm"><use href="#i-plus"/></svg> Maak actie van dit advies</button>`;
     if(u)return`<div class="msg u"><div class="bub">${esc(m.content)}</div></div>`;
     return`<div class="msg a"><div style="display:flex;gap:8px;align-items:flex-start">${avatar}<div style="flex:1;min-width:0"><div class="bub${m.stream?' stream':''}" style="border-left:3px solid ${a.col}">${esc(m.content)}</div>${actBtn}${actionStatus}<div class="mm">${sc}${tb}${fb}</div></div></div></div>`;
   }).join('');
@@ -3205,13 +3232,13 @@ function openActionPicker(masterId, msgIdx, btn){
       '<input type="text" id="action-text" value="'+esc(firstSentence).replace(/"/g,'&quot;')+'" maxlength="120" style="width:100%;padding:11px 14px;border:1px solid '+borderColor+';border-radius:8px;font-size:14px;font-family:inherit;background:'+bgSolid+';color:'+inkColor+';margin-bottom:14px;box-sizing:border-box" placeholder="Wat is de actie?">' +
       '<div style="display:flex;flex-direction:column;gap:8px">' +
         '<button onclick="saveAsAction(\''+masterId+'\','+msgIdx+',\'today\')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:'+bgInset+';border:1px solid '+borderColor+';border-radius:10px;cursor:pointer;font-size:14px;color:'+inkColor+';text-align:left;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor=\'#c4532a\'" onmouseout="this.style.borderColor=\''+borderColor+'\'">' +
-          '<span style="font-size:18px">○</span><div style="flex:1"><div style="font-weight:500">Vandaag</div><div style="font-size:11px;color:'+mutedColor+'">Verschijnt op cockpit, vinkt af aan einde dag</div></div>' +
+          '<svg class="ico ico-lg"><use href="#i-circle"/></svg><div style="flex:1"><div style="font-weight:500">Vandaag</div><div style="font-size:11px;color:'+mutedColor+'">Verschijnt op cockpit, vinkt af aan einde dag</div></div>' +
         '</button>' +
         '<button onclick="saveAsAction(\''+masterId+'\','+msgIdx+',\'goal\')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:'+bgInset+';border:1px solid '+borderColor+';border-radius:10px;cursor:pointer;font-size:14px;color:'+inkColor+';text-align:left;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor=\'#c4532a\'" onmouseout="this.style.borderColor=\''+borderColor+'\'">' +
-          '<span style="font-size:18px">◇</span><div style="flex:1"><div style="font-weight:500">Doel</div><div style="font-size:11px;color:'+mutedColor+'">Lange termijn met voortgangs-percentage</div></div>' +
+          '<svg class="ico ico-lg"><use href="#i-target"/></svg><div style="flex:1"><div style="font-weight:500">Doel</div><div style="font-size:11px;color:'+mutedColor+'">Lange termijn met voortgangs-percentage</div></div>' +
         '</button>' +
         '<button onclick="saveAsAction(\''+masterId+'\','+msgIdx+',\'plan\')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:'+bgInset+';border:1px solid '+borderColor+';border-radius:10px;cursor:pointer;font-size:14px;color:'+inkColor+';text-align:left;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor=\'#c4532a\'" onmouseout="this.style.borderColor=\''+borderColor+'\'">' +
-          '<span style="font-size:18px">📅</span><div style="flex:1"><div style="font-weight:500">Plannen voor…</div><div style="font-size:11px;color:'+mutedColor+'">Verschijnt op cockpit op gekozen dag</div></div>' +
+          '<svg class="ico ico-lg"><use href="#i-calendar"/></svg><div style="flex:1"><div style="font-weight:500">Plannen voor…</div><div style="font-size:11px;color:'+mutedColor+'">Verschijnt op cockpit op gekozen dag</div></div>' +
         '</button>' +
       '</div>' +
       '<button onclick="closeActionPicker()" style="margin-top:14px;width:100%;padding:10px;background:none;border:none;color:'+mutedColor+';font-size:13px;cursor:pointer;font-family:inherit">Annuleren</button>' +
@@ -3437,11 +3464,11 @@ function renderCkActions(){
       if(isPast){
         planLabel = '<span style="font-size:10px;color:var(--acc);font-weight:500;margin-right:6px">↶ uit '+pd.toLocaleDateString('nl-NL',{day:'numeric',month:'short'})+'</span>';
       } else {
-        planLabel = '<span style="font-size:10px;color:var(--m);margin-right:6px">📅</span>';
+        planLabel = '<span style="display:inline-flex;align-items:center;color:var(--m);margin-right:6px"><svg class="ico ico-sm"><use href="#i-calendar"/></svg></span>';
       }
     }
     return '<div onclick="toggleAction(\''+a.id+'\')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--p2);border:1px solid var(--b);border-radius:10px;cursor:pointer;margin-bottom:6px;transition:all .15s;'+(a.done?'opacity:.55':'')+'">'+
-      '<div style="font-size:14px;color:'+(a.done?'var(--acc)':'var(--m)')+';flex-shrink:0;font-weight:500">'+(a.done?'✓':'○')+'</div>'+
+      '<svg class="ico" style="color:'+(a.done?'var(--acc)':'var(--m)')+';flex-shrink:0"><use href="'+(a.done?'#i-circle-check':'#i-circle')+'"/></svg>'+
       '<div style="flex:1;font-size:13px;color:var(--ink);line-height:1.4;'+(a.done?'text-decoration:line-through':'')+'">'+planLabel+esc(a.text)+'</div>'+
       '<div style="font-family:var(--FJ);font-size:13px;color:var(--m);flex-shrink:0;opacity:.6" title="'+(agent?.name||'')+'">'+(agent?.ico||'匠')+'</div>'+
     '</div>';
@@ -3503,10 +3530,11 @@ function renderPrimaryGoal(){
   sec.innerHTML =
     '<div style="padding:28px 0 24px;border-bottom:1px solid var(--b)">'+
       // Header — minimal
-      '<div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:16px">Jouw richting</div>'+
+      '<div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--m);font-weight:500;margin-bottom:16px;display:flex;align-items:center;gap:6px"><svg class="ico ico-sm"><use href="#i-compass"/></svg> Jouw richting</div>'+
 
       // Doel — geen kaart, gewoon tekst met progress
       '<div onclick="openGoal(\''+primary.id+'\')" style="cursor:pointer;margin-bottom:20px">'+
+        (primary.ico && primary.ico !== '🎯' ? '<div style="font-size:22px;line-height:1;margin-bottom:10px">'+primary.ico+'</div>' : '<svg class="ico ico-xl" style="color:var(--acc);margin-bottom:10px;display:block"><use href="#i-target"/></svg>')+
         '<div style="font-size:20px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:8px">'+esc(primary.title)+'</div>'+
         '<div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--m);margin-bottom:8px"><span>Week '+weekNumber+'</span><span>·</span><span style="font-weight:500">'+primary.pct+'%</span></div>'+
         '<div style="height:3px;background:var(--p2);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+primary.pct+'%;background:var(--acc);transition:width .4s"></div></div>'+
@@ -3523,7 +3551,7 @@ function renderPrimaryGoal(){
         '</div>'+
         '<div id="ck-leader-msg" style="font-size:13.5px;color:var(--ink);line-height:1.6;font-style:italic;font-family:var(--serif);min-height:20px;margin-bottom:14px">Een ogenblik...</div>'+
         '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
-          '<button onclick="askLeaderToday()" style="font-size:11.5px;padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;font-weight:500;display:inline-flex;align-items:center;gap:6px"><span style="font-family:var(--FJ);font-size:13px;line-height:1">'+leaderIco+'</span><span>Vraag '+esc(warriorShort)+(warriorDomain ? ' ('+esc(warriorDomain)+')' : '')+' →</span></button>'+
+          '<button onclick="askLeaderToday()" style="font-size:11.5px;padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;font-weight:500;display:inline-flex;align-items:center;gap:6px"><span style="font-family:var(--FJ);font-size:13px;line-height:1">'+leaderIco+'</span><span>Vraag '+esc(warriorShort)+(warriorDomain ? ' ('+esc(warriorDomain)+')' : '')+'</span><svg class="ico ico-sm" style="color:#fff"><use href="#i-arrow-right"/></svg></button>'+
           (S.primaryGoalId !== primary.id ? '<button onclick="setPrimaryGoal(\''+primary.id+'\')" style="font-size:11.5px;padding:7px 14px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:14px;cursor:pointer;font-family:inherit">Zet als focus</button>' : '')+
         '</div>'+
       '</div>'+
