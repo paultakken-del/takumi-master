@@ -690,33 +690,36 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <nav id="sb">
   <div class="sb-logo"><span class="sb-kanji">匠</span><div><div class="sb-brand">Takumi</div></div></div>
   <div class="sb-nav">
-    <div class="sb-sec">Dag</div>
-    <div class="ni on" data-v="ck"><span class="ico">⬡</span>Cockpit</div>
-    <div class="ni" data-v="dy"><span class="ico" style="font-family:var(--FJ)">脈</span>Ochtend Start</div>
-    <div class="ni" data-v="bo"><span class="ico">◈</span>Raad van Meesters</div>
-    <div class="sb-sec">Avond</div>
-    <div class="ni" data-v="ri"><span class="ico">習</span>Avond Check-out</div>
-    <div class="sb-sec">Week · Maand</div>
-    <div class="ni" id="nav-wr" data-v="wr"><span class="ico" style="font-family:var(--FJ)">週</span>Week Reflectie</div>
-    <div class="ni" data-v="rt"><span class="ico" style="font-family:var(--FJ)">律</span>Ritme & Herstel</div>
-    <div class="sb-sec">Strategie</div>
-    <div class="ni" data-v="gl"><span class="ico">◇</span>Doelen</div>
-    <div class="ni" data-v="wc"><span class="ico">○</span>Wereldcontext</div>
-    <div class="sb-sec">Oefenen</div>
-    <div class="ni" data-v="dj"><span class="ico" style="font-family:var(--FJ)">道</span>Dojo</div>
-    <div class="sb-sec">Data</div>
-    <div class="ni" data-v="da"><span class="ico">▤</span>Data Hub</div>
-    <a id="admin-link" href="/admin/users" target="_blank" style="display:none;align-items:center;gap:10px;padding:8px 16px;font-size:13px;color:rgba(255,255,255,.55);text-decoration:none;border-radius:8px" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='none'"><span style="font-size:14px">👥</span>Gebruikers</a>
+    <div class="sb-sec" data-i18n="nav.section_day">Dag</div>
+    <div class="ni on" data-v="ck"><span class="ico">⬡</span><span data-i18n="nav.cockpit">Cockpit</span></div>
+    <div class="ni" data-v="dy"><span class="ico" style="font-family:var(--FJ)">脈</span><span data-i18n="nav.daily">Ochtend Start</span></div>
+    <div class="ni" data-v="bo"><span class="ico">◈</span><span data-i18n="nav.board">Raad van Meesters</span></div>
+    <div class="sb-sec" data-i18n="nav.section_evening">Avond</div>
+    <div class="ni" data-v="ri"><span class="ico">習</span><span data-i18n="nav.evening_checkout">Avond Check-out</span></div>
+    <div class="sb-sec" data-i18n="nav.section_week_month">Week · Maand</div>
+    <div class="ni" id="nav-wr" data-v="wr"><span class="ico" style="font-family:var(--FJ)">週</span><span data-i18n="nav.week_reflection">Week Reflectie</span></div>
+    <div class="ni" data-v="rt"><span class="ico" style="font-family:var(--FJ)">律</span><span data-i18n="nav.rhythm_recovery">Ritme & Herstel</span></div>
+    <div class="sb-sec" data-i18n="nav.section_strategy">Strategie</div>
+    <div class="ni" data-v="gl"><span class="ico">◇</span><span data-i18n="nav.goals">Doelen</span></div>
+    <div class="ni" data-v="wc"><span class="ico">○</span><span data-i18n="nav.world">Wereldcontext</span></div>
+    <div class="sb-sec" data-i18n="nav.section_practice">Oefenen</div>
+    <div class="ni" data-v="dj"><span class="ico" style="font-family:var(--FJ)">道</span><span data-i18n="nav.dojo">Dojo</span></div>
+    <div class="sb-sec" data-i18n="nav.section_data">Data</div>
+    <div class="ni" data-v="da"><span class="ico">▤</span><span data-i18n="nav.data_hub">Data Hub</span></div>
+    <a id="admin-link" href="/admin/users" target="_blank" style="display:none;align-items:center;gap:10px;padding:8px 16px;font-size:13px;color:rgba(255,255,255,.55);text-decoration:none;border-radius:8px" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='none'"><span style="font-size:14px">👥</span><span data-i18n="nav.users">Gebruikers</span></a>
   </div>
-  <div class="sb-foot" style="display:flex;align-items:center;justify-content:space-between">
-      <span>persoonlijk adviesplatform</span>
-      <button onclick="toggleTheme()" id="theme-btn" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:3px 10px;cursor:pointer;font-size:11px;color:rgba(255,255,255,.4);font-family:var(--F);transition:all .2s" title="Dag/nacht">☀</button>
+  <div class="sb-foot" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <span data-i18n="nav.subtitle">persoonlijk adviesplatform</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button onclick="setLang(LANG === 'nl' ? 'en' : 'nl')" id="lang-btn" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:3px 10px;cursor:pointer;font-size:10.5px;color:rgba(255,255,255,.55);font-family:var(--F);transition:all .2s;letter-spacing:.05em;font-weight:500" title="Switch language"></button>
+        <button onclick="toggleTheme()" id="theme-btn" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:3px 10px;cursor:pointer;font-size:11px;color:rgba(255,255,255,.4);font-family:var(--F);transition:all .2s" title="Dag/nacht">☀</button>
+      </div>
     </div>
 
     <div class="sb-footer">
       <div class="sb-user" id="sb-user-email"></div>
-      <button onclick="window.startTakumiTour && window.startTakumiTour()" style="background:none;border:none;font-size:12px;color:rgba(255,255,255,.3);cursor:pointer;font-family:var(--F);padding:4px 0;text-align:left;transition:color .2s" onmouseover="this.style.color='rgba(196,83,42,.8)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">◎ Rondleiding</button>
-      <button class="sb-logout" onclick="logout()">↩ Afmelden</button>
+      <button onclick="window.startTakumiTour && window.startTakumiTour()" style="background:none;border:none;font-size:12px;color:rgba(255,255,255,.3);cursor:pointer;font-family:var(--F);padding:4px 0;text-align:left;transition:color .2s" onmouseover="this.style.color='rgba(196,83,42,.8)'" onmouseout="this.style.color='rgba(255,255,255,.3)'"><span id="sb-tour-text">◎ Rondleiding</span></button>
+      <button class="sb-logout" onclick="logout()"><span id="sb-logout-text">↩ Afmelden</span></button>
     </div>
 </nav>
 
@@ -1264,11 +1267,11 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
 <!-- MOBILE NAV -->
 <nav id="mob"><div class="mn2">
-  <div class="mi2 on" data-v="ck"><div class="mico">⬡</div><div class="mlb">Cockpit</div></div>
-  <div class="mi2" data-v="bo"><div class="mico">◈</div><div class="mlb">Raad</div></div>
-  <div class="mi2" data-v="dj"><div class="mico" style="font-family:var(--FJ)">道</div><div class="mlb">Dojo</div></div>
-  <div class="mi2" data-v="gl"><div class="mico">◇</div><div class="mlb">Doelen</div></div>
-  <div class="mi2" data-v="ri"><div class="mico">習</div><div class="mlb">Rituelen</div></div>
+  <div class="mi2 on" data-v="ck"><div class="mico">⬡</div><div class="mlb" data-i18n="mob.cockpit">Cockpit</div></div>
+  <div class="mi2" data-v="bo"><div class="mico">◈</div><div class="mlb" data-i18n="mob.board">Raad</div></div>
+  <div class="mi2" data-v="dj"><div class="mico" style="font-family:var(--FJ)">道</div><div class="mlb" data-i18n="mob.dojo">Dojo</div></div>
+  <div class="mi2" data-v="gl"><div class="mico">◇</div><div class="mlb" data-i18n="mob.goals">Doelen</div></div>
+  <div class="mi2" data-v="ri"><div class="mico">習</div><div class="mlb" data-i18n="mob.rituals">Rituelen</div></div>
 </div></nav>
 
 <!-- GOAL SHEET -->
@@ -1347,11 +1350,23 @@ var I18N = {
     'nav.cockpit': 'Cockpit',
     'nav.daily': 'Ochtend Start',
     'nav.board': 'Raad van Meesters',
+    'nav.section_day': 'Dag',
+    'nav.section_evening': 'Avond',
+    'nav.section_week_month': 'Week · Maand',
     'nav.section_strategy': 'Strategie',
     'nav.section_practice': 'Oefenen',
+    'nav.section_data': 'Data',
+    'nav.evening_checkout': 'Avond Check-out',
+    'nav.week_reflection': 'Week Reflectie',
+    'nav.rhythm_recovery': 'Ritme & Herstel',
     'nav.goals': 'Doelen',
     'nav.world': 'Wereldcontext',
     'nav.dojo': 'Dojo',
+    'nav.data_hub': 'Data Hub',
+    'nav.users': 'Gebruikers',
+    'nav.subtitle': 'persoonlijk adviesplatform',
+    'nav.tour': '◎ Rondleiding',
+    'nav.logout': '↩ Afmelden',
     'nav.evening': 'Avond Ritueel',
     'nav.rituals': 'Rituelen',
     // Mobile bottom nav
@@ -1526,11 +1541,23 @@ var I18N = {
     'nav.cockpit': 'Cockpit',
     'nav.daily': 'Morning Start',
     'nav.board': 'Council of Masters',
+    'nav.section_day': 'Day',
+    'nav.section_evening': 'Evening',
+    'nav.section_week_month': 'Week · Month',
     'nav.section_strategy': 'Strategy',
     'nav.section_practice': 'Practice',
+    'nav.section_data': 'Data',
+    'nav.evening_checkout': 'Evening Check-out',
+    'nav.week_reflection': 'Week Reflection',
+    'nav.rhythm_recovery': 'Rhythm & Recovery',
     'nav.goals': 'Goals',
     'nav.world': 'World context',
     'nav.dojo': 'Dojo',
+    'nav.data_hub': 'Data Hub',
+    'nav.users': 'Users',
+    'nav.subtitle': 'personal advisory platform',
+    'nav.tour': '◎ Tour',
+    'nav.logout': '↩ Sign out',
     'nav.evening': 'Evening Ritual',
     'nav.rituals': 'Rituals',
     'mob.cockpit': 'Cockpit',
@@ -1725,6 +1752,17 @@ function applyI18nDOM(){
     var key = el.getAttribute('data-i18n-placeholder');
     if(key) el.setAttribute('placeholder', t(key));
   });
+  // Speciale: taal-switch button (toon de andere taal)
+  var langBtn = document.getElementById('lang-btn');
+  if(langBtn){
+    langBtn.textContent = LANG === 'nl' ? 'EN' : 'NL';
+    langBtn.title = LANG === 'nl' ? 'Switch to English' : 'Schakel naar Nederlands';
+  }
+  // Tour en logout
+  var tourEl = document.getElementById('sb-tour-text');
+  if(tourEl) tourEl.textContent = t('nav.tour');
+  var logoutEl = document.getElementById('sb-logout-text');
+  if(logoutEl) logoutEl.textContent = t('nav.logout');
   // HTML-lang attribuut
   document.documentElement.setAttribute('lang', LANG);
 }
