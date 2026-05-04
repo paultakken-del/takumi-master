@@ -6789,57 +6789,112 @@ document.addEventListener('DOMContentLoaded', function(){
 // ── TAKUMI WALKTHROUGH TOUR ──────────────────────────────────────────
 (function(){
 
-var TOUR_KEY = 'tm_tour_done_v1';
+var TOUR_KEY = 'tm_tour_done_v2';
 
-var STEPS = [
+// Helper: t() is global, valt terug op NL als key niet bestaat
+var STEPS_NL = [
   {
-    title: '匠 Welkom bij Takumi',
-    text: 'Je bent er. In deze korte rondleiding laat ik je zien hoe Takumi werkt — vijf GodAI-elementen als jouw dagelijkse krijgersgidsen.',
-    target: null, // centered welcome
+    title: '匠 Welkom in Takumi',
+    text: 'Een digitale dojo om te leren spelen met de elementen. Niet AI die alles weet — vijf stemmen die je leren beter te zien. Aarde, Water, Wind, Vuur, Leegte.',
+    target: null,
     pos: 'center'
   },
   {
-    title: '⬡ De Cockpit',
-    text: 'Dit is je thuisbasis. Hier zie je jouw dagelijkse energie, een synthese van je dag, doelen en een wijsheid van de dag.',
-    target: 'ck-icon-circle',
-    pos: 'bottom'
+    title: '⬡ Cockpit — jouw dag',
+    text: 'Hier zie je vandaag in één blik: welke meester leidt deze dag, jouw richting, acties, energie en de balans van de week. Klik door op alles wat je aandacht trekt.',
+    target: null,
+    navItem: 'ck',
+    pos: 'right'
   },
   {
-    title: '脈 Ochtend Start',
-    text: 'Begin elke dag hier. Stel je intentie in, voel je energieniveau en laat Takumi jouw dag afstemmen op de flow van de elementen.',
+    title: '☯ Balans van de week',
+    text: 'De yin-yang toont hoe jouw week zich verdeelt tussen Doen (Aarde + Vuur) en Zijn (Water + Leegte). Wind vloeit ertussen. AI-analyse leest het patroon. Vanaf hier kun je dieper de Dojo in.',
     target: null,
-    navItem: 'dy',
+    navItem: 'ck',
     pos: 'right'
   },
   {
     title: '◈ Raad van Meesters',
-    text: 'Vijf AI-adviseurs, elk geworteld in een Godai-element: 地 水 風 火 空. Stel ze elke vraag over strategie, aanpassing, creativiteit, actie of loslaten.',
+    text: 'Dertien meesters, vijf elementen. Stel een vraag aan Ki (Sui) over herstel, aan Hataraki (Ka) over actie, aan Ryaku (Chi) over strategie. Of vraag het Master Council voor synthese.',
     target: null,
     navItem: 'bo',
     pos: 'right'
   },
   {
-    title: '◇ Doelen',
-    text: 'Verbind jouw doelen aan de elementen. Zo worden ze niet alleen opgeslagen — maar dagelijks belichaamd.',
+    title: '道 Dojo — oefenruimte',
+    text: 'Het hart van Takumi. Hier oefen je transformatieve gesprekken: vier elementen stellen elk één doorvraag, dan synthese. Of bekijk je element-portretten — wat jij hebt geleerd over elke kant van jezelf.',
+    target: null,
+    navItem: 'dj',
+    pos: 'right'
+  },
+  {
+    title: '◇ Doelen — geworteld',
+    text: 'Jouw doelen krijgen één primaire spil. De meesters bouwen daar dagelijks op voort. Niet abstract — geworteld in wat jij wil bereiken.',
     target: null,
     navItem: 'gl',
     pos: 'right'
   },
   {
-    title: '習 Avond Ritueel',
-    text: 'Sluit bewust af. Reflecteer op energie, leer van de dag en cultiveer dankbaarheid. Zo bouw je dag voor dag aan vakmeesterschap.',
-    target: null,
-    navItem: 'ri',
-    pos: 'right'
-  },
-  {
     title: '空 Begin',
-    text: 'In het niets ontstaan nieuwe dingen. Jouw reis naar natuurlijk vakmeesterschap begint nu.',
+    text: 'Leer spelen met de elementen. Soms voor jezelf, soms voor je groep, altijd om beter te leren waarnemen. De rondleiding is voorbij — start met één gesprek, of een transformatieve vraag in de Dojo.',
     target: null,
     pos: 'center',
     last: true
   }
 ];
+
+var STEPS_EN = [
+  {
+    title: '匠 Welcome to Takumi',
+    text: 'A digital dojo to learn playing with the elements. Not AI that knows everything — five voices that teach you to see better. Earth, Water, Wind, Fire, Void.',
+    target: null,
+    pos: 'center'
+  },
+  {
+    title: '⬡ Cockpit — your day',
+    text: 'See today at a glance: which master leads this day, your direction, actions, energy, and the week\'s balance. Tap on whatever draws your attention.',
+    target: null,
+    navItem: 'ck',
+    pos: 'right'
+  },
+  {
+    title: '☯ Balance of the week',
+    text: 'The yin-yang shows how your week divides between Doing (Earth + Fire) and Being (Water + Void). Wind flows between them. AI reads the pattern. From here you can go deeper into the Dojo.',
+    target: null,
+    navItem: 'ck',
+    pos: 'right'
+  },
+  {
+    title: '◈ Council of Masters',
+    text: 'Thirteen masters, five elements. Ask Ki (Sui) about recovery, Hataraki (Ka) about action, Ryaku (Chi) about strategy. Or ask the Master Council for synthesis.',
+    target: null,
+    navItem: 'bo',
+    pos: 'right'
+  },
+  {
+    title: '道 Dojo — practice space',
+    text: 'The heart of Takumi. Here you practice transformative conversations: four elements each ask one deeper question, then synthesis. Or view element portraits — what you have learned about each side of yourself.',
+    target: null,
+    navItem: 'dj',
+    pos: 'right'
+  },
+  {
+    title: '◇ Goals — rooted',
+    text: 'Your goals receive one primary anchor. The masters build on this daily. Not abstract — rooted in what you want to reach.',
+    target: null,
+    navItem: 'gl',
+    pos: 'right'
+  },
+  {
+    title: '空 Begin',
+    text: 'Learn to play with the elements. Sometimes for yourself, sometimes for your group, always to perceive more richly. The tour is done — start with one conversation, or a transformative question in the Dojo.',
+    target: null,
+    pos: 'center',
+    last: true
+  }
+];
+
+var STEPS = (typeof LANG !== 'undefined' && LANG === 'en') ? STEPS_EN : STEPS_NL;
 
 var current = 0;
 var overlay, spotlight, tooltip;
@@ -6955,6 +7010,12 @@ function doRender(idx) {
     dots += '<span style="width:6px;height:6px;border-radius:50%;background:' + (i === idx ? '#c4532a' : 'rgba(28,24,21,.2)') + ';display:inline-block;margin:0 3px"></span>';
   }
 
+  // Tweetalige labels — gebruik LANG die globaal beschikbaar is
+  var lblBack = (typeof LANG !== 'undefined' && LANG === 'en') ? '← Back' : '← Terug';
+  var lblNext = (typeof LANG !== 'undefined' && LANG === 'en') ? 'Next →' : 'Volgende →';
+  var lblBegin = (typeof LANG !== 'undefined' && LANG === 'en') ? 'Begin ↗' : 'Begin ↗';
+  var lblSkip = (typeof LANG !== 'undefined' && LANG === 'en') ? 'Skip' : 'Overslaan';
+
   tooltip.innerHTML = `
     <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#c4532a;margin-bottom:10px">${idx + 1} / ${total}</div>
     <div style="font-size:17px;font-weight:600;color:#1a1815;margin-bottom:10px;line-height:1.3">${step.title}</div>
@@ -6962,13 +7023,13 @@ function doRender(idx) {
     <div style="display:flex;justify-content:space-between;align-items:center">
       <div>${dots}</div>
       <div style="display:flex;gap:10px">
-        ${idx > 0 ? '<button onclick="window.__tourPrev()" style="background:none;border:1px solid rgba(28,24,21,.15);border-radius:8px;padding:9px 18px;font-size:13px;cursor:pointer;color:#6e6558;font-family:system-ui">← Terug</button>' : ''}
+        ${idx > 0 ? '<button onclick="window.__tourPrev()" style="background:none;border:1px solid rgba(28,24,21,.15);border-radius:8px;padding:9px 18px;font-size:13px;cursor:pointer;color:#6e6558;font-family:system-ui">'+lblBack+'</button>' : ''}
         <button onclick="window.__tourNext()" style="background:#c4532a;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;color:#fff;font-family:system-ui">
-          ${step.last ? 'Begin ↗' : 'Volgende →'}
+          ${step.last ? lblBegin : lblNext}
         </button>
       </div>
     </div>
-    ${idx === 0 ? '<div style="text-align:center;margin-top:12px"><button onclick="window.__tourSkip()" style="background:none;border:none;font-size:12px;color:rgba(28,24,21,.35);cursor:pointer;font-family:system-ui">Overslaan</button></div>' : ''}
+    ${idx === 0 ? '<div style="text-align:center;margin-top:12px"><button onclick="window.__tourSkip()" style="background:none;border:none;font-size:12px;color:rgba(28,24,21,.35);cursor:pointer;font-family:system-ui">'+lblSkip+'</button></div>' : ''}
   `;
 }
 
