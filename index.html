@@ -4503,10 +4503,10 @@ async function deepenBalanceInDojo(){
     document.querySelectorAll('.view').forEach(function(el){ el.classList.toggle('on', el.id === 'v-dj'); });
   }
 
-  // Start het transformatieve gesprek met voorgevulde vraag
+  // Start het transformatieve gesprek met voorgevulde vraag + balans-context
   setTimeout(function(){
     if(typeof startTransformatief === 'function'){
-      startTransformatief();
+      startTransformatief({balanceContext: analysisText});
       // Wacht tot de input gerenderd is, dan vullen
       setTimeout(function(){
         var inp = document.getElementById('dj-q-input');
@@ -4731,7 +4731,8 @@ var DOJO_ELEMENTS = [
   {id:'ka',  kanji:'火', name:'Ka',  warrior:'Hataraki', domein:'Vuur · Energie', col:'var(--ink)'}
 ];
 
-function startTransformatief(){
+function startTransformatief(opts){
+  opts = opts || {};
   // Init nieuw gesprek
   S.dojoActive = {
     id: 'tg_' + Date.now(),
@@ -4739,7 +4740,8 @@ function startTransformatief(){
     initialQuestion: null,
     answers: [], // {element, question, answer}
     synthesis: null,
-    step: 0
+    step: 0,
+    balanceContext: opts.balanceContext || null // analyse-tekst die dit gesprek triggerde
   };
   document.getElementById('dj-intro').style.display = 'none';
   document.getElementById('dj-active').style.display = 'block';
@@ -4829,6 +4831,14 @@ function submitInitialQuestion(){
 async function generateElementQuestion(dj, el){
   // Bouw context
   var prevContext = '';
+  var balCtx = '';
+  if(dj.balanceContext){
+    if(LANG === 'en'){
+      balCtx = '\n\nCONTEXT: This conversation was started from a balance reading. The user just read this about their week:\n"'+dj.balanceContext+'"\n\nYour question should build on what this reading reveals — not generic, but rooted in this specific pattern.';
+    } else {
+      balCtx = '\n\nCONTEXT: Dit gesprek begon vanuit een balans-lezing. De gebruiker las net dit over hun week:\n"'+dj.balanceContext+'"\n\nJouw vraag moet voortbouwen op wat deze lezing onthult — niet generiek, maar geworteld in dit specifieke patroon.';
+    }
+  }
   if(dj.answers.length > 0){
     if(LANG === 'en'){
       prevContext = '\n\nWhat the user has said so far:\n' +
@@ -4848,7 +4858,7 @@ async function generateElementQuestion(dj, el){
   var prompt;
   if(LANG === 'en'){
     var domEn = translateDomein(el.domein);
-    prompt = 'You are '+el.warrior+', master of the '+el.name+' element ('+domEn+'). The user has presented a transformative question:\n\n"'+dj.initialQuestion+'"'+prevContext+
+    prompt = 'You are '+el.warrior+', master of the '+el.name+' element ('+domEn+'). The user has presented a transformative question:\n\n"'+dj.initialQuestion+'"'+balCtx+prevContext+
       '\n\nAsk ONE deeper question from your element. Do not advise, do not answer — only one question that lets the user look deeper. Speak from '+el.name+'\'s perspective:'+
       (el.id === 'chi' ? ' Chi asks about foundation, structure, what carries beneath the problem.' : '') +
       (el.id === 'sui' ? ' Sui asks about what is lost, which conversation has disappeared, what flows beneath the surface.' : '') +
@@ -4856,7 +4866,7 @@ async function generateElementQuestion(dj, el){
       (el.id === 'ka'  ? ' Ka asks where the energy has gone, where the fire was and is no longer, about moments and places.' : '') +
       '\n\nFormat: 2-4 sentences in English, no quotation marks. Begin directly with the question or a short lead-in. End with a concrete question the user can work with. Keep it inviting and spacious, not diagnostic.';
   } else {
-    prompt = 'Je bent '+el.warrior+', meester van het '+el.name+'-element ('+el.domein+'). De gebruiker heeft een transformatieve vraag voorgelegd:\n\n"'+dj.initialQuestion+'"'+prevContext+
+    prompt = 'Je bent '+el.warrior+', meester van het '+el.name+'-element ('+el.domein+'). De gebruiker heeft een transformatieve vraag voorgelegd:\n\n"'+dj.initialQuestion+'"'+balCtx+prevContext+
       '\n\nStel ÉÉN doorvraag vanuit jouw element. Niet adviseren, niet beantwoorden — alleen één vraag stellen die de gebruiker dieper laat kijken. Spreek vanuit het perspectief van '+el.name+':'+
       (el.id === 'chi' ? ' Chi vraagt naar fundament, structuur, wat draagt onder het probleem.' : '') +
       (el.id === 'sui' ? ' Sui vraagt naar wat is verloren, welk gesprek verdwenen is, wat onder de oppervlakte stroomt.' : '') +
@@ -4922,9 +4932,17 @@ async function generateSynthesis(dj){
   }).join('\n\n');
 
   var prompt;
+  var balCtxSyn = '';
+  if(dj.balanceContext){
+    if(LANG === 'en'){
+      balCtxSyn = '\n\nThis conversation began from a balance reading the user just received about their week:\n"'+dj.balanceContext+'"\nLet the synthesis honor this — the user did not come with a random question, but from a specific lens.\n';
+    } else {
+      balCtxSyn = '\n\nDit gesprek begon vanuit een balans-lezing die de gebruiker net kreeg over hun week:\n"'+dj.balanceContext+'"\nLaat de synthese dit eren — de gebruiker kwam niet met een willekeurige vraag, maar vanuit een specifieke lens.\n';
+    }
+  }
   if(LANG === 'en'){
     prompt = 'You are the Master Council — five Godai masters together. The user has explored a transformative question through four elements. Read the answers and give a synthesis.\n\n'+
-      'Original question: "'+dj.initialQuestion+'"\n\n'+
+      'Original question: "'+dj.initialQuestion+'"'+balCtxSyn+'\n\n'+
       'Answers:\n'+antwoorden+'\n\n'+
       'Write a synthesis in 4-6 sentences in English that:\n'+
       '1. Begins with "Before you reach for solutions..." or similar\n'+
@@ -4934,7 +4952,7 @@ async function generateSynthesis(dj){
       'No advice. No solution. A mirror. Use a calm, serif-like tone. No quotation marks around your own text, but yes around the reformulated question.';
   } else {
     prompt = 'Je bent het Master Council — vijf Godai-meesters samen. De gebruiker heeft een transformatieve vraag onderzocht via vier elementen. Lees de antwoorden en geef een synthese.\n\n'+
-      'Oorspronkelijke vraag: "'+dj.initialQuestion+'"\n\n'+
+      'Oorspronkelijke vraag: "'+dj.initialQuestion+'"'+balCtxSyn+'\n\n'+
       'Antwoorden:\n'+antwoorden+'\n\n'+
       'Schrijf een synthese in 4-6 zinnen Nederlands die:\n'+
       '1. Begint met "Voor je naar oplossingen zoekt..." of vergelijkbaar\n'+
@@ -4966,7 +4984,8 @@ async function generateSynthesis(dj){
       completedAt: dj.completedAt,
       question: dj.initialQuestion,
       answers: dj.answers,
-      synthesis: synth
+      synthesis: synth,
+      balanceContext: dj.balanceContext || null
     });
     // Beperk tot laatste 20
     S.dojoHistory = S.dojoHistory.slice(0, 20);
