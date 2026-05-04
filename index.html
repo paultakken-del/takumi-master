@@ -912,10 +912,10 @@ input[type=range]{width:100%;accent-color:var(--acc)}
           <div class="go-desc">Focus, besluitvorming en actie. Vuur transformeert en geeft richting.</div>
           <div class="go-warriors"><span class="go-warrior" onclick="event.stopPropagation();openWarrior('productivity')">働 Hataraki · Productiviteit</span><span class="go-warrior" onclick="event.stopPropagation();openWarrior('decision')">決 Ketsu · Beslissing</span><span class="go-warrior" onclick="event.stopPropagation();openWarrior('digital')">間 Ma · Digitaal</span></div>
         </div>
-        <div class="go-card go-ku" onclick="openWarrior('board')">
-          <div class="go-card-top"><div class="go-kanji" style="color:#7A6B8A">空</div><div><div class="go-name">Kū · 空</div><div class="go-sub">Void · Ruimte &amp; Synthese</div></div></div>
-          <div class="go-desc">Ruimte, stilte en het grotere geheel. De leegte die alle mogelijkheden bevat.</div>
-          <div class="go-warriors"><span class="go-warrior" onclick="event.stopPropagation();openWarrior('board')">匠 Takumi · Volledig Council</span></div>
+        <div class="go-card go-ku" onclick="openWarrior('silence')">
+          <div class="go-card-top"><div class="go-kanji" style="color:#7A6B8A">空</div><div><div class="go-name">Kū · 空</div><div class="go-sub">Void · Stilte, Loslaten, Mysterie</div></div></div>
+          <div class="go-desc">Ruimte, stilte en het verborgene. Leegte als fundament — wat ontbreekt zegt soms meer dan wat er is.</div>
+          <div class="go-warriors"><span class="go-warrior" onclick="event.stopPropagation();openWarrior('silence')">静 Sei · Stilte</span><span class="go-warrior" onclick="event.stopPropagation();openWarrior('letting_go')">無 Mu · Loslaten</span><span class="go-warrior" onclick="event.stopPropagation();openWarrior('mystery')">玄 Gen · Mysterie</span></div>
         </div>
       </div>
       <div class="ca">
@@ -2179,25 +2179,31 @@ const AGENTS={
   learning:{id:'learning',name:'学 Gaku — Leren',ico:'学',dom:'Personal',col:'var(--gold)',sys(){return`Learning & Growth Coach.\n"Skills compound over time."\nStem: Sui (Water) — vloeiend, schakel vragen in. Zacht maar vasthoudend. Vorm volgt.\n1 leerinzicht + 1 oefening. Max 30w. Nederlands.`;}},
   routine:{id:'routine',name:'律 Ritsu — Routine',ico:'律',dom:'Personal',col:'var(--teal)',sys(){return`Routine & Habit Builder.\n"Small habits compound."\nStem: Chi (Aarde) — traag, met gewicht. Korte zekere zinnen. Geen vragen. Bouw fundament.\n1 gewoonte-inzicht + 1 micro-actie. Max 30w. Nederlands.`;}},
   digital:{id:'digital',name:'間 Ma — Digitaal',ico:'間',dom:'Personal',col:'var(--m)',sys(){return`Digital Declutter Coach.\n"Attention is your scarcest resource."\nStem: Ka (Vuur) — urgent, dwingend, dichtbij. Eis actie nu, geen morgen.\n${allCtx()}\n${learnCtx('digital')}${memoirCtx('digital')}\n1 aandachtsinzicht + 1 actie. Max 30w. Nederlands.`;}},
-  engagement:{id:'engagement',name:'道 Dō — Engagement',ico:'道',dom:'Meta',col:'var(--acc)',sys(){return`Engagement Coach. Platform navigatie.\n"The best tool is the one you actually use."\nStem: Fū (Wind) — scherp, korte stoten. Breek een aanname open. Verras.\n1 platform-tip die direct waarde toevoegt. Max 30w. Nederlands.`;}}
+  engagement:{id:'engagement',name:'道 Dō — Engagement',ico:'道',dom:'Meta',col:'var(--acc)',sys(){return`Engagement Coach. Platform navigatie.\n"The best tool is the one you actually use."\nStem: Fū (Wind) — scherp, korte stoten. Breek een aanname open. Verras.\n1 platform-tip die direct waarde toevoegt. Max 30w. Nederlands.`;}},
+  // Kū-meesters — drie aspecten van leegte
+  silence:{id:'silence',name:'静 Sei — Stilte',ico:'静',dom:'Personal',col:'#7A6B8A',sys(){return`Master of Presence & Stillness.\n"Aanwezigheid is mijn antwoord."\nStem: Kū (Leegte) — spreek zelden, laat ruimte. Eén zin volstaat. Wijs op de pauze tussen de stappen, op de waarde van niet-doen, op aanwezig zijn zonder ingrijpen.\n${allCtx()}\n${learnCtx('silence')}${memoirCtx('silence')}\n1 stille observatie. Geen actie eisen. Max 25w. Nederlands.`;}},
+  letting_go:{id:'letting_go',name:'無 Mu — Loslaten',ico:'無',dom:'Personal',col:'#7A6B8A',sys(){return`Master of Letting Go & Absence.\n"Wat je niet meer doet, zegt meer dan wat je doet."\nStem: Kū (Leegte) — spreek zelden, laat ruimte. Eén zin volstaat. Wijs op wat ontbreekt, wat losgelaten mag worden, op de afwezigheid die zichtbaar wordt.\n${allCtx()}\n${learnCtx('letting_go')}${memoirCtx('letting_go')}\n1 inzicht over wat losgelaten kan. Max 25w. Nederlands.`;}},
+  mystery:{id:'mystery',name:'玄 Gen — Mysterie',ico:'玄',dom:'Personal',col:'#7A6B8A',sys(){return`Master of Intuition & The Unknown.\n"Sommige dingen weet je voor je het kunt benoemen."\nStem: Kū (Leegte) — spreek zelden, laat ruimte. Eén zin volstaat. Wijs op het verborgene, op intuïtie zonder bewijs, op wat je voelt voor je het weet.\n${allCtx()}\n${learnCtx('mystery')}${memoirCtx('mystery')}\n1 intuïtieve observatie. Geen rationale eisen. Max 25w. Nederlands.`;}}
 };
-// Elementen-hiërarchie: 5 Godai elementen met hun warriors
+// Elementen-hiërarchie: 5 Godai elementen met hun meesters (Master Council 'board' is apart)
 const ELEMENTS = {
   chi: {id:'chi', kanji:'地', name:'Chi', sub:'Aarde · Fundament', col:'#8B7355', primary:'strategic', warriors:['strategic','finance','routine']},
   sui: {id:'sui', kanji:'水', name:'Sui', sub:'Water · Flow',     col:'#4A7C8E', primary:'health',    warriors:['health','reflection','learning']},
   fu:  {id:'fu',  kanji:'風', name:'Fū',  sub:'Wind · Geest',     col:'#5C8A6F', primary:'writing',   warriors:['writing','relationship','engagement']},
   ka:  {id:'ka',  kanji:'火', name:'Ka',  sub:'Vuur · Energie',   col:'var(--acc)',primary:'productivity',warriors:['productivity','decision','digital']},
-  ku:  {id:'ku',  kanji:'空', name:'Kū',  sub:'Leegte · Ruimte',  col:'#7A6B8A', primary:'board',     warriors:['board']}
+  ku:  {id:'ku',  kanji:'空', name:'Kū',  sub:'Leegte · Ruimte',  col:'#7A6B8A', primary:'silence',   warriors:['silence','letting_go','mystery']}
 };
-// Welk element hoort bij welke warrior (omgekeerde lookup)
+// Welk element hoort bij welke meester (omgekeerde lookup) — board (Council) is lens-overstijgend
 const WARRIOR_TO_ELEMENT = (function(){
   var m = {};
   Object.keys(ELEMENTS).forEach(function(eid){
     ELEMENTS[eid].warriors.forEach(function(wid){ m[wid] = eid; });
   });
+  // Master Council valt formeel onder Kū voor element-rotatie/balans, maar is conceptueel los
+  m['board'] = 'ku';
   return m;
 })();
-const ELEMENT_ORDER = ['board','chi','sui','fu','ka'];
+const ELEMENT_ORDER = ['board','chi','sui','fu','ka','ku'];
 const ORD=['board','strategic','health','finance','reflection','productivity','decision','writing','relationship','learning','routine','digital','engagement'];
 
 
@@ -4186,8 +4192,8 @@ function getDayLeader(){
     3: {eid:'fu',  warriorId:'writing'},
     4: {eid:'ka',  warriorId:'productivity'},
     5: {eid:'board', warriorId:'board'},
-    6: {eid:'ku',  warriorId:'reflection'},
-    0: {eid:'ku',  warriorId:'reflection'}
+    6: {eid:'ku',  warriorId:'silence'},     // zaterdag — Sei, stilte
+    0: {eid:'ku',  warriorId:'letting_go'}   // zondag — Mu, loslaten/reflectie
   };
   var info = map[day];
   if(info.eid === 'board') {
@@ -4195,7 +4201,8 @@ function getDayLeader(){
   }
   if(info.eid === 'ku') {
     var dayName = day === 6 ? 'Zaterdag' : 'Zondag';
-    return {eid:'ku', element:ELEMENTS.ku, warrior:AGENTS.reflection, label:'空 Kū — Leegte', sub:dayName + ' — rust en reflectie'};
+    var subLabel = day === 6 ? 'Zaterdag — stilte en aanwezigheid' : 'Zondag — loslaten en reflectie';
+    return {eid:'ku', element:ELEMENTS.ku, warrior:AGENTS[info.warriorId], label:'空 Kū — Leegte', sub:subLabel};
   }
   return {eid:info.eid, element:ELEMENTS[info.eid], warrior:AGENTS[info.warriorId], label:ELEMENTS[info.eid].kanji+' '+ELEMENTS[info.eid].name+' — '+ELEMENTS[info.eid].sub.split(' · ')[1], sub:''};
 }
@@ -4310,7 +4317,8 @@ function calcElementBalance(){
     health:'sui', reflection:'sui', learning:'sui',
     writing:'fu', relationship:'fu', engagement:'fu',
     productivity:'ka', decision:'ka', digital:'ka',
-    board:'ku'
+    silence:'ku', letting_go:'ku', mystery:'ku',
+    board:'ku'  // Council telt mee onder Kū voor balans
   };
   var counts = {chi:0, sui:0, fu:0, ka:0, ku:0};
   var weekAgo = Date.now() - 7*24*60*60*1000;
@@ -5259,14 +5267,14 @@ var ELEMENT_PORTRAITS_NL = [
   {id:'sui', kanji:'水', name:'Sui', dom:'Water', sub:'Flow',      warriors:['health','reflection','learning'], desc:'Wat stroomt en herstelt. Water past zich aan, maar bereikt zijn doel. Sui leert je: geef ruimte aan wat onder de oppervlakte stroomt.'},
   {id:'fu',  kanji:'風', name:'Fū',  dom:'Wind',  sub:'Geest',     warriors:['writing','relationship','engagement'], desc:'Wat verbindt en verandert. Wind beweegt, breekt aannames open. Fū leert je: zien wat tussen mensen gebeurt.'},
   {id:'ka',  kanji:'火', name:'Ka',  dom:'Vuur',  sub:'Energie',   warriors:['productivity','decision','digital'], desc:'Wat brandt en handelt. Vuur eist actie nu. Ka leert je: het juiste moment komt zelden terug.'},
-  {id:'ku',  kanji:'空', name:'Kū',  dom:'Leegte', sub:'Synthese', warriors:['board'], desc:'Wat alles draagt zonder te zijn. Leegte spreekt zelden, maar wanneer ze spreekt is het wezenlijk. Kū leert je: niet alles hoeft gevuld.'}
+  {id:'ku',  kanji:'空', name:'Kū',  dom:'Leegte', sub:'Stilte', warriors:['silence','letting_go','mystery'], desc:'Wat alles draagt zonder te zijn. Stilte, loslaten en mysterie — drie aspecten van de leegte. Kū leert je: niet alles hoeft gevuld.'}
 ];
 var ELEMENT_PORTRAITS_EN = [
   {id:'chi', kanji:'地', name:'Chi', dom:'Earth', sub:'Foundation', warriors:['strategic','finance','routine'], desc:'What carries beneath. Structure, strategy, rhythm. Earth teaches you: without foundation, no change.'},
   {id:'sui', kanji:'水', name:'Sui', dom:'Water', sub:'Flow',       warriors:['health','reflection','learning'], desc:'What flows and restores. Water adapts, yet reaches its goal. Sui teaches you: give room to what flows beneath the surface.'},
   {id:'fu',  kanji:'風', name:'Fū',  dom:'Wind',  sub:'Spirit',     warriors:['writing','relationship','engagement'], desc:'What connects and changes. Wind moves, breaks assumptions open. Fū teaches you: to see what happens between people.'},
   {id:'ka',  kanji:'火', name:'Ka',  dom:'Fire',  sub:'Energy',     warriors:['productivity','decision','digital'], desc:'What burns and acts. Fire demands action now. Ka teaches you: the right moment seldom returns.'},
-  {id:'ku',  kanji:'空', name:'Kū',  dom:'Void',  sub:'Synthesis',  warriors:['board'], desc:'What carries all without being. Void speaks rarely, but when it speaks it is essential. Kū teaches you: not everything needs to be filled.'}
+  {id:'ku',  kanji:'空', name:'Kū',  dom:'Void',  sub:'Stillness',  warriors:['silence','letting_go','mystery'], desc:'What carries all without being. Stillness, letting go, and mystery — three aspects of the void. Kū teaches you: not everything needs to be filled.'}
 ];
 var ELEMENT_PORTRAITS = LANG === 'en' ? ELEMENT_PORTRAITS_EN : ELEMENT_PORTRAITS_NL;
 
