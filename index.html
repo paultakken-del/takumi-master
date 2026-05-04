@@ -4281,19 +4281,33 @@ function renderElementBalance(){
   var waveEl = document.getElementById('bal-wave-fill');
   if(waveEl) waveEl.setAttribute('d', wavePath);
 
+  // Helper: maak SVG text element met namespace
+  function svgText(x, y, content, fontSize, fill, opacity, fontFamily, letterSpacing){
+    var el = document.createElementNS('http://www.w3.org/2000/svg','text');
+    el.setAttribute('x', x);
+    el.setAttribute('y', y);
+    el.setAttribute('text-anchor','middle');
+    el.setAttribute('font-family', fontFamily || 'inherit');
+    el.setAttribute('font-size', fontSize);
+    el.setAttribute('fill', fill);
+    if(opacity !== undefined) el.setAttribute('opacity', opacity);
+    if(letterSpacing) el.setAttribute('letter-spacing', letterSpacing);
+    el.textContent = content;
+    return el;
+  }
+
   // Plaats kanji's met romaji + domein-label
   // Doen-kant (licht beige): 地 Chi top, 火 Ka bottom — zwarte tekst
   var chiSize = 22 + Math.min(14, bal.counts.chi * 1.2);
   var kaSize = 22 + Math.min(14, bal.counts.ka * 1.2);
   var doenKanjisEl = document.getElementById('bal-doen-kanjis');
   if(doenKanjisEl){
-    doenKanjisEl.innerHTML =
-      // Chi
-      '<text x="68" y="78" text-anchor="middle" font-family="var(--FJ)" font-size="'+chiSize+'" fill="#1a1815" opacity=".88">地</text>'+
-      '<text x="68" y="98" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#1a1815" opacity=".55" letter-spacing=".5">'+t('el.chi.full')+'</text>'+
-      // Ka
-      '<text x="68" y="166" text-anchor="middle" font-family="var(--FJ)" font-size="'+kaSize+'" fill="#1a1815" opacity=".88">火</text>'+
-      '<text x="68" y="186" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#1a1815" opacity=".55" letter-spacing=".5">'+t('el.ka.full')+'</text>';
+    doenKanjisEl.replaceChildren(
+      svgText(68, 78, '地', chiSize, '#1a1815', '.88', 'var(--FJ)'),
+      svgText(68, 98, t('el.chi.full'), 9.5, '#1a1815', '.55', 'inherit', '.5'),
+      svgText(68, 166, '火', kaSize, '#1a1815', '.88', 'var(--FJ)'),
+      svgText(68, 186, t('el.ka.full'), 9.5, '#1a1815', '.55', 'inherit', '.5')
+    );
   }
 
   // Zijn-kant (rood): 水 Sui top, 空 Kū bottom — beige tekst
@@ -4301,13 +4315,12 @@ function renderElementBalance(){
   var kuSize = 22 + Math.min(14, bal.counts.ku * 1.2);
   var zijnKanjisEl = document.getElementById('bal-zijn-kanjis');
   if(zijnKanjisEl){
-    zijnKanjisEl.innerHTML =
-      // Sui
-      '<text x="172" y="78" text-anchor="middle" font-family="var(--FJ)" font-size="'+suiSize+'" fill="#f0ece4" opacity=".95">水</text>'+
-      '<text x="172" y="98" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#f0ece4" opacity=".7" letter-spacing=".5">'+t('el.sui.full')+'</text>'+
-      // Ku
-      '<text x="172" y="166" text-anchor="middle" font-family="var(--FJ)" font-size="'+kuSize+'" fill="#f0ece4" opacity=".95">空</text>'+
-      '<text x="172" y="186" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#f0ece4" opacity=".7" letter-spacing=".5">'+t('el.ku.full')+'</text>';
+    zijnKanjisEl.replaceChildren(
+      svgText(172, 78, '水', suiSize, '#f0ece4', '.95', 'var(--FJ)'),
+      svgText(172, 98, t('el.sui.full'), 9.5, '#f0ece4', '.7', 'inherit', '.5'),
+      svgText(172, 166, '空', kuSize, '#f0ece4', '.95', 'var(--FJ)'),
+      svgText(172, 186, t('el.ku.full'), 9.5, '#f0ece4', '.7', 'inherit', '.5')
+    );
   }
 
   // Fū kanji op de wave (vloeit ertussen) met label eronder
