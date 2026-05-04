@@ -1068,12 +1068,14 @@ input[type=range]{width:100%;accent-color:var(--acc)}
           </div>
         </div>
 
-        <div style="padding:20px 18px;background:transparent;border:1px dashed var(--b);border-radius:14px;opacity:.55">
+        <!-- Oefening 3: Leesraster -->
+        <div onclick="openLeesraster()" style="padding:22px 20px;background:var(--p2);border:1px solid var(--b);border-radius:14px;cursor:pointer;transition:all .15s;margin-bottom:14px" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--b)'">
           <div style="display:flex;align-items:flex-start;gap:14px">
-            <div style="font-family:var(--FJ);font-size:24px;color:var(--m);line-height:1;flex-shrink:0">観</div>
+            <div style="font-family:var(--FJ);font-size:28px;color:var(--acc);line-height:1;flex-shrink:0">観</div>
             <div style="flex:1">
-              <div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px" data-i18n="dojo.reading_grid">Leesraster oefenen</div>
-              <div style="font-size:12px;color:var(--m);line-height:1.5" data-i18n="dojo.reading_grid_sub">Krijg een situatie, leer welk element domineert. Komt later.</div>
+              <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:6px" data-i18n="dojo.reading_grid">Leesraster oefenen</div>
+              <div style="font-size:13px;color:var(--m);line-height:1.6;margin-bottom:10px" data-i18n="dojo.reading_grid_sub">Beschrijf een situatie. Vijf elementen lezen hem tegelijk. Leer waarnemen door vijf lenzen.</div>
+              <div style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--acc);font-weight:500"><span data-i18n="dojo.open_reading">Open leesraster</span> <svg class="ico ico-sm" style="color:var(--acc)"><use href="#i-arrow-right"/></svg></div>
             </div>
           </div>
         </div>
@@ -1522,7 +1524,19 @@ var I18N = {
     'dojo.element_portraits_sub': 'Wat heb jij geleerd over Chi, Sui, Fū, Ka en Kū door je gesprekken? Een portret per element, gevuld door jouw eigen geschiedenis.',
     'dojo.open_portraits': 'Open portretten',
     'dojo.reading_grid': 'Leesraster oefenen',
-    'dojo.reading_grid_sub': 'Krijg een situatie, leer welk element domineert. Komt later.',
+    'dojo.reading_grid_sub': 'Beschrijf een situatie. Vijf elementen lezen hem tegelijk. Leer waarnemen door vijf lenzen.',
+    'dojo.open_reading': 'Open leesraster',
+    'dojo.reading_what_situation': 'Welke situatie wil je doorlezen?',
+    'dojo.reading_hint': 'Een team-dynamiek, een eigen patroon, een conflict, een keuze. Geen vraag — alleen de situatie. De vijf elementen lezen vanzelf.',
+    'dojo.reading_placeholder': 'Bijvoorbeeld: Mijn team werkt hard aan deadlines, maar de retrospectives worden steeds korter. Niemand klaagt openlijk, maar de energie zakt zichtbaar.',
+    'dojo.reading_begin': 'Lees de situatie',
+    'dojo.reading_loading': 'Vijf elementen lezen je situatie...',
+    'dojo.reading_failed': 'De elementen zijn even stil. Probeer opnieuw.',
+    'dojo.reading_sees': 'Ziet',
+    'dojo.reading_asks': 'Vraagt',
+    'dojo.reading_dominant': 'Dominant element',
+    'dojo.reading_lesson': 'Wat dit leesraster je leert',
+    'dojo.reading_again': 'Lees andere situatie',
     'dojo.previous_conversations': 'Eerdere gesprekken',
     'dojo.return_question': 'Terugkomvraag',
     'dojo.how_now': 'hoe staat het er nu mee?',
@@ -1726,7 +1740,19 @@ var I18N = {
     'dojo.element_portraits_sub': 'What have you learned about Chi, Sui, Fū, Ka and Kū through your conversations? A portrait per element, filled by your own history.',
     'dojo.open_portraits': 'Open portraits',
     'dojo.reading_grid': 'Practice the reading grid',
-    'dojo.reading_grid_sub': 'Get a situation, learn which element dominates. Coming later.',
+    'dojo.reading_grid_sub': 'Describe a situation. Five elements read it at once. Learn to perceive through five lenses.',
+    'dojo.open_reading': 'Open reading grid',
+    'dojo.reading_what_situation': 'Which situation do you want to read through?',
+    'dojo.reading_hint': 'A team dynamic, a personal pattern, a conflict, a choice. Not a question — just the situation. The five elements will read it.',
+    'dojo.reading_placeholder': 'For example: My team works hard on deadlines, but the retrospectives keep getting shorter. No one complains openly, but the energy visibly drops.',
+    'dojo.reading_begin': 'Read the situation',
+    'dojo.reading_loading': 'Five elements reading your situation...',
+    'dojo.reading_failed': 'The elements are silent. Try again.',
+    'dojo.reading_sees': 'Sees',
+    'dojo.reading_asks': 'Asks',
+    'dojo.reading_dominant': 'Dominant element',
+    'dojo.reading_lesson': 'What this reading grid teaches you',
+    'dojo.reading_again': 'Read another situation',
     'dojo.previous_conversations': 'Previous conversations',
     'dojo.return_question': 'Return question',
     'dojo.how_now': 'how does it stand now?',
@@ -5448,6 +5474,215 @@ async function generateElementInsight(ep, memoirs, dojoAnswers){
   } catch(e){
     insightEl.textContent = t('dojo.element_silent', {name: ep.name});
   }
+}
+
+// ── DOJO — LEESRASTER ──────────────────────────────────────────────
+// Vijf elementen lezen één situatie tegelijk en geven elk hun perspectief.
+// Geen interactie zoals transformatief gesprek — een directe vijf-lenzen lezing.
+
+var LEESRASTER_ELEMENTS = [
+  {id:'chi', kanji:'地', name:'Chi', dom_nl:'Aarde', dom_en:'Earth'},
+  {id:'sui', kanji:'水', name:'Sui', dom_nl:'Water', dom_en:'Water'},
+  {id:'fu',  kanji:'風', name:'Fū',  dom_nl:'Wind',  dom_en:'Wind'},
+  {id:'ka',  kanji:'火', name:'Ka',  dom_nl:'Vuur',  dom_en:'Fire'},
+  {id:'ku',  kanji:'空', name:'Kū',  dom_nl:'Leegte', dom_en:'Void'}
+];
+
+function openLeesraster(){
+  document.getElementById('dj-intro').style.display = 'none';
+  var box = document.getElementById('dj-active');
+  box.style.display = 'block';
+  box.innerHTML =
+    '<div style="text-align:center;padding:18px 12px 28px">'+
+      '<div style="font-family:var(--FJ);font-size:38px;color:var(--ink);opacity:.7;margin-bottom:14px">観</div>'+
+      '<div style="font-family:var(--serif);font-size:17px;font-style:italic;color:var(--ink);line-height:1.5;margin-bottom:6px">'+t('dojo.reading_what_situation')+'</div>'+
+      '<div style="font-size:12.5px;color:var(--m);line-height:1.6;max-width:420px;margin:0 auto">'+t('dojo.reading_hint')+'</div>'+
+    '</div>'+
+    '<textarea id="lr-input" placeholder="'+t('dojo.reading_placeholder')+'" rows="5" style="width:100%;padding:14px;border:1px solid var(--b);border-radius:10px;font-family:inherit;font-size:14px;background:var(--bg);color:var(--ink);box-sizing:border-box;resize:vertical;line-height:1.6"></textarea>'+
+    '<div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">'+
+      '<button onclick="endTransformatief()" style="padding:10px 18px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px">'+t('dojo.cancel')+'</button>'+
+      '<button onclick="submitLeesraster()" style="padding:10px 20px;background:var(--acc);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500">'+t('dojo.reading_begin')+' →</button>'+
+    '</div>';
+  setTimeout(function(){ document.getElementById('lr-input')?.focus(); }, 100);
+}
+
+async function submitLeesraster(){
+  var inp = document.getElementById('lr-input');
+  if(!inp || !inp.value.trim()){ toast(t('dojo.describe_question'),'err'); return; }
+  var situation = inp.value.trim();
+
+  var box = document.getElementById('dj-active');
+  // Loading state — show kanji's animeren
+  box.innerHTML =
+    '<div style="text-align:center;padding:40px 20px">'+
+      '<div style="display:flex;justify-content:center;gap:14px;margin-bottom:24px">'+
+        LEESRASTER_ELEMENTS.map(function(el, i){
+          return '<span style="font-family:var(--FJ);font-size:32px;color:var(--ink);opacity:.4;animation:dotRingPulse 1.6s ease-in-out '+(i*0.18)+'s infinite">'+el.kanji+'</span>';
+        }).join('')+
+      '</div>'+
+      '<div style="font-family:var(--serif);font-size:15px;font-style:italic;color:var(--m);line-height:1.6">'+t('dojo.reading_loading')+'</div>'+
+    '</div>';
+
+  var prompt;
+  if(LANG === 'en'){
+    prompt = 'You are the Master Council of Takumi — five Godai elements together. A user has described a situation. Read it through each of the five elements at once.\n\n'+
+      'Situation: "'+situation+'"\n\n'+
+      'For EACH element, give:\n'+
+      '- SEES: 1-2 sentences what this element notices in the situation (specific, not abstract)\n'+
+      '- ASKS: 1 sentence — the question this element would ask\n\n'+
+      'Then identify which element speaks loudest here, and what lesson the reading reveals.\n\n'+
+      'Respond STRICTLY in this format (use exactly these headers, no markdown):\n\n'+
+      'CHI:\nSEES: [...]\nASKS: [...]\n\n'+
+      'SUI:\nSEES: [...]\nASKS: [...]\n\n'+
+      'FU:\nSEES: [...]\nASKS: [...]\n\n'+
+      'KA:\nSEES: [...]\nASKS: [...]\n\n'+
+      'KU:\nSEES: [...]\nASKS: [...]\n\n'+
+      'DOMINANT: [chi|sui|fu|ka|ku]\n'+
+      'LESSON: [2-3 sentences in English about what this reading reveals — address user as "you", calm observant tone]\n\n'+
+      'Element guidance: Chi=foundation/structure, Sui=flow/recovery/what is lost, Fu=connections/spirit, Ka=energy/action/urgency, Ku=void/what is missing/silence.';
+  } else {
+    prompt = 'Je bent het Master Council van Takumi — vijf Godai-elementen samen. Een gebruiker heeft een situatie beschreven. Lees hem door elk van de vijf elementen tegelijk.\n\n'+
+      'Situatie: "'+situation+'"\n\n'+
+      'Geef per element:\n'+
+      '- ZIET: 1-2 zinnen wat dit element opmerkt in de situatie (specifiek, niet abstract)\n'+
+      '- VRAAGT: 1 zin — de vraag die dit element zou stellen\n\n'+
+      'Bepaal daarna welk element hier het hardst spreekt, en wat de lezing onthult.\n\n'+
+      'Antwoord STRIKT in dit format (gebruik exact deze headers, geen markdown):\n\n'+
+      'CHI:\nZIET: [...]\nVRAAGT: [...]\n\n'+
+      'SUI:\nZIET: [...]\nVRAAGT: [...]\n\n'+
+      'FU:\nZIET: [...]\nVRAAGT: [...]\n\n'+
+      'KA:\nZIET: [...]\nVRAAGT: [...]\n\n'+
+      'KU:\nZIET: [...]\nVRAAGT: [...]\n\n'+
+      'DOMINANT: [chi|sui|fu|ka|ku]\n'+
+      'LES: [2-3 zinnen Nederlands over wat deze lezing onthult — spreek gebruiker aan met "je", rustige observerende toon]\n\n'+
+      'Element-richtlijn: Chi=fundament/structuur, Sui=stroom/herstel/wat verloren is, Fu=verbinding/geest, Ka=energie/actie/urgentie, Ku=leegte/wat ontbreekt/stilte.';
+  }
+
+  try {
+    var res = await fetch('/api/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1500,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok) throw new Error('API fout');
+    var j = await res.json();
+    var txt = j.content?.[0]?.text?.trim();
+    if(!txt) throw new Error('Geen output');
+
+    var parsed = parseLeesrasterOutput(txt);
+    if(!parsed) throw new Error('Parse fout');
+    renderLeesrasterResult(situation, parsed);
+  } catch(e){
+    var box2 = document.getElementById('dj-active');
+    if(box2){
+      box2.innerHTML =
+        '<div style="text-align:center;padding:40px 20px;color:var(--m);font-style:italic">'+t('dojo.reading_failed')+'</div>'+
+        '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px">'+
+          '<button onclick="openLeesraster()" style="padding:10px 18px;background:var(--acc);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px">'+t('dojo.reading_again')+'</button>'+
+        '</div>';
+    }
+  }
+}
+
+// Parse strict format: CHI:/ZIET:/VRAAGT: blocks per element + DOMINANT + LES/LESSON
+function parseLeesrasterOutput(txt){
+  var perspectives = {};
+  var elementIds = ['chi','sui','fu','ka','ku'];
+  var seesKey = LANG === 'en' ? 'SEES' : 'ZIET';
+  var asksKey = LANG === 'en' ? 'ASKS' : 'VRAAGT';
+  var lessonKey = LANG === 'en' ? 'LESSON' : 'LES';
+
+  for(var i = 0; i < elementIds.length; i++){
+    var id = elementIds[i];
+    var blockRe = new RegExp(id.toUpperCase()+':\\s*\\n?\\s*'+seesKey+':\\s*([\\s\\S]*?)\\n\\s*'+asksKey+':\\s*([\\s\\S]*?)(?=\\n\\s*\\n|\\n\\s*[A-Z]{2,}:|$)','i');
+    var m = txt.match(blockRe);
+    if(!m) return null;
+    perspectives[id] = {
+      sees: m[1].trim().replace(/^\[|\]$/g,''),
+      asks: m[2].trim().replace(/^\[|\]$/g,'')
+    };
+  }
+  var domMatch = txt.match(/DOMINANT:\s*(chi|sui|fu|ka|ku)/i);
+  var lesMatch = txt.match(new RegExp(lessonKey+':\\s*([\\s\\S]+?)$','i'));
+  if(!domMatch || !lesMatch) return null;
+  return {
+    perspectives: perspectives,
+    dominant: domMatch[1].toLowerCase(),
+    lesson: lesMatch[1].trim().replace(/^\[|\]$/g,'')
+  };
+}
+
+function renderLeesrasterResult(situation, parsed){
+  var box = document.getElementById('dj-active');
+  if(!box) return;
+
+  var domEl = LEESRASTER_ELEMENTS.find(function(e){ return e.id === parsed.dominant; });
+  var domDom = domEl ? (LANG === 'en' ? domEl.dom_en : domEl.dom_nl) : '';
+
+  box.innerHTML =
+    // Top: kanji + situatie als context
+    '<div style="text-align:center;padding:14px 12px 22px">'+
+      '<div style="font-family:var(--FJ);font-size:34px;color:var(--ink);opacity:.65;margin-bottom:10px">観</div>'+
+      '<div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:14px">'+t('dojo.reading_grid')+'</div>'+
+    '</div>'+
+    '<div style="margin-bottom:24px;padding:14px 16px;background:var(--p2);border-left:3px solid var(--ink);border-radius:0 8px 8px 0">'+
+      '<div style="font-size:13px;color:var(--ink);line-height:1.6;font-style:italic;font-family:var(--serif);opacity:.85">"'+esc(situation)+'"</div>'+
+    '</div>'+
+
+    // Vijf perspectieven, één per element
+    LEESRASTER_ELEMENTS.map(function(el){
+      var p = parsed.perspectives[el.id];
+      if(!p) return '';
+      var isDom = el.id === parsed.dominant;
+      var dom = LANG === 'en' ? el.dom_en : el.dom_nl;
+      return '<div style="margin-bottom:12px;padding:16px 18px;background:var(--p2);border:1px solid '+(isDom ? 'var(--acc)' : 'var(--b)')+';border-radius:12px'+(isDom ? ';box-shadow:0 0 0 1px rgba(196,83,42,.15)' : '')+'">'+
+        '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">'+
+          '<span style="font-family:var(--FJ);font-size:24px;color:'+(isDom ? 'var(--acc)' : 'var(--ink)')+'">'+el.kanji+'</span>'+
+          '<span style="font-size:14px;font-weight:600;color:var(--ink)">'+el.name+'</span>'+
+          '<span style="font-size:11px;color:var(--m)">· '+esc(dom)+'</span>'+
+        '</div>'+
+        '<div style="margin-bottom:8px">'+
+          '<div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:4px">'+t('dojo.reading_sees')+'</div>'+
+          '<div style="font-size:13.5px;color:var(--ink);line-height:1.6">'+esc(p.sees)+'</div>'+
+        '</div>'+
+        '<div>'+
+          '<div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:4px">'+t('dojo.reading_asks')+'</div>'+
+          '<div style="font-size:13.5px;color:var(--ink);line-height:1.6;font-style:italic;font-family:var(--serif)">'+esc(p.asks)+'</div>'+
+        '</div>'+
+      '</div>';
+    }).join('')+
+
+    // Synthese: dominant + les
+    '<div style="margin-top:24px;padding:20px;background:linear-gradient(135deg,rgba(196,83,42,.06),rgba(196,83,42,.01));border:1px solid rgba(196,83,42,.22);border-radius:12px">'+
+      '<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:12px">'+t('dojo.reading_dominant')+'</div>'+
+      '<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(196,83,42,.18)">'+
+        '<span style="font-family:var(--FJ);font-size:36px;color:var(--acc)">'+(domEl?.kanji||'')+'</span>'+
+        '<div>'+
+          '<div style="font-size:16px;font-weight:600;color:var(--ink)">'+(domEl?.name||'')+'</div>'+
+          '<div style="font-size:11px;color:var(--m);letter-spacing:.04em">'+esc(domDom)+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:10px">'+t('dojo.reading_lesson')+'</div>'+
+      '<div style="font-family:var(--serif);font-size:14.5px;color:var(--ink);line-height:1.7;font-style:italic">'+esc(parsed.lesson).replace(/\n/g,'<br>')+'</div>'+
+    '</div>'+
+
+    '<div style="display:flex;gap:8px;margin-top:24px;justify-content:flex-end">'+
+      '<button onclick="endTransformatief()" style="padding:10px 18px;background:transparent;border:1px solid var(--b);color:var(--m);border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px">'+t('dojo.back')+'</button>'+
+      '<button onclick="openLeesraster()" style="padding:10px 18px;background:var(--acc);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500">'+t('dojo.reading_again')+'</button>'+
+    '</div>';
+
+  // Sla op in geschiedenis
+  var hist = ls('tm2_dojo_readings', []);
+  hist.unshift({
+    id: 'lr_'+Date.now(),
+    t: Date.now(),
+    situation: situation,
+    perspectives: parsed.perspectives,
+    dominant: parsed.dominant,
+    lesson: parsed.lesson
+  });
+  hist = hist.slice(0, 10);
+  lsSet('tm2_dojo_readings', hist);
 }
 
 // ── MEER VOOR VANDAAG ──────────────────────────────────────────────
