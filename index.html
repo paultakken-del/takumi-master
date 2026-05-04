@@ -696,21 +696,12 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 <nav id="sb">
   <div class="sb-logo"><span class="sb-kanji">匠</span><div><div class="sb-brand">Takumi</div></div></div>
   <div class="sb-nav">
-    <div class="sb-sec" data-i18n="nav.section_day">Dag</div>
     <div class="ni on" data-v="ck"><span class="ico">⬡</span><span data-i18n="nav.cockpit">Cockpit</span></div>
-    <div class="ni" data-v="dy"><span class="ico" style="font-family:var(--FJ)">脈</span><span data-i18n="nav.daily">Ochtend Start</span></div>
     <div class="ni" data-v="bo"><span class="ico">◈</span><span data-i18n="nav.board">Raad van Meesters</span></div>
-    <div class="sb-sec" data-i18n="nav.section_evening">Avond</div>
-    <div class="ni" data-v="ri"><span class="ico">習</span><span data-i18n="nav.evening_checkout">Avond Check-out</span></div>
-    <div class="sb-sec" data-i18n="nav.section_week_month">Week · Maand</div>
-    <div class="ni" id="nav-wr" data-v="wr"><span class="ico" style="font-family:var(--FJ)">週</span><span data-i18n="nav.week_reflection">Week Reflectie</span></div>
-    <div class="ni" data-v="rt"><span class="ico" style="font-family:var(--FJ)">律</span><span data-i18n="nav.rhythm_recovery">Ritme & Herstel</span></div>
-    <div class="sb-sec" data-i18n="nav.section_strategy">Strategie</div>
-    <div class="ni" data-v="gl"><span class="ico">◇</span><span data-i18n="nav.goals">Doelen</span></div>
-    <div class="ni" data-v="wc"><span class="ico">○</span><span data-i18n="nav.world">Wereldcontext</span></div>
-    <div class="sb-sec" data-i18n="nav.section_practice">Oefenen</div>
     <div class="ni" data-v="dj"><span class="ico" style="font-family:var(--FJ)">道</span><span data-i18n="nav.dojo">Dojo</span></div>
-    <div class="sb-sec" data-i18n="nav.section_data">Data</div>
+    <div class="ni" data-v="gl"><span class="ico">◇</span><span data-i18n="nav.goals">Doelen</span></div>
+    <div class="ni" data-v="rh"><span class="ico">習</span><span data-i18n="nav.rituals">Rituelen</span></div>
+    <div class="ni" data-v="wc"><span class="ico">○</span><span data-i18n="nav.world">Wereldcontext</span></div>
     <div class="ni" data-v="da"><span class="ico">▤</span><span data-i18n="nav.data_hub">Data Hub</span></div>
     <a id="admin-link" href="/admin/users" target="_blank" style="display:none;align-items:center;gap:10px;padding:8px 16px;font-size:13px;color:rgba(255,255,255,.55);text-decoration:none;border-radius:8px" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='none'"><span style="font-size:14px">👥</span><span data-i18n="nav.users">Gebruikers</span></a>
   </div>
@@ -1097,6 +1088,71 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   </div>
 </div>
 
+<!-- RITUELEN HUB — verzamelt alle ritme-rituelen -->
+<div class="view" id="v-rh">
+  <div class="tb">
+    <div>
+      <div class="tb-t" style="display:flex;align-items:baseline;gap:8px"><span style="font-family:var(--FJ);font-weight:300;color:var(--ink)">習</span><span data-i18n="rh.title">Rituelen</span></div>
+      <div class="tb-s" data-i18n="rh.subtitle">Momenten van afstemming — dagelijks, wekelijks, in ritme</div>
+    </div>
+  </div>
+  <div class="vs">
+    <div style="max-width:600px;margin:0 auto;padding:0 4px">
+      <div style="text-align:center;padding:18px 12px 28px">
+        <div style="font-family:var(--FJ);font-size:42px;color:var(--ink);opacity:.7;margin-bottom:14px">習</div>
+        <div style="font-size:13px;color:var(--m);line-height:1.7;max-width:440px;margin:0 auto" data-i18n="rh.intro">Rituelen geven structuur aan reflectie. Begin de dag, sluit hem af, kijk terug op de week, voel je ritme.</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <!-- Ochtend Start -->
+        <div onclick="go('dy')" style="padding:18px 20px;background:var(--p2);border:1px solid var(--b);border-radius:12px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--b)'">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="font-family:var(--FJ);font-size:28px;color:var(--ink);opacity:.9;line-height:1;flex-shrink:0;width:40px;text-align:center">脈</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px" data-i18n="rh.morning_title">Ochtend Start</div>
+              <div style="font-size:12.5px;color:var(--m);line-height:1.5" data-i18n="rh.morning_desc">Stel je intentie in, voel je energie, laat de dag-leider je begeleiden.</div>
+            </div>
+            <svg class="ico ico-sm" style="color:var(--m);flex-shrink:0;margin-top:6px"><use href="#i-arrow-right"/></svg>
+          </div>
+        </div>
+        <!-- Avond Check-out -->
+        <div onclick="go('ri')" style="padding:18px 20px;background:var(--p2);border:1px solid var(--b);border-radius:12px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--b)'">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="font-family:var(--FJ);font-size:28px;color:var(--ink);opacity:.9;line-height:1;flex-shrink:0;width:40px;text-align:center">習</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px" data-i18n="rh.evening_title">Avond Check-out</div>
+              <div style="font-size:12.5px;color:var(--m);line-height:1.5" data-i18n="rh.evening_desc">Sluit bewust af. Reflecteer op energie, leer van de dag.</div>
+            </div>
+            <svg class="ico ico-sm" style="color:var(--m);flex-shrink:0;margin-top:6px"><use href="#i-arrow-right"/></svg>
+          </div>
+        </div>
+        <!-- Week Reflectie -->
+        <div onclick="go('wr')" style="padding:18px 20px;background:var(--p2);border:1px solid var(--b);border-radius:12px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--b)'">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="font-family:var(--FJ);font-size:28px;color:var(--ink);opacity:.9;line-height:1;flex-shrink:0;width:40px;text-align:center">週</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px" data-i18n="rh.week_title">Week Reflectie</div>
+              <div style="font-size:12.5px;color:var(--m);line-height:1.5" data-i18n="rh.week_desc">Terugblik op patronen, lessen, koers van de afgelopen week.</div>
+            </div>
+            <svg class="ico ico-sm" style="color:var(--m);flex-shrink:0;margin-top:6px"><use href="#i-arrow-right"/></svg>
+          </div>
+        </div>
+        <!-- Ritme & Herstel -->
+        <div onclick="go('rt')" style="padding:18px 20px;background:var(--p2);border:1px solid var(--b);border-radius:12px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--b)'">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="font-family:var(--FJ);font-size:28px;color:var(--ink);opacity:.9;line-height:1;flex-shrink:0;width:40px;text-align:center">律</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px" data-i18n="rh.rhythm_title">Ritme & Herstel</div>
+              <div style="font-size:12.5px;color:var(--m);line-height:1.5" data-i18n="rh.rhythm_desc">Cycli van werk en rust — zie hoe je week-ritme zich ontvouwt.</div>
+            </div>
+            <svg class="ico ico-sm" style="color:var(--m);flex-shrink:0;margin-top:6px"><use href="#i-arrow-right"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- WORLD CONTEXT -->
 <div class="view" id="v-wc">
   <div class="tb"><div><div class="tb-t">World Intelligence</div><div class="tb-s">AI-gegenereerde marktanalyse</div></div><button class="btn sm pri" onclick="loadWorld()">↺ Verversen</button></div>
@@ -1277,7 +1333,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
   <div class="mi2" data-v="bo"><div class="mico">◈</div><div class="mlb" data-i18n="mob.board">Raad</div></div>
   <div class="mi2" data-v="dj"><div class="mico" style="font-family:var(--FJ)">道</div><div class="mlb" data-i18n="mob.dojo">Dojo</div></div>
   <div class="mi2" data-v="gl"><div class="mico">◇</div><div class="mlb" data-i18n="mob.goals">Doelen</div></div>
-  <div class="mi2" data-v="ri"><div class="mico">習</div><div class="mlb" data-i18n="mob.rituals">Rituelen</div></div>
+  <div class="mi2" data-v="rh"><div class="mico">習</div><div class="mlb" data-i18n="mob.rituals">Rituelen</div></div>
 </div></nav>
 
 <!-- GOAL SHEET -->
@@ -1375,6 +1431,17 @@ var I18N = {
     'nav.logout': '↩ Afmelden',
     'nav.evening': 'Avond Ritueel',
     'nav.rituals': 'Rituelen',
+    'rh.title': 'Rituelen',
+    'rh.subtitle': 'Momenten van afstemming — dagelijks, wekelijks, in ritme',
+    'rh.intro': 'Rituelen geven structuur aan reflectie. Begin de dag, sluit hem af, kijk terug op de week, voel je ritme.',
+    'rh.morning_title': 'Ochtend Start',
+    'rh.morning_desc': 'Stel je intentie in, voel je energie, laat de dag-leider je begeleiden.',
+    'rh.evening_title': 'Avond Check-out',
+    'rh.evening_desc': 'Sluit bewust af. Reflecteer op energie, leer van de dag.',
+    'rh.week_title': 'Week Reflectie',
+    'rh.week_desc': 'Terugblik op patronen, lessen, koers van de afgelopen week.',
+    'rh.rhythm_title': 'Ritme & Herstel',
+    'rh.rhythm_desc': 'Cycli van werk en rust — zie hoe je week-ritme zich ontvouwt.',
     // Mobile bottom nav
     'mob.cockpit': 'Cockpit',
     'mob.board': 'Raad',
@@ -1575,6 +1642,17 @@ var I18N = {
     'nav.logout': '↩ Sign out',
     'nav.evening': 'Evening Ritual',
     'nav.rituals': 'Rituals',
+    'rh.title': 'Rituals',
+    'rh.subtitle': 'Moments of attunement — daily, weekly, in rhythm',
+    'rh.intro': 'Rituals give structure to reflection. Begin the day, close it, look back over the week, feel your rhythm.',
+    'rh.morning_title': 'Morning Start',
+    'rh.morning_desc': 'Set your intention, feel your energy, let the day-leader guide you.',
+    'rh.evening_title': 'Evening Check-out',
+    'rh.evening_desc': 'Close consciously. Reflect on energy, learn from the day.',
+    'rh.week_title': 'Week Reflection',
+    'rh.week_desc': 'Look back at patterns, lessons, the course of the past week.',
+    'rh.rhythm_title': 'Rhythm & Recovery',
+    'rh.rhythm_desc': 'Cycles of work and rest — see how your week-rhythm unfolds.',
     'mob.cockpit': 'Cockpit',
     'mob.board': 'Council',
     'mob.dojo': 'Dojo',
