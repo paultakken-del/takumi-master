@@ -4234,115 +4234,88 @@ function renderElementBalance(){
   if(!sec) return;
   var bal = calcElementBalance();
 
+  var contentEl = document.getElementById('ck-balance-content');
+  if(!contentEl) return;
+
   if(bal.total < 1){
-    document.getElementById('ck-balance-content').innerHTML =
+    contentEl.innerHTML =
       '<div style="padding:32px 20px;text-align:center;color:var(--m);font-size:13px;line-height:1.6">'+
         '<div style="font-family:var(--FJ);font-size:32px;color:var(--m);opacity:.4;margin-bottom:12px">空</div>'+
-        '<div>Nog geen activiteit deze week.<br>De balans verschijnt na je eerste gesprekken en acties.</div>'+
+        '<div>'+(LANG === 'en' ? 'No activity this week yet.<br>Balance appears after your first conversations and actions.' : 'Nog geen activiteit deze week.<br>De balans verschijnt na je eerste gesprekken en acties.')+'</div>'+
       '</div>';
     return;
   }
 
-  // Doen = Chi + Ka (gronden + actie)
-  // Zijn = Sui + Kū (herstel + leegte)
-  // Fū vloeit ertussen — telt half mee aan beide
+  // Doen = Chi + Ka, Zijn = Sui + Kū, Fū telt half mee aan beide
   var doen = bal.counts.chi + bal.counts.ka + bal.counts.fu * 0.5;
   var zijn = bal.counts.sui + bal.counts.ku + bal.counts.fu * 0.5;
   var sumDZ = doen + zijn;
   var doenRatio = sumDZ > 0 ? doen / sumDZ : 0.5;
-  // Beperk extreme waarden — wave moet altijd zichtbaar zijn binnen cirkel
   doenRatio = Math.max(0.18, Math.min(0.82, doenRatio));
 
-  // Wave-positie: x-as schuift met balans
-  // doenRatio 0.5 = perfect midden (cx=120)
-  // doenRatio > 0.5 (meer doen) = wave naar rechts (zijn-kant krimpt)
-  // doenRatio < 0.5 (meer zijn) = wave naar links (doen-kant krimpt)
-  var waveCenterX = 240 * doenRatio; // 0..240
-  var waveAmplitude = 14; // hoogte van golven
+  var waveCenterX = 240 * doenRatio;
+  var waveAmplitude = 14;
 
-  // Bouw wave-pad: van top tot bottom van cirkel met sinus
-  // Het pad vult de zijn-helft (rechts van wave)
+  // Bouw wave-pad
   var pathPoints = [];
   var steps = 40;
   for(var i = 0; i <= steps; i++){
-    var t = i / steps;
-    var y = 20 + t * 200; // van 20 tot 220
-    // Sinus-golf met 2 cycli over de hoogte
-    var phase = t * Math.PI * 4;
+    var t_ = i / steps;
+    var y = 20 + t_ * 200;
+    var phase = t_ * Math.PI * 4;
     var x = waveCenterX + Math.sin(phase) * waveAmplitude;
     pathPoints.push((i === 0 ? 'M' : 'L') + ' ' + x.toFixed(1) + ',' + y.toFixed(1));
   }
-  // Sluit pad naar rechtsboven via rechtsonder
   pathPoints.push('L 240,220');
   pathPoints.push('L 240,20');
   pathPoints.push('Z');
   var wavePath = pathPoints.join(' ');
 
-  var waveEl = document.getElementById('bal-wave-fill');
-  if(waveEl) waveEl.setAttribute('d', wavePath);
-
-  // Helper: maak SVG text element met namespace
-  function svgText(x, y, content, fontSize, fill, opacity, fontFamily, letterSpacing){
-    var el = document.createElementNS('http://www.w3.org/2000/svg','text');
-    el.setAttribute('x', x);
-    el.setAttribute('y', y);
-    el.setAttribute('text-anchor','middle');
-    el.setAttribute('font-family', fontFamily || 'inherit');
-    el.setAttribute('font-size', fontSize);
-    el.setAttribute('fill', fill);
-    if(opacity !== undefined) el.setAttribute('opacity', opacity);
-    if(letterSpacing) el.setAttribute('letter-spacing', letterSpacing);
-    el.textContent = content;
-    return el;
-  }
-
-  // Plaats kanji's met romaji + domein-label
-  // Doen-kant (licht beige): 地 Chi top, 火 Ka bottom — zwarte tekst
+  // Element groottes
   var chiSize = 22 + Math.min(14, bal.counts.chi * 1.2);
   var kaSize = 22 + Math.min(14, bal.counts.ka * 1.2);
-  var doenKanjisEl = document.getElementById('bal-doen-kanjis');
-  if(doenKanjisEl){
-    doenKanjisEl.replaceChildren(
-      svgText(68, 78, '地', chiSize, '#1a1815', '.88', 'var(--FJ)'),
-      svgText(68, 98, t('el.chi.full'), 9.5, '#1a1815', '.55', 'inherit', '.5'),
-      svgText(68, 166, '火', kaSize, '#1a1815', '.88', 'var(--FJ)'),
-      svgText(68, 186, t('el.ka.full'), 9.5, '#1a1815', '.55', 'inherit', '.5')
-    );
-  }
-
-  // Zijn-kant (rood): 水 Sui top, 空 Kū bottom — beige tekst
   var suiSize = 22 + Math.min(14, bal.counts.sui * 1.2);
   var kuSize = 22 + Math.min(14, bal.counts.ku * 1.2);
-  var zijnKanjisEl = document.getElementById('bal-zijn-kanjis');
-  if(zijnKanjisEl){
-    zijnKanjisEl.replaceChildren(
-      svgText(172, 78, '水', suiSize, '#f0ece4', '.95', 'var(--FJ)'),
-      svgText(172, 98, t('el.sui.full'), 9.5, '#f0ece4', '.7', 'inherit', '.5'),
-      svgText(172, 166, '空', kuSize, '#f0ece4', '.95', 'var(--FJ)'),
-      svgText(172, 186, t('el.ku.full'), 9.5, '#f0ece4', '.7', 'inherit', '.5')
-    );
-  }
+  var fuSize = 14 + Math.min(8, bal.counts.fu * 1.2);
 
-  // Fū kanji op de wave (vloeit ertussen) met label eronder
-  var fuEl = document.getElementById('bal-fu-kanji');
-  if(fuEl){
-    var fuSize = 14 + Math.min(8, bal.counts.fu * 1.2);
-    fuEl.setAttribute('font-size', fuSize);
-    fuEl.setAttribute('x', waveCenterX);
-    fuEl.setAttribute('y', 122);
-    fuEl.setAttribute('fill', '#a8a39a');
-    fuEl.textContent = '風';
-  }
-  // Fū label
-  var fuLblEl = document.getElementById('bal-fu-label');
-  if(fuLblEl){
-    fuLblEl.setAttribute('x', waveCenterX);
-    fuLblEl.setAttribute('y', 138);
-    fuLblEl.textContent = t('el.fu.full');
-  }
+  // BUILD ENTIRE SVG AS STRING — one source of truth
+  var svgHTML =
+    '<svg id="ck-balance-svg" viewBox="0 0 240 240" width="220" height="220" style="max-width:100%" xmlns="http://www.w3.org/2000/svg">'+
+      '<defs>'+
+        '<clipPath id="bal-circle-clip">'+
+          '<circle cx="120" cy="120" r="100"/>'+
+        '</clipPath>'+
+      '</defs>'+
+      '<circle cx="120" cy="120" r="100" fill="none" stroke="var(--b)" stroke-width="1.2"/>'+
+      '<g clip-path="url(#bal-circle-clip)">'+
+        // Linker helft Doen — beige
+        '<rect x="20" y="20" width="100" height="200" fill="#f0ece4"/>'+
+        // Rechter helft Zijn — pagina-rood
+        '<rect x="120" y="20" width="100" height="200" fill="#c4532a"/>'+
+        // Wave als scheidingslijn (vult zijn-kant)
+        '<path d="'+wavePath+'" fill="#c4532a"/>'+
+        // Chi
+        '<text x="68" y="78" text-anchor="middle" font-family="var(--FJ)" font-size="'+chiSize+'" fill="#1a1815" opacity="0.88">地</text>'+
+        '<text x="68" y="98" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#1a1815" opacity="0.55" letter-spacing="0.5">'+esc(t('el.chi.full'))+'</text>'+
+        // Ka
+        '<text x="68" y="166" text-anchor="middle" font-family="var(--FJ)" font-size="'+kaSize+'" fill="#1a1815" opacity="0.88">火</text>'+
+        '<text x="68" y="186" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#1a1815" opacity="0.55" letter-spacing="0.5">'+esc(t('el.ka.full'))+'</text>'+
+        // Sui
+        '<text x="172" y="78" text-anchor="middle" font-family="var(--FJ)" font-size="'+suiSize+'" fill="#f0ece4" opacity="0.95">水</text>'+
+        '<text x="172" y="98" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#f0ece4" opacity="0.7" letter-spacing="0.5">'+esc(t('el.sui.full'))+'</text>'+
+        // Ku
+        '<text x="172" y="166" text-anchor="middle" font-family="var(--FJ)" font-size="'+kuSize+'" fill="#f0ece4" opacity="0.95">空</text>'+
+        '<text x="172" y="186" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#f0ece4" opacity="0.7" letter-spacing="0.5">'+esc(t('el.ku.full'))+'</text>'+
+        // Fū op wave
+        '<text x="'+waveCenterX.toFixed(1)+'" y="122" text-anchor="middle" font-family="var(--FJ)" font-size="'+fuSize+'" fill="#a8a39a">風</text>'+
+        '<text x="'+waveCenterX.toFixed(1)+'" y="138" text-anchor="middle" font-family="inherit" font-size="9" fill="#a8a39a" opacity="0.75" letter-spacing="0.5">'+esc(t('el.fu.full'))+'</text>'+
+      '</g>'+
+    '</svg>'+
+    '<div id="ck-balance-summary" style="font-size:13.5px;color:var(--ink);text-align:center;margin-top:14px;line-height:1.5;font-style:italic;font-family:var(--serif);max-width:280px"></div>';
+
+  contentEl.innerHTML = svgHTML;
 
   // Korte samenvatting — geen percentages
-  // Statische snelle samenvatting als fallback
   var diff = Math.abs(doenRatio - 0.5);
   var summary;
   if(diff < 0.08){
