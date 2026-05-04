@@ -1410,6 +1410,8 @@ var I18N = {
     'bal.be_dominates': 'Zijn overheerst — beweging mag.',
     'bal.strong_action': 'Sterk in actie. Tijd om te ademen.',
     'bal.much_rest': 'Veel rust. Een eerste stap helpt.',
+    'bal.deepen': 'Werk hier verder aan in de dojo',
+    'bal.preparing_question': 'Een vraag voor de dojo voorbereiden...',
     // Stats
     'stats.hrv': 'HRV',
     'stats.sleep': 'Slaap',
@@ -1605,6 +1607,8 @@ var I18N = {
     'bal.be_dominates': 'Being dominates — movement is welcome.',
     'bal.strong_action': 'Strongly in action. Time to breathe.',
     'bal.much_rest': 'Much rest. A first step helps.',
+    'bal.deepen': 'Work on this further in the dojo',
+    'bal.preparing_question': 'Preparing a question for the dojo...',
     'stats.hrv': 'HRV',
     'stats.sleep': 'Sleep',
     'stats.recovery': 'Recovery',
@@ -4311,7 +4315,8 @@ function renderElementBalance(){
         '<text x="'+waveCenterX.toFixed(1)+'" y="138" text-anchor="middle" font-family="inherit" font-size="9" fill="#a8a39a" opacity="0.75" letter-spacing="0.5">'+esc(t('el.fu.full'))+'</text>'+
       '</g>'+
     '</svg>'+
-    '<div id="ck-balance-summary" style="font-size:13.5px;color:var(--ink);text-align:center;margin-top:14px;line-height:1.5;font-style:italic;font-family:var(--serif);max-width:280px"></div>';
+    '<div id="ck-balance-summary" style="font-size:13.5px;color:var(--ink);text-align:center;margin-top:14px;line-height:1.5;font-style:italic;font-family:var(--serif);max-width:280px"></div>'+
+    '<div id="ck-balance-deepen" style="margin-top:14px;display:none"></div>';
 
   contentEl.innerHTML = svgHTML;
 
@@ -4339,13 +4344,14 @@ async function loadBalanceAnalysis(bal, doenRatio){
   var summaryEl = document.getElementById('ck-balance-summary');
   if(!summaryEl) return;
 
-  // Cache key: dagdatum + ruwe ratio (gerond op 5%) — voorkomt onnodig regeneren bij kleine schommelingen
+  // Cache key: dagdatum + taal + ruwe ratio (gerond op 5%)
   var dayKey = new Date().toISOString().slice(0,10);
-  var ratioKey = Math.round(doenRatio * 20) / 20; // 0.05 stappen
-  var cacheKey = 'tm2_balance_analysis_' + dayKey + '_' + ratioKey;
+  var ratioKey = Math.round(doenRatio * 20) / 20;
+  var cacheKey = 'tm2_balance_analysis_' + LANG + '_' + dayKey + '_' + ratioKey;
   var cached = ls(cacheKey, null);
   if(cached){
     summaryEl.textContent = cached;
+    showBalanceDeepenButton(cached);
     return;
   }
 
@@ -4372,17 +4378,32 @@ async function loadBalanceAnalysis(bal, doenRatio){
   var counts = bal.counts;
   var elInfo = '地 Chi='+counts.chi+', 火 Ka='+counts.ka+', 水 Sui='+counts.sui+', 空 Kū='+counts.ku+', 風 Fū='+counts.fu;
 
-  var prompt = 'Je bent een Godai-meester die kijkt naar de week-balans van een gebruiker. '+
-    'Doen-helft (Chi+Ka): '+doenPct+'%. Zijn-helft (Sui+Kū): '+(100-doenPct)+'%. '+
-    'Activiteit per element: '+elInfo+'.\n'+
-    (primary ? 'Hun doel: "'+primary.title+'" (voortgang '+primary.pct+'%).\n' : '') +
-    (leaderName ? 'Vandaag leidt: '+leaderName+'.\n' : '') +
-    (allMems.length ? 'Recente gesprekken: '+allMems.join(' | ')+'.\n' : '') +
-    '\n'+
-    'Schrijf 2-3 zinnen Nederlands die deze balans LEZEN — niet beschrijven. '+
-    'Verbind met hun doel en/of dag-leider. Eindig met één concrete suggestie als de balans dat vraagt. '+
-    'Niet generiek wijs, maar specifiek voor deze week. Geen aanhalingstekens. Max 50 woorden. '+
-    'Spreek de gebruiker aan met "je".';
+  var prompt;
+  if(LANG === 'en'){
+    prompt = 'You are a Godai master looking at the week-balance of a user. '+
+      'Do-half (Chi+Ka): '+doenPct+'%. Be-half (Sui+Kū): '+(100-doenPct)+'%. '+
+      'Activity per element: '+elInfo+'.\n'+
+      (primary ? 'Their goal: "'+primary.title+'" (progress '+primary.pct+'%).\n' : '') +
+      (leaderName ? 'Today leads: '+leaderName+'.\n' : '') +
+      (allMems.length ? 'Recent conversations: '+allMems.join(' | ')+'.\n' : '') +
+      '\n'+
+      'Write 2-3 sentences in English that READ this balance — not describe it. '+
+      'Connect with their goal and/or day-leader. End with one concrete suggestion if the balance calls for it. '+
+      'Not generic wisdom, but specific for this week. No quotation marks. Max 50 words. '+
+      'Address the user as "you".';
+  } else {
+    prompt = 'Je bent een Godai-meester die kijkt naar de week-balans van een gebruiker. '+
+      'Doen-helft (Chi+Ka): '+doenPct+'%. Zijn-helft (Sui+Kū): '+(100-doenPct)+'%. '+
+      'Activiteit per element: '+elInfo+'.\n'+
+      (primary ? 'Hun doel: "'+primary.title+'" (voortgang '+primary.pct+'%).\n' : '') +
+      (leaderName ? 'Vandaag leidt: '+leaderName+'.\n' : '') +
+      (allMems.length ? 'Recente gesprekken: '+allMems.join(' | ')+'.\n' : '') +
+      '\n'+
+      'Schrijf 2-3 zinnen Nederlands die deze balans LEZEN — niet beschrijven. '+
+      'Verbind met hun doel en/of dag-leider. Eindig met één concrete suggestie als de balans dat vraagt. '+
+      'Niet generiek wijs, maar specifiek voor deze week. Geen aanhalingstekens. Max 50 woorden. '+
+      'Spreek de gebruiker aan met "je".';
+  }
 
   try {
     var res = await fetch('/api/claude',{
@@ -4398,9 +4419,109 @@ async function loadBalanceAnalysis(bal, doenRatio){
     if(txt.length > 400) txt = txt.slice(0, 397) + '...';
     summaryEl.textContent = txt;
     lsSet(cacheKey, txt);
+    // Toon "Werk verder uit" knop nu er een echte analyse is
+    showBalanceDeepenButton(txt);
   } catch(e){
     // Statische fallback blijft staan
   }
+}
+
+// Toon knop "Werk hier verder aan in de dojo"
+function showBalanceDeepenButton(analysisText){
+  var btnContainer = document.getElementById('ck-balance-deepen');
+  if(!btnContainer) return;
+  btnContainer.style.display = 'block';
+  btnContainer.innerHTML =
+    '<button onclick="deepenBalanceInDojo()" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;background:transparent;border:1px solid var(--acc);color:var(--acc);border-radius:18px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;transition:all .15s" onmouseover="this.style.background=\'var(--acc)\';this.style.color=\'#fff\'" onmouseout="this.style.background=\'transparent\';this.style.color=\'var(--acc)\'">'+
+      '<span style="font-family:var(--FJ);font-size:14px">道</span>'+
+      '<span>'+t('bal.deepen')+'</span>'+
+      '<svg class="ico ico-sm"><use href="#i-arrow-right"/></svg>'+
+    '</button>';
+  // Sla de analyse op zodat de Dojo hem kan gebruiken voor vraag-generatie
+  window._balanceAnalysisText = analysisText;
+}
+
+// Open Dojo met voorgevulde transformatieve vraag op basis van balans-analyse
+async function deepenBalanceInDojo(){
+  var btnContainer = document.getElementById('ck-balance-deepen');
+  // Toon loading state
+  if(btnContainer){
+    btnContainer.innerHTML =
+      '<div style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;color:var(--m);font-size:12px;font-style:italic;font-family:var(--serif)">'+
+        '<span style="font-family:var(--FJ);font-size:14px;opacity:.6">道</span>'+
+        '<span>'+t('bal.preparing_question')+'</span>'+
+      '</div>';
+  }
+
+  // Genereer een transformatieve vraag uit de balans-analyse
+  var analysisText = window._balanceAnalysisText || '';
+  var primary = null;
+  if(typeof GOALS !== 'undefined' && GOALS && GOALS.length){
+    if(S.primaryGoalId) primary = GOALS.find(function(g){ return g.id === S.primaryGoalId && g.status === 'Actief'; });
+    if(!primary) primary = GOALS.find(function(g){ return g.status === 'Actief'; });
+  }
+
+  var prompt;
+  if(LANG === 'en'){
+    prompt = 'A user has just read this balance reading about their week:\n\n"'+analysisText+'"\n\n'+
+      (primary ? 'Their primary goal: "'+primary.title+'"\n\n' : '') +
+      'Formulate ONE transformative question they could explore in a deeper dojo conversation about this — not seeking advice, but inviting them to look at the situation underneath. The question should:\n'+
+      '- Build on what the analysis revealed\n'+
+      '- Be open, not solvable with a yes/no\n'+
+      '- Be in the user\'s own perspective (use "I" or "my")\n'+
+      '- Max 20 words, English, no quotation marks\n\n'+
+      'Just the question itself, nothing else.';
+  } else {
+    prompt = 'Een gebruiker heeft net deze balans-lezing over zijn week gelezen:\n\n"'+analysisText+'"\n\n'+
+      (primary ? 'Hun primaire doel: "'+primary.title+'"\n\n' : '') +
+      'Formuleer ÉÉN transformatieve vraag die ze in een diepere dojo-gesprek kunnen onderzoeken hierover — niet op zoek naar advies, maar uitnodigend om naar de situatie onder de oppervlakte te kijken. De vraag moet:\n'+
+      '- Voortbouwen op wat de analyse onthulde\n'+
+      '- Open zijn, niet oplosbaar met ja/nee\n'+
+      '- In het perspectief van de gebruiker zelf (gebruik "ik" of "mijn")\n'+
+      '- Max 20 woorden, Nederlands, geen aanhalingstekens\n\n'+
+      'Alleen de vraag zelf, niets anders.';
+  }
+
+  var question = '';
+  try {
+    var res = await fetch('/api/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:120,messages:[{role:'user',content:prompt}]})
+    });
+    if(res.ok){
+      var j = await res.json();
+      var txt = j.content?.[0]?.text?.trim();
+      if(txt) question = txt.replace(/^["'""]|["'""]$/g,'').trim();
+    }
+  } catch(e){}
+
+  // Navigate to Dojo
+  if(typeof go === 'function') go('dj');
+  else {
+    document.querySelectorAll('[data-v]').forEach(function(el){ el.classList.toggle('on', el.dataset.v === 'dj'); });
+    document.querySelectorAll('.view').forEach(function(el){ el.classList.toggle('on', el.id === 'v-dj'); });
+  }
+
+  // Start het transformatieve gesprek met voorgevulde vraag
+  setTimeout(function(){
+    if(typeof startTransformatief === 'function'){
+      startTransformatief();
+      // Wacht tot de input gerenderd is, dan vullen
+      setTimeout(function(){
+        var inp = document.getElementById('dj-q-input');
+        if(inp && question){
+          inp.value = question;
+          inp.focus();
+          // Cursor aan het einde
+          inp.setSelectionRange(question.length, question.length);
+        }
+      }, 200);
+    }
+    // Reset cockpit knop
+    var btnReset = document.getElementById('ck-balance-deepen');
+    if(btnReset) showBalanceDeepenButton(analysisText);
+  }, 300);
 }
 
 // ── AFSPRAKEN MET MEESTERS ─────────────────────────────────────────
