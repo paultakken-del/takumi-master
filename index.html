@@ -3179,8 +3179,8 @@ function renderGrid(){
     activeEl = 'board';
   } else {
     var mapped = WARRIOR_TO_ELEMENT[S.cur];
-    // Kū-warriors mappen we ook naar 'board' (Council representeert Kū)
-    activeEl = (mapped === 'ku') ? 'board' : (mapped || 'chi');
+    // Elke meester activeert zijn eigen element-pill
+    activeEl = mapped || 'chi';
   }
 
   // TOP: 6 elementen pillen
@@ -3320,7 +3320,7 @@ function selElement(eid){
     if(S.cur === 'board') current = 'board';
     else {
       var mapped = WARRIOR_TO_ELEMENT[S.cur];
-      current = (mapped === 'ku') ? 'board' : mapped;
+      current = mapped;
     }
     var idx = ELEMENT_ORDER.indexOf(current);
     if(idx < 0) idx = 0;
