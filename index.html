@@ -760,13 +760,13 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
     <!-- ── VANDAAG ── synthese als hoofdfocus ── -->
     <div class="dash-section dash-primary">
-      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-sun"/></svg> Vandaag</div>
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-sun"/></svg> <span data-i18n="ck.today">Vandaag</span></div>
       <div id="ck-synthese" style="font-size:15px;line-height:1.65;color:var(--ink);font-weight:400"></div>
     </div>
 
     <!-- ── ACTIES VANDAAG ── van meesters ── -->
     <div class="dash-section" id="ck-actions-section" style="display:none">
-      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-circle"/></svg> Acties vandaag</div>
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-circle"/></svg> <span data-i18n="ck.actions_today">Acties vandaag</span></div>
       <div id="ck-actions-list"></div>
     </div>
 
@@ -778,7 +778,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <div id="ck-more-content" style="display:none">
     <!-- ── ENERGIE ── micro-ritueel ── -->
     <div class="dash-section">
-      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-wave"/></svg> Energie</div>
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-wave"/></svg> <span data-i18n="ck.energy">Energie</span></div>
       <div class="ck-opening" id="ck-opening">
         <div class="ck-opening-q" id="ck-opening-q"></div>
         <div class="ck-opening-cards" id="ck-opening-cards"></div>
@@ -787,13 +787,13 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
     <!-- ── MUZIEK ── -->
     <div class="dash-section" id="ck-music-section" style="display:none">
-      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-wave"/></svg> Muziek</div>
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-wave"/></svg> <span data-i18n="ck.music">Muziek</span></div>
       <div class="ck-music" id="ck-music"></div>
     </div>
 
     <!-- ── WIJSHEID ── quote als afsluiter ── -->
     <div class="dash-section dash-quiet" id="ck-wisdom-section">
-      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-sparkle"/></svg> Wijsheid</div>
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-sparkle"/></svg> <span data-i18n="ck.wisdom">Wijsheid</span></div>
       <div style="text-align:center;padding:8px 12px">
         <div id="ck-quote" style="font-size:14px;color:var(--ink);opacity:.7;font-style:italic;line-height:1.7;word-wrap:break-word;font-family:var(--serif)"> </div>
         <div id="ck-quote-auth" style="font-size:var(--text-xs);color:var(--ink);opacity:.4;margin-top:8px;letter-spacing:.1em;text-transform:uppercase"> </div>
@@ -803,7 +803,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 
     <!-- ── BALANS ── doen vs zijn met wave als scheiding ── -->
     <div class="dash-section" id="ck-balance-section">
-      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-compass"/></svg> Balans deze week</div>
+      <div class="dash-label"><svg class="ico ico-sm"><use href="#i-compass"/></svg> <span data-i18n="ck.balance_week">Balans deze week</span></div>
       <div id="ck-balance-content" style="display:flex;flex-direction:column;align-items:center;padding:8px 0">
         <svg id="ck-balance-svg" viewBox="0 0 240 240" width="220" height="220" style="max-width:100%">
           <defs>
@@ -1403,6 +1403,13 @@ var I18N = {
     'bal.do': 'Doen',
     'bal.be': 'Zijn',
     'bal.between': 'tussen',
+    'bal.in_balance': 'In balans tussen doen en zijn.',
+    'bal.slight_more_do': 'Iets meer doen dan zijn.',
+    'bal.slight_more_be': 'Iets meer zijn dan doen.',
+    'bal.do_dominates': 'Doen overheerst — geef ruimte aan rust.',
+    'bal.be_dominates': 'Zijn overheerst — beweging mag.',
+    'bal.strong_action': 'Sterk in actie. Tijd om te ademen.',
+    'bal.much_rest': 'Veel rust. Een eerste stap helpt.',
     // Stats
     'stats.hrv': 'HRV',
     'stats.sleep': 'Slaap',
@@ -1591,6 +1598,13 @@ var I18N = {
     'bal.do': 'Do',
     'bal.be': 'Be',
     'bal.between': 'between',
+    'bal.in_balance': 'In balance between doing and being.',
+    'bal.slight_more_do': 'Slightly more doing than being.',
+    'bal.slight_more_be': 'Slightly more being than doing.',
+    'bal.do_dominates': 'Doing dominates — make room for rest.',
+    'bal.be_dominates': 'Being dominates — movement is welcome.',
+    'bal.strong_action': 'Strongly in action. Time to breathe.',
+    'bal.much_rest': 'Much rest. A first step helps.',
     'stats.hrv': 'HRV',
     'stats.sleep': 'Sleep',
     'stats.recovery': 'Recovery',
@@ -1738,6 +1752,29 @@ function setLang(newLang){
   if(newLang !== 'nl' && newLang !== 'en') return;
   LANG = newLang;
   try { localStorage.setItem('tm_lang', newLang); } catch(e){}
+
+  // Flush AI-output caches die taalspecifiek zijn maar geen taal in hun key hebben.
+  // Bij volgende render genereren ze opnieuw in de juiste taal.
+  try {
+    var keysToFlush = [];
+    for(var i = 0; i < localStorage.length; i++){
+      var k = localStorage.key(i);
+      if(!k) continue;
+      // Cache-prefixes die we willen regenereren bij taalwissel
+      if(k.indexOf('tm2_leader_msg_') === 0) keysToFlush.push(k);
+      else if(k.indexOf('tm2_balance_analysis_') === 0) keysToFlush.push(k);
+      else if(k.indexOf('tm2_council_synthesis_') === 0) keysToFlush.push(k);
+      else if(k.indexOf('tm2_observation_') === 0) keysToFlush.push(k);
+    }
+    keysToFlush.forEach(function(k){ localStorage.removeItem(k); });
+    // Week council resetten zodat hij opnieuw genereert
+    if(localStorage.getItem('tm2_week_council')){
+      localStorage.removeItem('tm2_week_council');
+    }
+  } catch(e){
+    // Stille fail — ergste geval: oude taal blijft op een paar plekken zichtbaar tot natuurlijke regeneratie
+  }
+
   // Forceer page reload zodat alle inline strings opnieuw renderen
   window.location.reload();
 }
@@ -4253,10 +4290,10 @@ function renderElementBalance(){
     doenKanjisEl.innerHTML =
       // Chi
       '<text x="68" y="78" text-anchor="middle" font-family="var(--FJ)" font-size="'+chiSize+'" fill="#1a1815" opacity=".88">地</text>'+
-      '<text x="68" y="98" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#1a1815" opacity=".55" letter-spacing=".5">Chi · Aarde</text>'+
+      '<text x="68" y="98" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#1a1815" opacity=".55" letter-spacing=".5">'+t('el.chi.full')+'</text>'+
       // Ka
       '<text x="68" y="166" text-anchor="middle" font-family="var(--FJ)" font-size="'+kaSize+'" fill="#1a1815" opacity=".88">火</text>'+
-      '<text x="68" y="186" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#1a1815" opacity=".55" letter-spacing=".5">Ka · Vuur</text>';
+      '<text x="68" y="186" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#1a1815" opacity=".55" letter-spacing=".5">'+t('el.ka.full')+'</text>';
   }
 
   // Zijn-kant (rood): 水 Sui top, 空 Kū bottom — beige tekst
@@ -4267,10 +4304,10 @@ function renderElementBalance(){
     zijnKanjisEl.innerHTML =
       // Sui
       '<text x="172" y="78" text-anchor="middle" font-family="var(--FJ)" font-size="'+suiSize+'" fill="#f0ece4" opacity=".95">水</text>'+
-      '<text x="172" y="98" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#f0ece4" opacity=".7" letter-spacing=".5">Sui · Water</text>'+
+      '<text x="172" y="98" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#f0ece4" opacity=".7" letter-spacing=".5">'+t('el.sui.full')+'</text>'+
       // Ku
       '<text x="172" y="166" text-anchor="middle" font-family="var(--FJ)" font-size="'+kuSize+'" fill="#f0ece4" opacity=".95">空</text>'+
-      '<text x="172" y="186" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#f0ece4" opacity=".7" letter-spacing=".5">Kū · Leegte</text>';
+      '<text x="172" y="186" text-anchor="middle" font-family="inherit" font-size="9.5" fill="#f0ece4" opacity=".7" letter-spacing=".5">'+t('el.ku.full')+'</text>';
   }
 
   // Fū kanji op de wave (vloeit ertussen) met label eronder
@@ -4288,7 +4325,7 @@ function renderElementBalance(){
   if(fuLblEl){
     fuLblEl.setAttribute('x', waveCenterX);
     fuLblEl.setAttribute('y', 138);
-    fuLblEl.textContent = 'Fū · Wind';
+    fuLblEl.textContent = t('el.fu.full');
   }
 
   // Korte samenvatting — geen percentages
@@ -4296,13 +4333,13 @@ function renderElementBalance(){
   var diff = Math.abs(doenRatio - 0.5);
   var summary;
   if(diff < 0.08){
-    summary = 'In balans tussen doen en zijn.';
+    summary = t('bal.in_balance');
   } else if(diff < 0.18){
-    summary = doenRatio > 0.5 ? 'Iets meer doen dan zijn.' : 'Iets meer zijn dan doen.';
+    summary = doenRatio > 0.5 ? t('bal.slight_more_do') : t('bal.slight_more_be');
   } else if(diff < 0.28){
-    summary = doenRatio > 0.5 ? 'Doen overheerst — geef ruimte aan rust.' : 'Zijn overheerst — beweging mag.';
+    summary = doenRatio > 0.5 ? t('bal.do_dominates') : t('bal.be_dominates');
   } else {
-    summary = doenRatio > 0.5 ? 'Sterk in actie. Tijd om te ademen.' : 'Veel rust. Een eerste stap helpt.';
+    summary = doenRatio > 0.5 ? t('bal.strong_action') : t('bal.much_rest');
   }
   var summaryEl = document.getElementById('ck-balance-summary');
   if(summaryEl) summaryEl.textContent = summary;
